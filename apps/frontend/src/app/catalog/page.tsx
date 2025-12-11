@@ -2,19 +2,32 @@ import { ShieldCheck } from "lucide-react";
 
 import { GlobalDisclaimer } from "@/components/banners/global-disclaimer";
 import { Button } from "@/components/ui/button";
+import { disclaimers } from "@/lib/utils";
 
 const placeholderProducts = [
   {
     name: "Research Peptide A",
     sku: "SKU-001",
+    purity: 99.4,
+    batchId: "BCH-2024-001",
+    storage: "Store at -20°C in a desiccated vial; avoid repeated freeze-thaw cycles.",
+    coaUrl: "https://example.com/coa/SKU-001",
   },
   {
     name: "Research Peptide B",
     sku: "SKU-002",
+    purity: 98.9,
+    batchId: "BCH-2024-002",
+    storage: "Refrigerate at 2-8°C; protect from light and humidity.",
+    coaUrl: "https://example.com/coa/SKU-002",
   },
   {
     name: "Research Supply Kit",
     sku: "SKU-003",
+    purity: 97.5,
+    batchId: "BCH-2024-003",
+    storage: "Keep sealed at room temperature; do not expose to moisture.",
+    coaUrl: "https://example.com/coa/SKU-003",
   },
 ];
 
@@ -40,17 +53,51 @@ export default function CatalogPage() {
             <div className="space-y-2">
               <p className="text-sm font-semibold text-foreground">{product.name}</p>
               <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
-              <p className="text-sm text-muted-foreground">
-                Description and pricing will be added later following compliance review. No medical usage is implied.
-              </p>
+              <dl className="grid grid-cols-1 gap-1 text-xs text-muted-foreground">
+                <div>
+                  <dt className="font-semibold text-foreground">Purity</dt>
+                  <dd>{product.purity}% (HPLC)</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold text-foreground">Batch ID</dt>
+                  <dd>{product.batchId}</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold text-foreground">Storage</dt>
+                  <dd>{product.storage}</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold text-foreground">COA</dt>
+                  <dd>
+                    <a
+                      href={product.coaUrl}
+                      className="underline underline-offset-2 hover:text-foreground"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Certificate of Analysis
+                    </a>
+                  </dd>
+                </div>
+              </dl>
             </div>
-            <div className="mt-4 flex gap-2">
-              <Button disabled size="sm">
-                Add to cart
-              </Button>
-              <Button disabled variant="outline" size="sm">
-                Details
-              </Button>
+            <div className="mt-4 space-y-3">
+              <ul className="space-y-1 rounded-md bg-muted/40 p-3 text-xs text-muted-foreground">
+                {disclaimers.map((statement) => (
+                  <li key={statement} className="flex gap-1">
+                    <span aria-hidden>•</span>
+                    <span>{statement}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex gap-2">
+                <Button disabled size="sm">
+                  Add to cart
+                </Button>
+                <Button disabled variant="outline" size="sm">
+                  Details
+                </Button>
+              </div>
             </div>
           </div>
         ))}

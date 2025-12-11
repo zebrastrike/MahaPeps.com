@@ -32,7 +32,10 @@ model Product {
   id        String   @id @default(uuid())
   name      String
   sku       String   @unique
-  metadata  Json
+  purity    Float
+  batchId   String   @unique
+  storage   String
+  coaUrl    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
