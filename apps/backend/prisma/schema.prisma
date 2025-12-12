@@ -11,11 +11,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum BatchFileType {
+  COA
+  DESCRIPTION_FORM
+  IMAGE
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
   role      String
+  uploads   BatchFile[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -28,16 +35,108 @@ model Org {
   updatedAt DateTime @updatedAt
 }
 
+model Distributor {
+  id          String      @id @default(uuid())
+  name        String
+  contactEmail String?
+  contactPhone String?
+  website     String?
+  clinics     Clinic[]
+  priceLists  PriceList[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Clinic {
+  id             String      @id @default(uuid())
+  name           String
+  contactEmail   String?
+  contactPhone   String?
+  addressLine1   String?
+  addressLine2   String?
+  city           String?
+  state          String?
+  postalCode     String?
+  country        String?
+  distributorId  String?
+  distributor    Distributor? @relation(fields: [distributorId], references: [id])
+  priceLists     PriceList[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
 model Product {
-  id        String   @id @default(uuid())
-  name      String
-  sku       String   @unique
-  purity    Float
-  batchId   String   @unique
-  storage   String
-  coaUrl    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String            @id @default(uuid())
+  name           String
+  description    String?
+  sku            String            @unique
+  category       String?
+  form           String?
+  concentration  String?
+  isActive       Boolean           @default(true)
+  batches        ProductBatch[]
+  priceListItems PriceListItem[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model ProductBatch {
+  id                   String      @id @default(uuid())
+  productId            String
+  product              Product     @relation(fields: [productId], references: [id])
+  batchCode            String      @unique
+  purityPercent        Decimal     @db.Decimal(5, 2)
+  manufacturedAt       DateTime
+  expiresAt            DateTime
+  storageInstructions  String?
+  qtyInitial           Decimal     @db.Decimal(12, 2)
+  qtyAvailable         Decimal     @db.Decimal(12, 2)
+  files                BatchFile[]
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+}
+
+model BatchFile {
+  id            String        @id @default(uuid())
+  batchId       String
+  batch         ProductBatch  @relation(fields: [batchId], references: [id])
+  type          BatchFileType
+  filePath      String
+  uploadedById  String?
+  uploadedBy    User?         @relation(fields: [uploadedById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model PriceList {
+  id             String         @id @default(uuid())
+  name           String
+  description    String?
+  currency       String         @default("USD")
+  effectiveFrom  DateTime       @default(now())
+  expiresAt      DateTime?
+  distributorId  String
+  clinicId       String?
+  distributor    Distributor    @relation(fields: [distributorId], references: [id])
+  clinic         Clinic?        @relation(fields: [clinicId], references: [id])
+  items          PriceListItem[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model PriceListItem {
+  id            String      @id @default(uuid())
+  priceListId   String
+  productId     String
+  label         String?
+  unitQuantity  String?
+  price         Decimal     @db.Decimal(12, 2)
+  currency      String?
+  isActive      Boolean     @default(true)
+  priceList     PriceList   @relation(fields: [priceListId], references: [id])
+  product       Product     @relation(fields: [productId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Order {
@@ -50,10 +149,11 @@ model Order {
 }
 
 model Inventory {
-  id        String   @id @default(uuid())
-  productId String
-  quantity  Int
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  updatedAt  DateTime @updatedAt
 }
 
 model AuditLog {
