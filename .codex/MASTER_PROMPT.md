@@ -2,11 +2,30 @@
 
 ## Project Overview
 
-MAHA Peptides OS is an enterprise-grade peptide e-commerce marketplace with three distinct sales channels:
+MAHA Peptides OS is an enterprise-grade research materials marketplace serving laboratories, research institutions, and qualified researchers.
 
-1. **Research Chemical Sales** - To labs and research institutions (B2B)
-2. **Clinical Trial Peptides** - To doctors, PRC clinics, and medical facilities (B2B2C)
-3. **FDA-Approved Peptides** - Direct to consumer (D2C)
+**CRITICAL: This is a RESEARCH-ONLY platform, NOT a supplement or wellness marketplace.**
+
+### Sales Channels:
+
+1. **Research Peptides (B2B)** - To laboratories and research institutions for analytical use
+2. **Clinical Research Materials (B2B2C)** - To authorized research clinics and facilities conducting approved studies
+3. **Analytical Reference Materials (D2C)** - To qualified researchers for laboratory research purposes
+
+### Platform Positioning:
+
+✅ **What This Platform IS:**
+- Research materials supplier
+- Laboratory chemical marketplace
+- B2B + qualified researcher platform
+- Non-clinical, non-medical, non-therapeutic system
+
+❌ **What This Platform IS NOT:**
+- NOT a supplement store
+- NOT a pharmacy or compounding facility
+- NOT a wellness brand
+- NOT a medical platform
+- NOT a consumer health product site
 
 ## Tech Stack
 
@@ -38,17 +57,18 @@ MahaPeps.com/
 
 ### User Roles & Access Control
 
-1. **CLIENT** - Retail customers buying FDA-approved peptides
+1. **CLIENT** - Qualified researchers purchasing analytical reference materials
    - Age verification required (21+)
-   - Personal account dashboard
-   - Order tracking and protocols
+   - Research credentials verification recommended
+   - Personal research dashboard
+   - Order tracking and material documentation
 
-2. **CLINIC** - Medical facilities and doctor offices
-   - KYC verification required
-   - Access to clinical trial peptides
-   - Patient management
-   - Staff management
-   - Inventory tracking
+2. **CLINIC** - Research clinics and authorized facilities conducting approved studies
+   - KYC verification required (research credentials)
+   - Access to clinical research materials
+   - Research participant tracking
+   - Staff researcher management
+   - Laboratory inventory tracking
    - Distributor relationship
 
 3. **DISTRIBUTOR** - Wholesale partners
@@ -64,24 +84,90 @@ MahaPeps.com/
    - User and org management
    - Settings control
 
-### Product Categories
+### Product Categories (STRICT - ONLY THESE ALLOWED)
 
-1. **Research Use Only (RUO)** - Lab research chemicals
-2. **Clinical Trial** - In-trial peptides for approved clinical sites
-3. **FDA Approved** - Consumer-ready peptides
+1. **Research Peptides** - Laboratory research compounds
+2. **Analytical Reference Materials** - Chemical standards and controls
+3. **Laboratory Adjuncts** - Research support materials
+4. **Research Combinations** - Pre-configured research sets
+5. **Materials & Supplies** - Lab equipment and supplies
+6. **Merchandise** - Non-consumable branded items (lab coats, beakers, etc.)
 
-### Compliance Requirements
+🚫 **PERMANENTLY BANNED CATEGORIES:**
+- "Supplements" (any type)
+- "Wellness products"
+- "Health products"
+- "Dietary supplements"
+- "Injectable supplements"
+- "FDA Approved" (for consumer use)
+- Any category implying human consumption or therapeutic use
+
+### Compliance Requirements (ABSOLUTE - NON-NEGOTIABLE)
 
 **CRITICAL:** All code must adhere to these guardrails:
 
-- **NO medical claims** - Products are research chemicals or supplements only
-- **NO dosing guidance** - Cannot provide dosage recommendations
-- **NO treatment protocols** - Cannot suggest medical uses
-- **NO unverified testimonials** - User reviews require legal approval
-- **Mandatory disclaimers** - "For research use only" or FDA disclaimer on all pages
-- **KYC for wholesale** - Clinics and distributors must verify identity/credentials
-- **Age verification** - Retail customers must be 21+
+#### Language Prohibitions (AUTO-REJECT)
+
+🚫 **FORBIDDEN TERMS - MUST NEVER APPEAR:**
+- "Supplement" / "Dietary supplement" / "Wellness"
+- "Health benefits" / "Treatment" / "Therapy" / "Therapeutic"
+- "Dosage" / "Dose" / "Administration" / "Clinical use"
+- "Injectable" / "Injection" / "Oral use" / "Nasal use" (for human application)
+- "For humans" / "For patients" / "Medical use"
+- "Improves", "Treats", "Cures", "Prevents" (health outcomes)
+- "Weight loss", "Anti-aging", "Performance enhancement"
+- "Medical", "Medicine", "Drug" (unless in regulatory disclaimers)
+
+✅ **APPROVED ALTERNATIVES:**
+- "Research peptide" / "Laboratory material" / "Analytical reference"
+- "Research purposes" / "Analytical use" / "Laboratory application"
+- "Theoretical calculation" / "Academic reference"
+- "Reconstitution" / "Preparation" (for research only)
+- "For laboratory research" / "For qualified researchers"
+- "Molecular structure" / "Chemical properties"
+
+#### Required Disclaimers (EXACT TEXT - NO MODIFICATIONS)
+
+**Primary FDA Disclaimer** (Footer + Product Pages):
+```
+All statements on this website have not been evaluated by the Food and Drug Administration (FDA).
+All products are sold strictly for research, laboratory, or analytical purposes only.
+Products are not intended to diagnose, treat, cure, or prevent any disease.
+```
+
+**Research-Use-Only Disclaimer** (Product Pages + Checkout):
+```
+All products sold on this platform are intended solely for lawful laboratory research and analytical use.
+Not for human or veterinary consumption.
+```
+
+**Non-Pharmacy Disclaimer** (Footer + Legal):
+```
+This site operates solely as a chemical and research materials supplier.
+We are not a compounding pharmacy or chemical compounding facility as defined under Section 503A of the Federal Food, Drug, and Cosmetic Act.
+We are not an outsourcing facility as defined under Section 503B of the Federal Food, Drug, and Cosmetic Act.
+```
+
+**Liability & Responsibility Disclaimer**:
+```
+The purchaser assumes full responsibility for the proper handling, storage, use, and disposal of all products.
+The purchaser is responsible for ensuring compliance with all applicable local, state, federal, and international laws.
+```
+
+**No Medical Advice Disclaimer**:
+```
+Nothing on this website constitutes medical, clinical, or healthcare advice.
+All information provided is for educational and research discussion purposes only.
+```
+
+#### Operational Requirements
+
+- **KYC for wholesale** - Research clinics and distributors must verify research credentials
+- **Age verification** - All customers must be 21+
 - **Audit logging** - All admin actions logged with user, timestamp, org
+- **Compliance acknowledgment** - All purchases require acceptance of research-only terms
+- **Content moderation** - Automated scanning for forbidden terms
+- **COA (Certificate of Analysis)** - Required for all batches before activation
 
 ## Database Schema Key Models
 
