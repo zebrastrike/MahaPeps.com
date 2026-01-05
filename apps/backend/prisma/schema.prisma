@@ -11,20 +11,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ✅ STRICT product categories - ONLY these allowed (per GUARDRAILS.md)
+enum ProductCategory {
+  RESEARCH_PEPTIDES
+  ANALYTICAL_REFERENCE_MATERIALS
+  LABORATORY_ADJUNCTS
+  RESEARCH_COMBINATIONS
+  MATERIALS_SUPPLIES
+  MERCHANDISE
+}
+
+// User role types
+enum UserRole {
+  CLIENT // Individual researchers
+  CLINIC // Medical facilities (B2B)
+  DISTRIBUTOR // Wholesale distributors (B2B)
+  ADMIN // Platform administrators
+}
+
+// Payment link status
+enum PaymentLinkStatus {
+  PENDING
+  SENT
+  CLICKED
+  PAID
+  EXPIRED
+  CANCELED
+}
+
+// Forbidden term severity levels
+enum ViolationSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// ✅ Compliance-safe file types only (per GUARDRAILS.md)
 enum BatchFileType {
-  COA
-  DESCRIPTION_FORM
-  IMAGE
+  COA // Certificate of Analysis (REQUIRED)
+  MSDS // Material Safety Data Sheet
+  PRODUCT_IMAGE // Product photos
+  TECHNICAL_SHEET // Chemical technical specifications
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      String
-  uploads   BatchFile[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                        String                     @id @default(uuid())
+  email                     String                     @unique
+  password                  String
+  role                      UserRole                   @default(CLIENT)
+  phone                     String?
+  isActive                  Boolean                    @default(true)
+  uploads                   BatchFile[]
+  orders                    Order[]
+  complianceAcknowledgments ComplianceAcknowledgment[]
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
 }
 
 model Org {
@@ -36,107 +78,116 @@ model Org {
 }
 
 model Distributor {
-  id          String      @id @default(uuid())
-  name        String
+  id           String      @id @default(uuid())
+  name         String
   contactEmail String?
   contactPhone String?
-  website     String?
-  clinics     Clinic[]
-  priceLists  PriceList[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  website      String?
+  clinics      Clinic[]
+  priceLists   PriceList[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  orders       Order[]
 }
 
 model Clinic {
-  id             String      @id @default(uuid())
-  name           String
-  contactEmail   String?
-  contactPhone   String?
-  addressLine1   String?
-  addressLine2   String?
-  city           String?
-  state          String?
-  postalCode     String?
-  country        String?
-  distributorId  String?
-  distributor    Distributor? @relation(fields: [distributorId], references: [id])
-  priceLists     PriceList[]
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id            String       @id @default(uuid())
+  name          String
+  contactEmail  String?
+  contactPhone  String?
+  addressLine1  String?
+  addressLine2  String?
+  city          String?
+  state         String?
+  postalCode    String?
+  country       String?
+  distributorId String?
+  distributor   Distributor? @relation(fields: [distributorId], references: [id])
+  priceLists    PriceList[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  orders        Order[]
 }
 
 model Product {
-  id             String            @id @default(uuid())
-  name           String
-  description    String?
-  sku            String            @unique
-  category       String?
-  form           String?
-  concentration  String?
-  isActive       Boolean           @default(true)
-  batches        ProductBatch[]
-  priceListItems PriceListItem[]
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id               String           @id @default(uuid())
+  name             String
+  description      String?
+  sku              String           @unique
+  category         ProductCategory? // ✅ Now uses enum instead of String
+  form             String?
+  concentration    String?
+  casNumber        String? // Chemical Abstracts Service number
+  molecularFormula String? // e.g., "C19H34N6O5"
+  isActive         Boolean          @default(true)
+  batches          ProductBatch[]
+  priceListItems   PriceListItem[]
+  orderItems       OrderItem[]
+  inventory        Inventory[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 }
 
 model ProductBatch {
-  id                   String      @id @default(uuid())
-  productId            String
-  product              Product     @relation(fields: [productId], references: [id])
-  batchCode            String      @unique
-  purityPercent        Decimal     @db.Decimal(5, 2)
-  manufacturedAt       DateTime
-  expiresAt            DateTime
-  storageInstructions  String?
-  qtyInitial           Decimal     @db.Decimal(12, 2)
-  qtyAvailable         Decimal     @db.Decimal(12, 2)
-  files                BatchFile[]
-  createdAt            DateTime    @default(now())
-  updatedAt            DateTime    @updatedAt
+  id                  String      @id @default(uuid())
+  productId           String
+  product             Product     @relation(fields: [productId], references: [id])
+  batchCode           String      @unique
+  purityPercent       Decimal     @db.Decimal(5, 2)
+  manufacturedAt      DateTime
+  expiresAt           DateTime
+  storageInstructions String?
+  qtyInitial          Decimal     @db.Decimal(12, 2)
+  qtyAvailable        Decimal     @db.Decimal(12, 2)
+  testingLab          String? // Lab that performed COA testing
+  coaFileId           String? // Reference to COA file (required before activation)
+  isActive            Boolean     @default(false) // ✅ Requires COA before activation
+  files               BatchFile[]
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 }
 
 model BatchFile {
-  id            String        @id @default(uuid())
-  batchId       String
-  batch         ProductBatch  @relation(fields: [batchId], references: [id])
-  type          BatchFileType
-  filePath      String
-  uploadedById  String?
-  uploadedBy    User?         @relation(fields: [uploadedById], references: [id])
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id           String        @id @default(uuid())
+  batchId      String
+  batch        ProductBatch  @relation(fields: [batchId], references: [id])
+  type         BatchFileType
+  filePath     String
+  uploadedById String?
+  uploadedBy   User?         @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model PriceList {
-  id             String         @id @default(uuid())
-  name           String
-  description    String?
-  currency       String         @default("USD")
-  effectiveFrom  DateTime       @default(now())
-  expiresAt      DateTime?
-  distributorId  String
-  clinicId       String?
-  distributor    Distributor    @relation(fields: [distributorId], references: [id])
-  clinic         Clinic?        @relation(fields: [clinicId], references: [id])
-  items          PriceListItem[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id            String          @id @default(uuid())
+  name          String
+  description   String?
+  currency      String          @default("USD")
+  effectiveFrom DateTime        @default(now())
+  expiresAt     DateTime?
+  distributorId String
+  clinicId      String?
+  distributor   Distributor     @relation(fields: [distributorId], references: [id])
+  clinic        Clinic?         @relation(fields: [clinicId], references: [id])
+  items         PriceListItem[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model PriceListItem {
-  id            String      @id @default(uuid())
-  priceListId   String
-  productId     String
-  label         String?
-  unitQuantity  String?
-  price         Decimal     @db.Decimal(12, 2)
-  currency      String?
-  isActive      Boolean     @default(true)
-  priceList     PriceList   @relation(fields: [priceListId], references: [id])
-  product       Product     @relation(fields: [productId], references: [id])
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id           String    @id @default(uuid())
+  priceListId  String
+  productId    String
+  label        String?
+  unitQuantity String?
+  price        Decimal   @db.Decimal(12, 2)
+  currency     String?
+  isActive     Boolean   @default(true)
+  priceList    PriceList @relation(fields: [priceListId], references: [id])
+  product      Product   @relation(fields: [productId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 enum OrderStatus {
@@ -165,77 +216,79 @@ enum OrderAccountType {
 }
 
 model Address {
-  id              String   @id @default(uuid())
-  line1           String
-  line2           String?
-  city            String
-  state           String
-  postalCode      String
-  country         String
-  ordersShipping  Order[]  @relation("OrderShippingAddress")
-  ordersBilling   Order[]  @relation("OrderBillingAddress")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(uuid())
+  line1          String
+  line2          String?
+  city           String
+  state          String
+  postalCode     String
+  country        String
+  ordersShipping Order[]  @relation("OrderShippingAddress")
+  ordersBilling  Order[]  @relation("OrderBillingAddress")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Order {
-  id                String            @id @default(uuid())
-  userId            String
-  user              User              @relation(fields: [userId], references: [id])
-  clinicId          String?
-  clinic            Clinic?           @relation(fields: [clinicId], references: [id])
-  distributorId     String?
-  distributor       Distributor?      @relation(fields: [distributorId], references: [id])
-  accountType       OrderAccountType
-  status            OrderStatus
-  subtotal          Decimal           @db.Decimal(12, 2)
-  tax               Decimal           @db.Decimal(12, 2)
-  shipping          Decimal           @db.Decimal(12, 2)
-  total             Decimal           @db.Decimal(12, 2)
-  shippingAddressId String?
-  shippingAddress   Address?          @relation("OrderShippingAddress", fields: [shippingAddressId], references: [id])
-  billingAddressId  String?
-  billingAddress    Address?          @relation("OrderBillingAddress", fields: [billingAddressId], references: [id])
-  items             OrderItem[]
-  payments          Payment[]
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  id                       String                    @id @default(uuid())
+  userId                   String
+  user                     User                      @relation(fields: [userId], references: [id])
+  clinicId                 String?
+  clinic                   Clinic?                   @relation(fields: [clinicId], references: [id])
+  distributorId            String?
+  distributor              Distributor?              @relation(fields: [distributorId], references: [id])
+  accountType              OrderAccountType
+  status                   OrderStatus
+  subtotal                 Decimal                   @db.Decimal(12, 2)
+  tax                      Decimal                   @db.Decimal(12, 2)
+  shipping                 Decimal                   @db.Decimal(12, 2)
+  total                    Decimal                   @db.Decimal(12, 2)
+  shippingAddressId        String?
+  shippingAddress          Address?                  @relation("OrderShippingAddress", fields: [shippingAddressId], references: [id])
+  billingAddressId         String?
+  billingAddress           Address?                  @relation("OrderBillingAddress", fields: [billingAddressId], references: [id])
+  items                    OrderItem[]
+  payments                 Payment[]
+  paymentLink              PaymentLink? // ✅ Private payment link
+  complianceAcknowledgment ComplianceAcknowledgment? // ✅ Required checkout compliance
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
 }
 
 model OrderItem {
-  id         String   @id @default(uuid())
-  orderId    String
-  order      Order    @relation(fields: [orderId], references: [id])
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id])
-  quantity   Decimal  @db.Decimal(12, 2)
-  unitPrice  Decimal  @db.Decimal(12, 2)
-  lineTotal  Decimal  @db.Decimal(12, 2)
-  metadata   Json?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Decimal  @db.Decimal(12, 2)
+  unitPrice Decimal  @db.Decimal(12, 2)
+  lineTotal Decimal  @db.Decimal(12, 2)
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Payment {
-  id                   String         @id @default(uuid())
+  id                   String        @id @default(uuid())
   orderId              String
-  order                Order          @relation(fields: [orderId], references: [id])
-  amount               Decimal        @db.Decimal(12, 2)
-  currency             String         @default("USD")
+  order                Order         @relation(fields: [orderId], references: [id])
+  amount               Decimal       @db.Decimal(12, 2)
+  currency             String        @default("USD")
   status               PaymentStatus
   method               String?
   transactionReference String?
   metadata             Json?
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 }
 
 model Inventory {
-  id         String   @id @default(uuid())
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id])
-  quantity   Int
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  updatedAt DateTime @updatedAt
 }
 
 model AuditLog {
@@ -243,5 +296,83 @@ model AuditLog {
   action    String
   userId    String?
   orgId     String?
+  metadata  Json?
   createdAt DateTime @default(now())
+}
+
+// ✅ COMPLIANCE MODELS - Required for GUARDRAILS.md enforcement
+
+model ForbiddenTerm {
+  id          String            @id @default(uuid())
+  term        String            @unique
+  severity    ViolationSeverity @default(HIGH)
+  category    String? // e.g., "medical", "dosing", "therapeutic"
+  replacement String? // Suggested compliant alternative
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model ComplianceAcknowledgment {
+  id                     String   @id @default(uuid())
+  orderId                String   @unique
+  order                  Order    @relation(fields: [orderId], references: [id])
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id])
+  researchPurposeOnly    Boolean // ☐ I acknowledge that all products are for research purposes only
+  responsibilityAccepted Boolean // ☐ I accept full responsibility for handling and disposal
+  noMedicalAdvice        Boolean // ☐ I understand no information constitutes medical advice
+  ageConfirmation        Boolean // ☐ I confirm I am at least 21 years of age
+  termsAccepted          Boolean // ☐ I have read and agree to Terms of Service
+  ipAddress              String
+  userAgent              String?
+  createdAt              DateTime @default(now())
+
+  @@index([userId])
+  @@index([orderId])
+}
+
+model PaymentLink {
+  id            String            @id @default(uuid())
+  orderId       String            @unique
+  order         Order             @relation(fields: [orderId], references: [id])
+  token         String            @unique
+  amount        Decimal           @db.Decimal(12, 2)
+  currency      String            @default("USD")
+  status        PaymentLinkStatus @default(PENDING)
+  expiresAt     DateTime
+  sentVia       String[] // ["SMS", "EMAIL"]
+  customerPhone String?
+  customerEmail String
+  processorType String? // "EPICOR_PROPELLO", "WIRE_TRANSFER", "CRYPTO"
+  processorUrl  String? // External payment processor URL
+  clickedAt     DateTime?
+  paidAt        DateTime?
+  clickCount    Int               @default(0)
+  ipAddresses   String[] // Track IPs that clicked the link
+  smsLogs       SmsLog[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([token])
+  @@index([orderId])
+  @@index([status])
+}
+
+model SmsLog {
+  id            String       @id @default(uuid())
+  paymentLinkId String?
+  paymentLink   PaymentLink? @relation(fields: [paymentLinkId], references: [id])
+  toPhone       String
+  message       String
+  status        String // "QUEUED", "SENT", "DELIVERED", "FAILED"
+  twilioSid     String?
+  errorMessage  String?
+  sentAt        DateTime?
+  deliveredAt   DateTime?
+  createdAt     DateTime     @default(now())
+
+  @@index([paymentLinkId])
+  @@index([toPhone])
+  @@index([status])
 }
