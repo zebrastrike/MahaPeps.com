@@ -1,0 +1,363 @@
+# MAHA Peptides OS - Tessl Project Configuration
+
+name: "MAHA Peptides OS"
+description: "Enterprise peptide e-commerce marketplace with B2B and D2C channels"
+version: "0.1.0"
+
+# Project type and framework detection
+type: "monorepo"
+frameworks:
+  - "nextjs"
+  - "nestjs"
+  - "typescript"
+  - "prisma"
+
+# Workspace structure
+workspaces:
+  - "apps/api"
+  - "apps/web"
+  - "packages/*"
+
+# Primary languages
+languages:
+  - "typescript"
+  - "tsx"
+  - "javascript"
+
+# Tech stack
+stack:
+  frontend:
+    - "Next.js 14 (App Router)"
+    - "React 18"
+    - "TypeScript"
+    - "Tailwind CSS"
+    - "Radix UI"
+  backend:
+    - "NestJS"
+    - "TypeScript"
+    - "Prisma ORM"
+    - "PostgreSQL"
+    - "Redis"
+  infrastructure:
+    - "Docker"
+    - "Nginx"
+    - "Cloudflare CDN"
+    - "Private Server"
+  services:
+    - "Stripe (Payments)"
+    - "Mailgun (Email)"
+    - "S3-compatible storage (Files)"
+
+# Project structure
+structure:
+  api:
+    path: "apps/api"
+    type: "backend"
+    framework: "nestjs"
+    entry: "src/main.ts"
+  web:
+    path: "apps/web"
+    type: "frontend"
+    framework: "nextjs"
+    entry: "app/layout.tsx"
+  database:
+    path: "prisma"
+    type: "schema"
+    file: "schema.prisma"
+
+# Key domains and features
+domains:
+  - name: "Authentication"
+    path: "apps/api/src/auth"
+    description: "JWT-based authentication with role-based access control"
+
+  - name: "User Management"
+    path: "apps/api/src/users"
+    description: "User accounts with roles: CLIENT, CLINIC, DISTRIBUTOR, ADMIN"
+
+  - name: "Product Catalog"
+    path: "apps/api/src/catalog"
+    description: "Product management with batches, COA tracking, and inventory"
+
+  - name: "Order Management"
+    path: "apps/api/src/orders"
+    description: "Order processing with status workflows and inventory allocation"
+
+  - name: "Payment Processing"
+    path: "apps/api/src/payments"
+    description: "Stripe integration with webhooks and refund handling"
+
+  - name: "KYC Verification"
+    path: "apps/api/src/kyc"
+    description: "Know Your Customer verification for B2B accounts"
+
+  - name: "Price Lists"
+    path: "apps/api/src/price-lists"
+    description: "Distributor-specific pricing for clinics with tiered pricing"
+
+  - name: "Notifications"
+    path: "apps/api/src/notifications"
+    description: "Email notifications via Mailgun for orders, KYC, inventory"
+
+  - name: "Audit Logging"
+    path: "apps/api/src/audit"
+    description: "Compliance audit trail for all admin and sensitive actions"
+
+  - name: "Admin Portal"
+    path: "apps/web/app/(admin)"
+    description: "Admin dashboard for user, order, and system management"
+
+  - name: "Client Dashboard"
+    path: "apps/web/app/(client)"
+    description: "Retail customer dashboard for orders and protocols"
+
+  - name: "Clinic Dashboard"
+    path: "apps/web/app/(clinic)"
+    description: "Clinic management for patients, staff, and inventory"
+
+  - name: "Distributor Dashboard"
+    path: "apps/web/app/(distributor)"
+    description: "Wholesale partner management, pricing, and logistics"
+
+# Business rules and constraints
+rules:
+  compliance:
+    - "No medical claims or dosing guidance allowed"
+    - "Mandatory research use disclaimer on all product pages"
+    - "FDA disclaimer required for consumer products"
+    - "KYC verification required for wholesale access"
+    - "Age verification (21+) required for retail purchases"
+    - "All admin actions must be audit logged"
+    - "PII must be encrypted at rest"
+    - "Payment card data never stored directly (Stripe tokens only)"
+
+  business_logic:
+    - "Four user roles: CLIENT, CLINIC, DISTRIBUTOR, ADMIN"
+    - "Three product categories: Research Use Only, Clinical Trial, FDA Approved"
+    - "Order status workflow: DRAFT → PENDING_PAYMENT → PAID → FULFILLING → SHIPPED → COMPLETED"
+    - "Inventory allocated on payment, released on cancellation"
+    - "Price lists are distributor-specific with tiered pricing"
+    - "Batch expiration tracking with 60-day warning"
+    - "Low stock alerts at < 10 units"
+
+  security:
+    - "JWT authentication with 24-hour expiration"
+    - "Role-based access control on all protected routes"
+    - "Password hashing with bcrypt (10 salt rounds)"
+    - "Rate limiting on auth endpoints (5 req/min)"
+    - "HTTPS enforced via Cloudflare"
+    - "Webhook signature validation for payments"
+
+# Code generation preferences
+code_style:
+  typescript:
+    strict: true
+    no_any: true
+    prefer_interfaces: false  # Use types for DTOs
+    prefer_functional: true   # React functional components
+
+  naming:
+    files: "kebab-case"
+    classes: "PascalCase"
+    functions: "camelCase"
+    constants: "UPPER_SNAKE_CASE"
+
+  patterns:
+    backend: "Service-Controller-DTO pattern"
+    frontend: "Component-Page-Layout pattern"
+    database: "Prisma ORM with migrations"
+
+  testing:
+    framework: "jest"
+    coverage: 80
+    patterns:
+      - "Unit tests for services"
+      - "Integration tests for controllers"
+      - "E2E tests for critical flows"
+
+# Documentation references
+documentation:
+  - path: "PROJECT.md"
+    description: "Project vision, scope, and roadmap"
+
+  - path: "GUARDRAILS.md"
+    description: "Compliance rules and restrictions (CRITICAL)"
+
+  - path: "ENGINEERING_PRINCIPLES.md"
+    description: "Coding standards and API design patterns"
+
+  - path: "REPO_STRUCTURE.md"
+    description: "Monorepo organization and ownership"
+
+  - path: ".codex/MASTER_PROMPT.md"
+    description: "Master prompt for Codex with full context"
+
+  - path: ".codex/FEATURE_PROMPTS.md"
+    description: "Feature-specific implementation prompts"
+
+# Environment configuration
+environments:
+  development:
+    - "apps/api/.env.example"
+    - "apps/web/.env.local.example"
+
+  production:
+    - ".env.production"
+    - "docker-compose.prod.yml"
+
+# Testing configuration
+testing:
+  unit:
+    command: "npm run test"
+    coverage: "npm run test:cov"
+    pattern: "**/*.spec.ts"
+
+  e2e:
+    command: "npm run test:e2e"
+    pattern: "**/*.e2e-spec.ts"
+
+# Build and deployment
+build:
+  api:
+    command: "npm run build"
+    output: "dist/"
+    dockerfile: "apps/api/Dockerfile"
+
+  web:
+    command: "npm run build"
+    output: ".next/"
+    dockerfile: "apps/web/Dockerfile"
+
+deployment:
+  strategy: "docker-compose"
+  registry: "private"
+  compose_file: "docker-compose.prod.yml"
+
+# Dependencies to track
+key_dependencies:
+  backend:
+    - "@nestjs/common"
+    - "@nestjs/jwt"
+    - "@nestjs/passport"
+    - "@prisma/client"
+    - "bcrypt"
+    - "stripe"
+    - "mailgun-js"
+
+  frontend:
+    - "next"
+    - "react"
+    - "react-dom"
+    - "@radix-ui/react-*"
+    - "@stripe/stripe-js"
+    - "tailwindcss"
+
+# Feature flags (future)
+features:
+  - name: "stripe_payments"
+    enabled: true
+    description: "Stripe payment processing"
+
+  - name: "kyc_verification"
+    enabled: true
+    description: "KYC workflow for B2B accounts"
+
+  - name: "audit_logging"
+    enabled: true
+    description: "Compliance audit trail"
+
+  - name: "email_notifications"
+    enabled: false  # To be implemented
+    description: "Mailgun email notifications"
+
+  - name: "file_uploads"
+    enabled: false  # To be implemented
+    description: "S3 file storage for COA and images"
+
+# Priority implementation order
+roadmap:
+  phase_1:
+    name: "Core E-commerce"
+    status: "in_progress"
+    features:
+      - "Product catalog API"
+      - "Shopping cart and checkout"
+      - "Order management"
+      - "Stripe payment integration"
+      - "Client dashboard"
+
+  phase_2:
+    name: "B2B Features"
+    status: "planned"
+    features:
+      - "Clinic dashboard"
+      - "Distributor dashboard"
+      - "Price list management"
+      - "Bulk ordering"
+      - "KYC verification workflow"
+
+  phase_3:
+    name: "Compliance & Operations"
+    status: "planned"
+    features:
+      - "COA upload system"
+      - "Batch expiration alerts"
+      - "Audit log dashboard"
+      - "Email notifications"
+      - "Reporting and analytics"
+
+  phase_4:
+    name: "Scale & Optimization"
+    status: "future"
+    features:
+      - "Multi-region support"
+      - "Advanced caching"
+      - "Search with Elasticsearch"
+      - "Real-time updates"
+      - "Mobile app"
+
+# AI assistance preferences
+ai_preferences:
+  code_generation:
+    - "Always reference GUARDRAILS.md for compliance"
+    - "Use TypeScript strict mode"
+    - "Follow NestJS patterns for backend"
+    - "Use Next.js App Router for frontend"
+    - "Implement proper error handling"
+    - "Add audit logging for sensitive operations"
+    - "Include input validation with class-validator"
+    - "Write tests for new features"
+
+  documentation:
+    - "Generate JSDoc comments for public APIs"
+    - "Update README when adding major features"
+    - "Document API endpoints with examples"
+    - "Explain business logic in comments"
+
+  refactoring:
+    - "Maintain backwards compatibility"
+    - "Update tests when refactoring"
+    - "Preserve audit trail during changes"
+    - "Update related documentation"
+
+# Contact and support
+maintainers:
+  - role: "Owner"
+    responsibilities:
+      - "Project vision and roadmap"
+      - "Compliance oversight"
+      - "Production deployment"
+
+repository:
+  type: "git"
+  branch: "main"
+
+support:
+  documentation: "docs/"
+  issues: "Github Issues"
+
+compliance_contact:
+  critical_files:
+    - "GUARDRAILS.md"
+    - "prisma/schema.prisma (AuditLog model)"
+    - "apps/web/components/DisclaimerBar.tsx"

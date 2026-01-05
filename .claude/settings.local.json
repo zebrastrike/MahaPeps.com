@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(xargs:*)",
+      "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com log --oneline --all -20)",
+      "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com show --stat HEAD)",
+      "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com status)",
+      "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com log --graph --oneline -15)"
+    ]
+  }
+}

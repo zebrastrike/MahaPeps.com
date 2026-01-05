@@ -1,0 +1,706 @@
+# MAHA Peptides OS - Code Patterns and Templates
+
+# This file defines reusable code patterns for consistent implementation
+
+# Backend Patterns (NestJS)
+
+nestjs_module:
+  description: "Standard NestJS module structure"
+  template: |
+    import { Module } from '@nestjs/common';
+    import { {{Name}}Controller } from './{{name}}.controller';
+    import { {{Name}}Service } from './{{name}}.service';
+    import { PrismaModule } from '../prisma/prisma.module';
+
+    @Module({
+      imports: [PrismaModule],
+      controllers: [{{Name}}Controller],
+      providers: [{{Name}}Service],
+      exports: [{{Name}}Service],
+    })
+    export class {{Name}}Module {}
+
+nestjs_service:
+  description: "Standard service with Prisma injection"
+  template: |
+    import { Injectable, NotFoundException } from '@nestjs/common';
+    import { PrismaService } from '../prisma/prisma.service';
+    import { Create{{Name}}Dto, Update{{Name}}Dto } from './dto';
+
+    @Injectable()
+    export class {{Name}}Service {
+      constructor(private prisma: PrismaService) {}
+
+      async findAll() {
+        return this.prisma.{{model}}.findMany();
+      }
+
+      async findOne(id: string) {
+        const {{name}} = await this.prisma.{{model}}.findUnique({
+          where: { id },
+        });
+
+        if (!{{name}}) {
+          throw new NotFoundException('{{Name}} not found');
+        }
+
+        return {{name}};
+      }
+
+      async create(dto: Create{{Name}}Dto) {
+        return this.prisma.{{model}}.create({
+          data: dto,
+        });
+      }
+
+      async update(id: string, dto: Update{{Name}}Dto) {
+        await this.findOne(id); // Verify exists
+
+        return this.prisma.{{model}}.update({
+          where: { id },
+          data: dto,
+        });
+      }
+
+      async remove(id: string) {
+        await this.findOne(id); // Verify exists
+
+        return this.prisma.{{model}}.delete({
+          where: { id },
+        });
+      }
+    }
+
+nestjs_controller:
+  description: "Standard REST controller with guards"
+  template: |
+    import {
+      Controller,
+      Get,
+      Post,
+      Patch,
+      Delete,
+      Body,
+      Param,
+      UseGuards,
+    } from '@nestjs/common';
+    import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+    import { RolesGuard } from '../auth/guards/roles.guard';
+    import { Roles } from '../auth/decorators/roles.decorator';
+    import { UserRole } from '@prisma/client';
+    import { {{Name}}Service } from './{{name}}.service';
+    import { Create{{Name}}Dto, Update{{Name}}Dto } from './dto';
+
+    @Controller('{{route}}')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    export class {{Name}}Controller {
+      constructor(private {{name}}Service: {{Name}}Service) {}
+
+      @Get()
+      @Roles(UserRole.ADMIN, UserRole.{{role}})
+      findAll() {
+        return this.{{name}}Service.findAll();
+      }
+
+      @Get(':id')
+      @Roles(UserRole.ADMIN, UserRole.{{role}})
+      findOne(@Param('id') id: string) {
+        return this.{{name}}Service.findOne(id);
+      }
+
+      @Post()
+      @Roles(UserRole.ADMIN)
+      create(@Body() dto: Create{{Name}}Dto) {
+        return this.{{name}}Service.create(dto);
+      }
+
+      @Patch(':id')
+      @Roles(UserRole.ADMIN)
+      update(@Param('id') id: string, @Body() dto: Update{{Name}}Dto) {
+        return this.{{name}}Service.update(id, dto);
+      }
+
+      @Delete(':id')
+      @Roles(UserRole.ADMIN)
+      remove(@Param('id') id: string) {
+        return this.{{name}}Service.remove(id);
+      }
+    }
+
+dto_create:
+  description: "Create DTO with validation"
+  template: |
+    import { IsString, IsNotEmpty, IsOptional, IsEnum, IsNumber } from 'class-validator';
+
+    export class Create{{Name}}Dto {
+      @IsString()
+      @IsNotEmpty()
+      name: string;
+
+      @IsString()
+      @IsOptional()
+      description?: string;
+
+      // Add more fields as needed
+    }
+
+dto_update:
+  description: "Update DTO (partial)"
+  template: |
+    import { PartialType } from '@nestjs/mapped-types';
+    import { Create{{Name}}Dto } from './create-{{name}}.dto';
+
+    export class Update{{Name}}Dto extends PartialType(Create{{Name}}Dto) {}
+
+service_with_audit:
+  description: "Service method with audit logging"
+  template: |
+    async {{action}}(id: string, userId: string) {
+      // Perform action
+      const result = await this.prisma.{{model}}.{{operation}}({
+        where: { id },
+      });
+
+      // Audit log
+      await this.auditService.logAction(
+        userId,
+        null,
+        '{{MODEL}}_{{ACTION}}',
+        { {{model}}Id: id, ...metadata },
+      );
+
+      return result;
+    }
+
+# Frontend Patterns (Next.js + React)
+
+nextjs_page:
+  description: "Next.js App Router page component"
+  template: |
+    import { Metadata } from 'next';
+
+    export const metadata: Metadata = {
+      title: '{{Title}}',
+      description: '{{Description}}',
+    };
+
+    export default async function {{Name}}Page() {
+      // Fetch data on server if needed
+      const data = await fetchData();
+
+      return (
+        <div className="container mx-auto py-8">
+          <h1 className="text-3xl font-bold mb-6">{{Title}}</h1>
+          {/* Page content */}
+        </div>
+      );
+    }
+
+nextjs_layout:
+  description: "Layout component with navigation"
+  template: |
+    import { ReactNode } from 'react';
+    import { Header } from '@/components/Header';
+    import { Navigation } from '@/components/Navigation';
+    import { DisclaimerBar } from '@/components/DisclaimerBar';
+
+    interface {{Name}}LayoutProps {
+      children: ReactNode;
+    }
+
+    export default function {{Name}}Layout({ children }: {{Name}}LayoutProps) {
+      return (
+        <div className="layout-shell">
+          <Header />
+          <Navigation links={navigationLinks} />
+          <main className="main-content">
+            {children}
+          </main>
+          <DisclaimerBar message="{{disclaimer}}" />
+        </div>
+      );
+    }
+
+    const navigationLinks = [
+      { href: '/{{base}}', label: '{{Label}}' },
+      // Add more navigation links
+    ];
+
+react_component:
+  description: "Typed React functional component"
+  template: |
+    interface {{Name}}Props {
+      {{prop}}: {{Type}};
+      on{{Action}}?: ({{param}}: {{Type}}) => void;
+    }
+
+    export function {{Name}}({ {{prop}}, on{{Action}} }: {{Name}}Props) {
+      const handleClick = () => {
+        on{{Action}}?.({{prop}});
+      };
+
+      return (
+        <div className="{{class}}">
+          {/* Component content */}
+        </div>
+      );
+    }
+
+api_call_pattern:
+  description: "API call with error handling"
+  template: |
+    async function fetch{{Name}}({{params}}: {{Type}}) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/{{endpoint}}`, {
+          method: '{{METHOD}}',
+          headers: {
+            'Content-Type': 'application/json',
+            // Add auth token if needed
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({{body}}),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Request failed');
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching {{name}}:', error);
+        throw error;
+      }
+    }
+
+loading_state:
+  description: "Component with loading state"
+  template: |
+    'use client';
+
+    import { useState, useEffect } from 'react';
+
+    export default function {{Name}}Page() {
+      const [data, setData] = useState<{{Type}}[]>([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState<string | null>(null);
+
+      useEffect(() => {
+        async function loadData() {
+          try {
+            setLoading(true);
+            const result = await fetch{{Name}}();
+            setData(result);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        loadData();
+      }, []);
+
+      if (loading) {
+        return <div className="loading">Loading...</div>;
+      }
+
+      if (error) {
+        return <div className="error">Error: {error}</div>;
+      }
+
+      return (
+        <div>
+          {data.map(item => (
+            <div key={item.id}>{item.name}</div>
+          ))}
+        </div>
+      );
+    }
+
+# Database Patterns (Prisma)
+
+prisma_model:
+  description: "Standard Prisma model with audit fields"
+  template: |
+    model {{Name}} {
+      id        String   @id @default(cuid())
+      // Add fields
+      name      String
+
+      // Relations
+      userId    String
+      user      User     @relation(fields: [userId], references: [id])
+
+      // Audit fields
+      createdAt DateTime @default(now())
+      updatedAt DateTime @updatedAt
+
+      @@map("{{table_name}}")
+    }
+
+prisma_transaction:
+  description: "Prisma transaction for atomic operations"
+  template: |
+    async {{action}}({{params}}) {
+      return this.prisma.$transaction(async (tx) => {
+        // Step 1: Update inventory
+        await tx.inventory.update({
+          where: { productId: {{productId}} },
+          data: { available: { decrement: {{quantity}} } },
+        });
+
+        // Step 2: Create order
+        const order = await tx.order.create({
+          data: {
+            userId: {{userId}},
+            status: 'PENDING_PAYMENT',
+          },
+        });
+
+        // Step 3: Add order items
+        await tx.orderItem.create({
+          data: {
+            orderId: order.id,
+            productId: {{productId}},
+            quantity: {{quantity}},
+          },
+        });
+
+        return order;
+      });
+    }
+
+# Testing Patterns
+
+unit_test:
+  description: "Jest unit test for service"
+  template: |
+    import { Test, TestingModule } from '@nestjs/testing';
+    import { {{Name}}Service } from './{{name}}.service';
+    import { PrismaService } from '../prisma/prisma.service';
+
+    describe('{{Name}}Service', () => {
+      let service: {{Name}}Service;
+      let prisma: PrismaService;
+
+      beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            {{Name}}Service,
+            {
+              provide: PrismaService,
+              useValue: {
+                {{model}}: {
+                  findMany: jest.fn(),
+                  findUnique: jest.fn(),
+                  create: jest.fn(),
+                  update: jest.fn(),
+                  delete: jest.fn(),
+                },
+              },
+            },
+          ],
+        }).compile();
+
+        service = module.get<{{Name}}Service>({{Name}}Service);
+        prisma = module.get<PrismaService>(PrismaService);
+      });
+
+      it('should be defined', () => {
+        expect(service).toBeDefined();
+      });
+
+      describe('findAll', () => {
+        it('should return an array of {{name}}s', async () => {
+          const result = [{ id: '1', name: 'Test' }];
+          jest.spyOn(prisma.{{model}}, 'findMany').mockResolvedValue(result);
+
+          expect(await service.findAll()).toBe(result);
+        });
+      });
+
+      // Add more test cases
+    });
+
+integration_test:
+  description: "Integration test for controller"
+  template: |
+    import { Test, TestingModule } from '@nestjs/testing';
+    import { INestApplication } from '@nestjs/common';
+    import * as request from 'supertest';
+    import { AppModule } from '../app.module';
+
+    describe('{{Name}}Controller (e2e)', () => {
+      let app: INestApplication;
+      let authToken: string;
+
+      beforeAll(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+          imports: [AppModule],
+        }).compile();
+
+        app = moduleFixture.createNestApplication();
+        await app.init();
+
+        // Get auth token
+        const loginResponse = await request(app.getHttpServer())
+          .post('/auth/login')
+          .send({ email: 'test@example.com', password: 'password' });
+
+        authToken = loginResponse.body.access_token;
+      });
+
+      afterAll(async () => {
+        await app.close();
+      });
+
+      it('/{{route}} (GET)', () => {
+        return request(app.getHttpServer())
+          .get('/{{route}}')
+          .set('Authorization', `Bearer ${authToken}`)
+          .expect(200)
+          .expect((res) => {
+            expect(Array.isArray(res.body)).toBe(true);
+          });
+      });
+
+      // Add more test cases
+    });
+
+# Common Use Cases
+
+audit_log_action:
+  description: "Log action to audit trail"
+  usage: |
+    // In any service method that needs audit logging
+    await this.auditService.logAction(
+      userId,           // Who performed the action
+      orgId,            // Organization context (or null)
+      'ORDER_CREATED',  // Action type
+      {                 // Metadata
+        orderId: order.id,
+        total: order.total,
+        items: order.items.length,
+      },
+    );
+
+check_inventory:
+  description: "Check and allocate inventory"
+  usage: |
+    async allocateInventory(productId: string, quantity: number) {
+      const inventory = await this.prisma.inventory.findUnique({
+        where: { productId },
+      });
+
+      if (!inventory || inventory.available < quantity) {
+        throw new BadRequestException('Insufficient inventory');
+      }
+
+      // Allocate in transaction
+      return this.prisma.inventory.update({
+        where: { productId },
+        data: { available: { decrement: quantity } },
+      });
+    }
+
+role_based_pricing:
+  description: "Get price based on user role"
+  usage: |
+    async getPriceForUser(productId: string, userId: string, quantity: number) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { clinic: { include: { priceList: true } } },
+      });
+
+      // If clinic user, get clinic pricing
+      if (user.role === UserRole.CLINIC && user.clinic?.priceList) {
+        const priceListItem = await this.prisma.priceListItem.findFirst({
+          where: {
+            priceListId: user.clinic.priceList.id,
+            productId,
+            minQuantity: { lte: quantity },
+            maxQuantity: { gte: quantity },
+          },
+          orderBy: { minQuantity: 'desc' },
+        });
+
+        if (priceListItem) {
+          return priceListItem.unitPrice;
+        }
+      }
+
+      // Fallback to retail price
+      const product = await this.prisma.product.findUnique({
+        where: { id: productId },
+      });
+
+      return product.retailPrice;
+    }
+
+stripe_webhook_handler:
+  description: "Handle Stripe webhook with signature verification"
+  usage: |
+    async handleWebhook(rawBody: Buffer, signature: string) {
+      let event;
+
+      try {
+        event = this.stripe.webhooks.constructEvent(
+          rawBody,
+          signature,
+          process.env.STRIPE_WEBHOOK_SECRET,
+        );
+      } catch (err) {
+        throw new BadRequestException('Invalid signature');
+      }
+
+      // Check if already processed (idempotency)
+      const existing = await this.prisma.webhookEvent.findUnique({
+        where: { stripeEventId: event.id },
+      });
+
+      if (existing) {
+        return { received: true };
+      }
+
+      // Record webhook event
+      await this.prisma.webhookEvent.create({
+        data: {
+          stripeEventId: event.id,
+          type: event.type,
+          processed: false,
+        },
+      });
+
+      // Process based on event type
+      switch (event.type) {
+        case 'payment_intent.succeeded':
+          await this.handlePaymentSuccess(event.data.object);
+          break;
+        case 'payment_intent.payment_failed':
+          await this.handlePaymentFailed(event.data.object);
+          break;
+        // Add more cases
+      }
+
+      // Mark as processed
+      await this.prisma.webhookEvent.update({
+        where: { stripeEventId: event.id },
+        data: { processed: true },
+      });
+
+      return { received: true };
+    }
+
+email_notification:
+  description: "Queue email notification"
+  usage: |
+    async sendOrderConfirmation(orderId: string) {
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: true,
+          items: { include: { product: true } },
+          address: true,
+        },
+      });
+
+      // Queue email job
+      await this.emailQueue.add('order-confirmation', {
+        to: order.user.email,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        total: order.total,
+        items: order.items,
+        shippingAddress: order.address,
+      });
+    }
+
+compliance_disclaimer:
+  description: "Add compliance disclaimer to component"
+  usage: |
+    import { DisclaimerBar } from '@/components/DisclaimerBar';
+
+    export default function ProductPage({ product }) {
+      const disclaimerMessage = product.category === 'FDA_APPROVED'
+        ? 'These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease.'
+        : 'For research use only. Not for human consumption.';
+
+      return (
+        <div>
+          {/* Product content */}
+          <DisclaimerBar message={disclaimerMessage} />
+        </div>
+      );
+    }
+
+# Error Handling Patterns
+
+http_exception:
+  description: "Common HTTP exceptions"
+  examples:
+    - name: "Not Found"
+      code: "throw new NotFoundException('Resource not found');"
+    - name: "Unauthorized"
+      code: "throw new UnauthorizedException('Authentication required');"
+    - name: "Forbidden"
+      code: "throw new ForbiddenException('Insufficient permissions');"
+    - name: "Bad Request"
+      code: "throw new BadRequestException('Invalid input');"
+    - name: "Conflict"
+      code: "throw new ConflictException('Resource already exists');"
+
+validation_pipe:
+  description: "Global validation pipe setup"
+  usage: |
+    // In main.ts
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,           // Strip unknown properties
+        forbidNonWhitelisted: true, // Throw error on unknown properties
+        transform: true,            // Auto-transform to DTO types
+      }),
+    );
+
+# Security Patterns
+
+password_hashing:
+  description: "Hash password with bcrypt"
+  usage: |
+    import * as bcrypt from 'bcrypt';
+
+    const SALT_ROUNDS = 10;
+
+    async hashPassword(password: string): Promise<string> {
+      return bcrypt.hash(password, SALT_ROUNDS);
+    }
+
+    async comparePassword(password: string, hash: string): Promise<boolean> {
+      return bcrypt.compare(password, hash);
+    }
+
+jwt_generation:
+  description: "Generate JWT token"
+  usage: |
+    async generateToken(user: User) {
+      const payload = { sub: user.id, email: user.email, role: user.role };
+
+      return {
+        access_token: this.jwtService.sign(payload),
+        expires_in: '24h',
+      };
+    }
+
+rate_limiting:
+  description: "Add rate limiting to controller"
+  usage: |
+    import { Throttle } from '@nestjs/throttler';
+
+    @Controller('auth')
+    export class AuthController {
+      @Post('login')
+      @Throttle(5, 60) // 5 requests per 60 seconds
+      async login(@Body() dto: LoginDto) {
+        return this.authService.login(dto);
+      }
+    }
