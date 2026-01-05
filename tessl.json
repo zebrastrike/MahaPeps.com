@@ -1,0 +1,8 @@
+{
+  "name": "my-project",
+  "dependencies": {
+    "tessl/npm-openai--codex": {
+      "version": "0.39.0"
+    }
+  }
+}
