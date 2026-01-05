@@ -6,7 +6,10 @@
       "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com log --oneline --all -20)",
       "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com show --stat HEAD)",
       "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com status)",
-      "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com log --graph --oneline -15)"
+      "Bash(git -C /c/Users/keyse_pt9dxr4/MAHAPEPS/MahaPeps.com log --graph --oneline -15)",
+      "Bash(npx prisma format:*)",
+      "Bash(node node_modules/.bin/prisma format:*)",
+      "Bash(npm install)"
     ]
   }
 }
