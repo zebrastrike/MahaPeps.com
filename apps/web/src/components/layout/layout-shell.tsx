@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+﻿import { ReactNode } from "react";
 
 import { DisclaimerBar } from "@/components/layout/disclaimer-bar";
 import { Header } from "@/components/layout/header";
@@ -28,7 +28,7 @@ export function LayoutShell({
           {children}
         </div>
       </main>
-      <DisclaimerBar />
+      <DisclaimerBar variant="footer" />
     </div>
   );
 }
