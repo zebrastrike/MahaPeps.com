@@ -4,6 +4,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BatchesModule } from './modules/batches/batches.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
+import { FilesModule } from './modules/files/files.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { OrgsModule } from './modules/orgs/orgs.module';
@@ -17,6 +18,7 @@ import { UsersModule } from './modules/users/users.module';
     OrgsModule,
     CatalogModule,
     BatchesModule,
+    FilesModule,
     OrdersModule,
     PaymentsModule,
     NotificationsModule,
