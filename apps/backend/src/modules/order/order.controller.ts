@@ -10,11 +10,15 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { OrderService } from './order.service';
+import { ShippoService } from './shippo.service';
 import { CreateOrderDto, MarkOrderPaidDto } from './dto/create-order.dto';
 
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly shippoService: ShippoService,
+  ) {}
 
   /**
    * Create a new order with compliance validation
@@ -83,5 +87,50 @@ export class OrderController {
     const userId = 'mock-user-id';
 
     return this.orderService.getUserOrders(userId);
+  }
+
+  /**
+   * Create shipment via Shippo (admin only)
+   * POST /orders/:orderId/create-shipment
+   */
+  @Post(':orderId/create-shipment')
+  // @UseGuards(AdminGuard) // TODO: Add admin auth guard
+  async createShipment(
+    @Param('orderId') orderId: string,
+    @Body() body: { carrier: 'USPS' | 'FedEx' | 'UPS'; service: 'PRIORITY' | 'EXPRESS' | 'GROUND' },
+  ) {
+    // Get order details
+    const order = await this.orderService.getOrderById(orderId);
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    if (!order.shippingAddress) {
+      throw new Error('Order has no shipping address');
+    }
+
+    // Create shipment via Shippo
+    const shipment = await this.shippoService.createShipment({
+      orderId,
+      carrier: body.carrier,
+      service: body.service,
+      customerName: order.user.email.split('@')[0], // Use email username as name
+      shippingAddress: {
+        line1: order.shippingAddress.line1,
+        line2: order.shippingAddress.line2 || undefined,
+        city: order.shippingAddress.city,
+        state: order.shippingAddress.state,
+        postalCode: order.shippingAddress.postalCode,
+        country: order.shippingAddress.country,
+      },
+    });
+
+    return {
+      shipmentId: shipment.shipmentId,
+      trackingNumber: shipment.trackingNumber,
+      labelUrl: shipment.labelUrl,
+      message: 'Shipment created successfully',
+    };
   }
 }
