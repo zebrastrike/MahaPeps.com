@@ -249,6 +249,7 @@ model Order {
   billingAddress           Address?                  @relation("OrderBillingAddress", fields: [billingAddressId], references: [id])
   items                    OrderItem[]
   payments                 Payment[]
+  shipments                Shipment[] // Shippo shipments
   paymentLink              PaymentLink? // ✅ Private payment link
   complianceAcknowledgment ComplianceAcknowledgment? // ✅ Required checkout compliance
   createdAt                DateTime                  @default(now())
@@ -276,8 +277,11 @@ model Payment {
   amount               Decimal       @db.Decimal(12, 2)
   currency             String        @default("USD")
   status               PaymentStatus
-  method               String?
-  transactionReference String?
+  method               String? // "ZELLE", "CASHAPP", "WIRE_TRANSFER"
+  paymentProof         String? // URL to uploaded screenshot/receipt
+  transactionReference String? // Zelle confirmation / CashApp transaction ID
+  verifiedById         String? // Admin who verified payment
+  verifiedAt           DateTime?
   metadata             Json?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
@@ -375,4 +379,24 @@ model SmsLog {
   @@index([paymentLinkId])
   @@index([toPhone])
   @@index([status])
+}
+
+// ✅ SHIPPO INTEGRATION - Shipping management
+model Shipment {
+  id                String    @id @default(uuid())
+  orderId           String
+  order             Order     @relation(fields: [orderId], references: [id])
+  carrier           String // "USPS", "FedEx", "UPS"
+  service           String // "Priority", "Express", "Ground"
+  trackingNumber    String    @unique
+  labelUrl          String? // Shippo label PDF URL
+  shippoId          String? // Shippo shipment ID
+  shippedAt         DateTime  @default(now())
+  estimatedDelivery DateTime?
+  actualDelivery    DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([orderId])
+  @@index([trackingNumber])
 }

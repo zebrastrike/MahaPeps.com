@@ -10,7 +10,9 @@
       "Bash(npx prisma format:*)",
       "Bash(node node_modules/.bin/prisma format:*)",
       "Bash(npm install)",
-      "Bash(npx prisma generate:*)"
+      "Bash(npx prisma generate:*)",
+      "Bash(ls:*)",
+      "Bash(npm install:*)"
     ]
   }
 }
