@@ -25,8 +25,8 @@ All information provided is for educational and research discussion purposes onl
 
 export function DisclaimerBar({ variant = "footer" }: { variant?: DisclaimerVariant }) {
   return (
-    <div className="mt-auto border-t border-slate-200 bg-slate-100 px-6 py-3 text-xs text-slate-700">
-      <p className="whitespace-pre-line">{DISCLAIMER_COPY[variant]}</p>
+    <div className="mt-auto border-t border-charcoal-700/50 bg-charcoal-800/50 px-6 py-4 text-xs text-charcoal-300">
+      <p className="whitespace-pre-line max-w-7xl mx-auto">{DISCLAIMER_COPY[variant]}</p>
     </div>
   );
 }
