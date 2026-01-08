@@ -20,13 +20,10 @@ export function LayoutShell({
   children
 }: LayoutShellProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-50 text-slate-900">
+    <div className="flex min-h-screen flex-col bg-charcoal-900 text-clinical-white">
       <Header title={title} subtitle={subtitle} />
-      <Navigation items={navigationItems} description={navigationDescription} />
-      <main className="flex-1 px-6 py-8">
-        <div className="mx-auto max-w-6xl space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          {children}
-        </div>
+      <main className="flex-1">
+        {children}
       </main>
       <DisclaimerBar variant="footer" />
     </div>

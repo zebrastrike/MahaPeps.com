@@ -4,16 +4,16 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "MAHA Peptides OS",
-    template: "%s | MAHA Peptides OS"
+    default: "MAHA Peptides - American-Made Research Peptides",
+    template: "%s | MAHA Peptides"
   },
-  description: "Frontend scaffolding for MAHA Peptides OS"
+  description: "Pharmaceutical-grade research peptides manufactured in the USA. 99%+ purity with full COA documentation. Trusted by laboratories and research institutions nationwide."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-neutral-50 text-slate-900 antialiased">{children}</body>
+    <html lang="en" className="dark">
+      <body className="min-h-screen bg-charcoal-900 text-clinical-white antialiased">{children}</body>
     </html>
   );
 }

@@ -1,29 +1,148 @@
 "use client";
 
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import Image from "next/image";
+import { ShoppingCart, User, Search, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export type HeaderProps = {
-  title: string;
+  title?: string;
   subtitle?: string;
 };
 
 export function Header({ title, subtitle }: HeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 shadow-sm">
-      <div>
-        <p className="text-xs uppercase tracking-wide text-slate-500">MAHA Peptides OS</p>
-        <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
-        {subtitle ? <p className="text-sm text-slate-600">{subtitle}</p> : null}
-      </div>
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" aria-label="Open navigation">
-          <Menu className="h-4 w-4" />
-        </Button>
-        <Button asChild>
-          <Link href="#">Get Support</Link>
-        </Button>
+    <header className="sticky top-0 z-50 border-b border-charcoal-700/50 bg-charcoal-900/95 backdrop-blur-sm">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
+              <Image
+                src="/branding/maha-logo.png"
+                alt="MAHA Peptides"
+                width={140}
+                height={50}
+                className="h-12 w-auto"
+                priority
+              />
+            </Link>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link
+              href="/products"
+              className="text-sm font-medium text-clinical-white hover:text-accent-400 transition-colors"
+            >
+              Products
+            </Link>
+            <Link
+              href="/solutions"
+              className="text-sm font-medium text-clinical-white hover:text-accent-400 transition-colors"
+            >
+              Solutions
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-sm font-medium text-clinical-white hover:text-accent-400 transition-colors"
+            >
+              Wholesale
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-medium text-clinical-white hover:text-accent-400 transition-colors"
+            >
+              Contact
+            </Link>
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-3">
+            <button
+              className="hidden md:flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+            <Link
+              href="/sign-in"
+              className="hidden md:flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors"
+              aria-label="Account"
+            >
+              <User className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/checkout"
+              className="hidden md:flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors relative"
+              aria-label="Cart"
+            >
+              <ShoppingCart className="h-5 w-5" />
+            </Link>
+            <Button
+              asChild
+              className="hidden md:inline-flex bg-accent-500 text-white hover:bg-accent-600 font-medium px-6"
+            >
+              <Link href="/products">Browse Catalog</Link>
+            </Button>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 space-y-2 border-t border-charcoal-700/50">
+            <Link
+              href="/products"
+              className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+            >
+              Products
+            </Link>
+            <Link
+              href="/solutions"
+              className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+            >
+              Solutions
+            </Link>
+            <Link
+              href="/pricing"
+              className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+            >
+              Wholesale
+            </Link>
+            <Link
+              href="/contact"
+              className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+            >
+              Contact
+            </Link>
+            <div className="pt-2 space-y-2">
+              <Link
+                href="/sign-in"
+                className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/products"
+                className="block px-4 py-2 text-sm font-medium bg-accent-500 text-white hover:bg-accent-600 rounded-md transition-colors text-center"
+              >
+                Browse Catalog
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
