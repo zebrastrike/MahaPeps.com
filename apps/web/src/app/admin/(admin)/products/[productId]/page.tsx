@@ -493,6 +493,29 @@ export default function AdminProductDetailPage() {
             />
           </div>
           <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Current Stock</label>
+            <input
+              type="number"
+              min="0"
+              value={productForm.currentStock}
+              onChange={(event) => handleProductChange("currentStock", event.target.value)}
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">
+              Expected Restock Date
+            </label>
+            <input
+              type="date"
+              value={productForm.expectedRestockDate}
+              onChange={(event) =>
+                handleProductChange("expectedRestockDate", event.target.value)
+              }
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            />
+          </div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">CAS Number</label>
             <input
               type="text"
