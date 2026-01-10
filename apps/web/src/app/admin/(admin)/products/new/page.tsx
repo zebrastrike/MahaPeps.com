@@ -13,6 +13,14 @@ const categories = [
   "MATERIALS_SUPPLIES",
   "MERCHANDISE"
 ];
+const visibilityOptions = ["B2C_ONLY", "B2B_ONLY", "BOTH"];
+const stockStatusOptions = [
+  "IN_STOCK",
+  "LOW_STOCK",
+  "OUT_OF_STOCK",
+  "DISCONTINUED",
+  "BACKORDER"
+];
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -30,6 +38,10 @@ export default function NewProductPage() {
     concentration: "",
     casNumber: "",
     molecularFormula: "",
+    visibility: "B2C_ONLY",
+    stockStatus: "OUT_OF_STOCK",
+    currentStock: "",
+    expectedRestockDate: "",
     isActive: true
   });
   const [submitting, setSubmitting] = useState(false);
@@ -66,6 +78,13 @@ export default function NewProductPage() {
         concentration: productForm.concentration.trim() || undefined,
         casNumber: productForm.casNumber.trim() || undefined,
         molecularFormula: productForm.molecularFormula.trim() || undefined,
+        visibility: productForm.visibility || undefined,
+        stockStatus: productForm.stockStatus || undefined,
+        currentStock:
+          productForm.currentStock === ""
+            ? undefined
+            : Number(productForm.currentStock),
+        expectedRestockDate: productForm.expectedRestockDate || undefined,
         isActive: productForm.isActive
       };
 
@@ -153,6 +172,34 @@ export default function NewProductPage() {
             </select>
           </div>
           <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Visibility</label>
+            <select
+              value={productForm.visibility}
+              onChange={(event) => handleChange("visibility", event.target.value)}
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            >
+              {visibilityOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Stock Status</label>
+            <select
+              value={productForm.stockStatus}
+              onChange={(event) => handleChange("stockStatus", event.target.value)}
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            >
+              {stockStatusOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Form</label>
             <input
               type="text"
@@ -167,6 +214,27 @@ export default function NewProductPage() {
               type="text"
               value={productForm.concentration}
               onChange={(event) => handleChange("concentration", event.target.value)}
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Current Stock</label>
+            <input
+              type="number"
+              min="0"
+              value={productForm.currentStock}
+              onChange={(event) => handleChange("currentStock", event.target.value)}
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">
+              Expected Restock Date
+            </label>
+            <input
+              type="date"
+              value={productForm.expectedRestockDate}
+              onChange={(event) => handleChange("expectedRestockDate", event.target.value)}
               className="w-full rounded-md border border-slate-200 px-3 py-2"
             />
           </div>
