@@ -1,4 +1,8 @@
-﻿import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import * as Joi from 'joi';
 import { ComplianceModule } from './compliance/compliance.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -10,9 +14,28 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { OrgsModule } from './modules/orgs/orgs.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { UsersModule } from './modules/users/users.module';
+import { KycModule } from './modules/kyc/kyc.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        JWT_SECRET: Joi.string().min(32).required(),
+        ENCRYPTION_KEY: Joi.string().length(64).required(),
+        R2_ENDPOINT: Joi.string().uri().required(),
+        R2_ACCESS_KEY_ID: Joi.string().required(),
+        R2_SECRET_ACCESS_KEY: Joi.string().required(),
+        R2_KYC_BUCKET: Joi.string().required(),
+        R2_COA_BUCKET: Joi.string().required(),
+        DATABASE_URL: Joi.string().required(),
+        REDIS_URL: Joi.string().required(),
+      }),
+    }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
     AuthModule,
     UsersModule,
     OrgsModule,
@@ -24,6 +47,13 @@ import { UsersModule } from './modules/users/users.module';
     NotificationsModule,
     ComplianceModule,
     AdminModule,
+    KycModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

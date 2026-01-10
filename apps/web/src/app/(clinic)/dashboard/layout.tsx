@@ -6,11 +6,11 @@ export default function ClinicDashboardLayout({ children }: { children: ReactNod
   return (
     <LayoutShell
       title="Clinic Dashboard"
-      subtitle="Clinic operations and patient management"
+      subtitle="Clinic operations and research subject management"
       navigationDescription="Clinic navigation"
       navigationItems={[
         { label: "Overview", href: "/clinic/dashboard" },
-        { label: "Patients", href: "/clinic/dashboard/patients" },
+        { label: "Subjects", href: "/clinic/dashboard/subjects" },
         { label: "Inventory", href: "/clinic/dashboard/inventory" },
         { label: "Staff", href: "/clinic/dashboard/staff" }
       ]}

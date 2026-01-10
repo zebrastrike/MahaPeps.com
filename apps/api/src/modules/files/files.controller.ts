@@ -1,10 +1,15 @@
 import { Controller, Get, Param, Res, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
-import * as path from 'path';
-import * as fs from 'fs/promises';
+import { PrismaService } from '../../prisma/prisma.service';
+import { FileStorageService } from './file-storage.service';
 
 @Controller('files')
 export class FilesController {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly fileStorage: FileStorageService,
+  ) {}
+
   /**
    * Serve uploaded files (COAs, MSDSs, etc.)
    * GET /files/uploads/:folder/:filename
@@ -15,24 +20,27 @@ export class FilesController {
     @Param('filename') filename: string,
     @Res() res: Response,
   ) {
-    try {
-      const filePath = path.join(process.cwd(), 'uploads', folder, filename);
+    const storageKey = `${folder}/${filename}`;
+    const file = await this.prisma.file.findFirst({
+      where: { storageKey },
+      select: { id: true },
+    });
 
-      // Check if file exists
-      try {
-        await fs.access(filePath);
-      } catch {
-        throw new NotFoundException('File not found');
-      }
-
-      // Set appropriate headers
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
-
-      // Stream the file
-      res.sendFile(filePath);
-    } catch (error) {
+    if (!file) {
       throw new NotFoundException('File not found');
     }
+
+    const url = await this.fileStorage.getSignedDownloadUrl(file.id, 86400);
+    return res.redirect(url);
+  }
+
+  /**
+   * Get a signed download URL by file id
+   * GET /files/:fileId
+   */
+  @Get(':fileId')
+  async getFile(@Param('fileId') fileId: string) {
+    const url = await this.fileStorage.getSignedDownloadUrl(fileId, 86400);
+    return { url };
   }
 }

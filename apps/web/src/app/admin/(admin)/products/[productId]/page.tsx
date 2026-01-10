@@ -39,7 +39,11 @@ interface ProductDetail {
   concentration?: string | null;
   casNumber?: string | null;
   molecularFormula?: string | null;
+  visibility?: string | null;
   isActive: boolean;
+  stockStatus?: string | null;
+  currentStock?: number | null;
+  expectedRestockDate?: string | null;
   variants: VariantInfo[];
 }
 
@@ -53,6 +57,14 @@ const categoryOptions = [
 ];
 
 const strengthUnits = ["MG", "IU", "ML"];
+const visibilityOptions = ["B2C_ONLY", "B2B_ONLY", "BOTH"];
+const stockStatusOptions = [
+  "IN_STOCK",
+  "LOW_STOCK",
+  "OUT_OF_STOCK",
+  "DISCONTINUED",
+  "BACKORDER"
+];
 
 export default function AdminProductDetailPage() {
   const params = useParams();
@@ -73,7 +85,11 @@ export default function AdminProductDetailPage() {
     concentration: "",
     casNumber: "",
     molecularFormula: "",
-    isActive: true
+    visibility: "B2C_ONLY",
+    isActive: true,
+    stockStatus: "OUT_OF_STOCK",
+    currentStock: "",
+    expectedRestockDate: ""
   });
   const [variantForms, setVariantForms] = useState<Record<string, any>>({});
   const [newVariant, setNewVariant] = useState({
@@ -119,7 +135,16 @@ export default function AdminProductDetailPage() {
         concentration: data.concentration || "",
         casNumber: data.casNumber || "",
         molecularFormula: data.molecularFormula || "",
-        isActive: data.isActive
+        visibility: data.visibility || "B2C_ONLY",
+        isActive: data.isActive,
+        stockStatus: data.stockStatus || "OUT_OF_STOCK",
+        currentStock:
+          data.currentStock !== null && data.currentStock !== undefined
+            ? data.currentStock.toString()
+            : "",
+        expectedRestockDate: data.expectedRestockDate
+          ? new Date(data.expectedRestockDate).toISOString().slice(0, 10)
+          : ""
       });
 
       const variantState: Record<string, any> = {};
@@ -158,7 +183,7 @@ export default function AdminProductDetailPage() {
 
   const saveProduct = async () => {
     if (missingAdminHeader) {
-      setError("Set NEXT_PUBLIC_ADMIN_USER_ID before saving.");
+      setError("Set NEXT_PUBLIC_ADMIN_TOKEN before saving.");
       return;
     }
 
@@ -181,7 +206,14 @@ export default function AdminProductDetailPage() {
         concentration: productForm.concentration.trim() || null,
         casNumber: productForm.casNumber.trim() || null,
         molecularFormula: productForm.molecularFormula.trim() || null,
-        isActive: productForm.isActive
+        visibility: productForm.visibility || null,
+        isActive: productForm.isActive,
+        stockStatus: productForm.stockStatus || null,
+        currentStock:
+          productForm.currentStock === ""
+            ? null
+            : Number(productForm.currentStock),
+        expectedRestockDate: productForm.expectedRestockDate || null
       };
 
       const response = await fetch(`${apiBaseUrl}/admin/products/${productId}`, {
@@ -207,7 +239,7 @@ export default function AdminProductDetailPage() {
 
   const saveVariant = async (variantId: string) => {
     if (missingAdminHeader) {
-      setError("Set NEXT_PUBLIC_ADMIN_USER_ID before saving.");
+      setError("Set NEXT_PUBLIC_ADMIN_TOKEN before saving.");
       return;
     }
 
@@ -263,7 +295,7 @@ export default function AdminProductDetailPage() {
 
   const addVariant = async () => {
     if (missingAdminHeader) {
-      setError("Set NEXT_PUBLIC_ADMIN_USER_ID before adding variants.");
+      setError("Set NEXT_PUBLIC_ADMIN_TOKEN before adding variants.");
       return;
     }
 
@@ -359,7 +391,7 @@ export default function AdminProductDetailPage() {
 
       {missingAdminHeader && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          Missing admin credentials. Set NEXT_PUBLIC_ADMIN_USER_ID to use admin endpoints.
+          Missing admin credentials. Set NEXT_PUBLIC_ADMIN_TOKEN to use admin endpoints.
         </div>
       )}
 
@@ -408,6 +440,34 @@ export default function AdminProductDetailPage() {
             >
               <option value="">No category</option>
               {categoryOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Visibility</label>
+            <select
+              value={productForm.visibility}
+              onChange={(event) => handleProductChange("visibility", event.target.value)}
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            >
+              {visibilityOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Stock Status</label>
+            <select
+              value={productForm.stockStatus}
+              onChange={(event) => handleProductChange("stockStatus", event.target.value)}
+              className="w-full rounded-md border border-slate-200 px-3 py-2"
+            >
+              {stockStatusOptions.map((option) => (
                 <option key={option} value={option}>
                   {option.replace(/_/g, " ")}
                 </option>
@@ -703,3 +763,4 @@ export default function AdminProductDetailPage() {
     </div>
   );
 }
+

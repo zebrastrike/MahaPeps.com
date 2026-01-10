@@ -1,13 +1,9 @@
-import { Body, Controller, Get, Post, Param, Query, UsePipes } from '@nestjs/common';
-import { ComplianceValidationPipe } from '../../compliance/compliance.pipe';
+import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { JwtOptional } from '../../auth/decorators/jwt-optional.decorator';
 import { CatalogService } from './catalog.service';
 import { RecommendationsService } from './recommendations.service';
 import { SearchService } from './search.service';
-
-interface CreateProductDto {
-  name: string;
-  description: string;
-}
 
 @Controller('catalog')
 export class CatalogController {
@@ -16,12 +12,6 @@ export class CatalogController {
     private readonly recommendationsService: RecommendationsService,
     private readonly searchService: SearchService,
   ) {}
-
-  @Post()
-  @UsePipes(ComplianceValidationPipe)
-  create(@Body() dto: CreateProductDto) {
-    return this.catalogService.create(dto);
-  }
 
   @Get('health')
   getHealth(): string {
@@ -33,9 +23,11 @@ export class CatalogController {
    * GET /catalog/products
    */
   @Get('products')
-  async getProducts(@Query('limit') limit?: string) {
+  @UseGuards(JwtAuthGuard)
+  @JwtOptional()
+  async getProducts(@Query('limit') limit?: string, @Req() request?: any) {
     const limitNum = limit ? parseInt(limit, 10) : undefined;
-    return this.catalogService.listProducts(limitNum);
+    return this.catalogService.listProducts(request?.user, limitNum);
   }
 
   /**
@@ -92,8 +84,10 @@ export class CatalogController {
    * GET /catalog/products/:slugOrId
    */
   @Get('products/:slugOrId')
-  async getProductBySlug(@Param('slugOrId') slugOrId: string) {
-    return this.catalogService.getProductBySlug(slugOrId);
+  @UseGuards(JwtAuthGuard)
+  @JwtOptional()
+  async getProductBySlug(@Param('slugOrId') slugOrId: string, @Req() request?: any) {
+    return this.catalogService.getProductBySlug(slugOrId, request?.user);
   }
 
   /**

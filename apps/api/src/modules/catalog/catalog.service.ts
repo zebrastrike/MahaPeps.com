@@ -1,46 +1,68 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { FileStorageService } from '../files/file-storage.service';
+import { CatalogVisibilityService } from './catalog-visibility.service';
+import { PurchasabilityService } from './purchasability.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class CatalogService {
-  constructor(private readonly prisma: PrismaService) {}
-
-  create(data: { name: string; description: string }) {
-    return { ...data };
-  }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly fileStorage: FileStorageService,
+    private readonly catalogVisibility: CatalogVisibilityService,
+    private readonly purchasability: PurchasabilityService,
+  ) {}
 
   getHealth(): string {
     return 'catalog-ok';
   }
 
-  async listProducts(limit: number = 200) {
+  async listProducts(user?: User | null, limit: number = 200) {
     const safeLimit = this.clampNumber(limit, 1, 200);
+    const visibleTypes = this.catalogVisibility.getVisibleProducts(user);
+    const now = new Date();
 
     const products = await this.prisma.product.findMany({
-      where: { isActive: true },
+      where: {
+        visibility: { in: visibleTypes },
+        isActive: true,
+        isDraft: false,
+      },
       take: safeLimit,
-      orderBy: { name: 'asc' },
+      orderBy: [{ displayOrder: 'asc' }, { name: 'asc' }],
       include: {
         variants: {
           where: { isActive: true },
           orderBy: { strengthValue: 'asc' },
           include: {
             batches: {
-              where: { isActive: true, coaFileId: { not: null } },
-              select: { id: true, purityPercent: true },
+              where: {
+                isActive: true,
+                isAvailable: true,
+                coaFileId: { not: null },
+                expiresAt: { gt: now },
+              },
+              take: 1,
+              include: { coaFile: true },
             },
           },
         },
       },
     });
 
-    return products.map((product) => this.mapCatalogProduct(product));
+    return Promise.all(products.map((product) => this.mapCatalogProduct(product)));
   }
 
-  async getProductBySlug(slugOrId: string) {
+  async getProductBySlug(slugOrId: string, user?: User | null) {
+    const visibleTypes = this.catalogVisibility.getVisibleProducts(user);
+    const now = new Date();
+
     const product = await this.prisma.product.findFirst({
       where: {
         isActive: true,
+        isDraft: false,
+        visibility: { in: visibleTypes },
         OR: [{ slug: slugOrId }, { id: slugOrId }],
       },
       include: {
@@ -49,8 +71,14 @@ export class CatalogService {
           orderBy: { strengthValue: 'asc' },
           include: {
             batches: {
-              where: { isActive: true, coaFileId: { not: null } },
-              select: { id: true, purityPercent: true },
+              where: {
+                isActive: true,
+                isAvailable: true,
+                coaFileId: { not: null },
+                expiresAt: { gt: now },
+              },
+              take: 1,
+              include: { coaFile: true },
             },
           },
         },
@@ -64,31 +92,47 @@ export class CatalogService {
     return this.mapCatalogProductDetail(product);
   }
 
-  private mapCatalogProduct(product: any) {
-    const variants = (product.variants || []).map((variant: any) => {
-      const hasCoa = (variant.batches || []).length > 0;
-      return {
-        id: variant.id,
-        strengthValue: this.toNumber(variant.strengthValue),
-        strengthUnit: variant.strengthUnit,
-        sku: variant.sku,
-        priceCents: variant.priceCents,
-        isActive: variant.isActive,
-        hasCoa,
-        purchasable: product.isActive && variant.isActive && hasCoa,
-      };
-    });
+  private async mapCatalogProduct(product: any) {
+    const variants = await Promise.all(
+      (product.variants || []).map(async (variant: any) => {
+        const activeBatch = (variant.batches || [])[0];
+        const hasCoa = !!activeBatch?.coaFileId;
+        const purchaseCheck = await this.purchasability.isVariantPurchasable(
+          variant.id,
+        );
+
+        let coaDownloadUrl: string | null = null;
+        if (activeBatch?.coaFileId) {
+          coaDownloadUrl = await this.fileStorage.getSignedDownloadUrl(
+            activeBatch.coaFileId,
+            86400,
+          );
+        }
+
+        return {
+          id: variant.id,
+          strengthValue: this.toNumber(variant.strengthValue),
+          strengthUnit: variant.strengthUnit,
+          sku: variant.sku,
+          priceCents: variant.priceCents,
+          isActive: variant.isActive,
+          hasCoa,
+          purchasable: purchaseCheck.purchasable,
+          coaDownloadUrl,
+        };
+      }),
+    );
 
     const purityValues: number[] = [];
     for (const variant of product.variants || []) {
       for (const batch of variant.batches || []) {
-        purityValues.push(this.toNumber(batch.purityPercent));
+        if (batch.purityPercent !== null && batch.purityPercent !== undefined) {
+          purityValues.push(this.toNumber(batch.purityPercent));
+        }
       }
     }
 
-    const purityPercent = purityValues.length
-      ? Math.max(...purityValues)
-      : null;
+    const purityPercent = purityValues.length ? Math.max(...purityValues) : null;
 
     const defaultVariant =
       variants.find((variant) => variant.purchasable) ||
@@ -103,6 +147,8 @@ export class CatalogService {
       sku: product.sku,
       category: product.category,
       isActive: product.isActive,
+      stockStatus: product.stockStatus,
+      expectedRestockDate: product.expectedRestockDate,
       hasCoa: variants.some((variant) => variant.hasCoa),
       purityPercent,
       variants,
@@ -110,9 +156,10 @@ export class CatalogService {
     };
   }
 
-  private mapCatalogProductDetail(product: any) {
+  private async mapCatalogProductDetail(product: any) {
+    const base = await this.mapCatalogProduct(product);
     return {
-      ...this.mapCatalogProduct(product),
+      ...base,
       form: product.form,
       concentration: product.concentration,
       casNumber: product.casNumber,

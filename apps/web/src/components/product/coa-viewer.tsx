@@ -5,10 +5,10 @@ import { X, Download, FileText } from "lucide-react";
 
 interface CoaData {
   fileId: string;
-  filePath: string;
-  uploadedAt: string;
+  downloadUrl: string;
+  uploadedAt: string | null;
   purityPercent: string;
-  testingLab: string;
+  testingLab: string | null;
   batchCode: string;
 }
 
@@ -53,11 +53,8 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
   const handleDownload = () => {
     if (!coaData) return;
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-    const downloadUrl = `${apiBaseUrl}${coaData.filePath}`;
-
     // Open in new tab to trigger browser download
-    window.open(downloadUrl, "_blank");
+    window.open(coaData.downloadUrl, "_blank");
   };
 
   if (!isOpen) return null;
@@ -117,12 +114,16 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Testing Lab</p>
-                  <p className="text-sm font-semibold">{coaData.testingLab}</p>
+                  <p className="text-sm font-semibold">
+                    {coaData.testingLab || "Unavailable"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Upload Date</p>
                   <p className="text-sm">
-                    {new Date(coaData.uploadedAt).toLocaleDateString()}
+                    {coaData.uploadedAt
+                      ? new Date(coaData.uploadedAt).toLocaleDateString()
+                      : "Unavailable"}
                   </p>
                 </div>
               </div>
@@ -130,7 +131,7 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
               {/* PDF Viewer */}
               <div className="border rounded-lg overflow-hidden">
                 <iframe
-                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001"}${coaData.filePath}`}
+                  src={coaData.downloadUrl}
                   className="w-full h-[600px]"
                   title="Certificate of Analysis"
                 />
@@ -152,7 +153,10 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
         {coaData && (
           <div className="flex items-center justify-between p-4 border-t bg-gray-50">
             <p className="text-sm text-gray-600">
-              Uploaded: {new Date(coaData.uploadedAt).toLocaleDateString()}
+              Uploaded:{" "}
+              {coaData.uploadedAt
+                ? new Date(coaData.uploadedAt).toLocaleDateString()
+                : "Unavailable"}
             </p>
             <button
               onClick={handleDownload}

@@ -8,13 +8,26 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserRole } from '@prisma/client';
+import { Request } from 'express';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
 import { BatchesService } from './batches.service';
+import { AuditService } from '../../audit/audit.service';
 
 @Controller('batches')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.ADMIN)
 export class BatchesController {
-  constructor(private readonly batchesService: BatchesService) {}
+  constructor(
+    private readonly batchesService: BatchesService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get('health')
   getHealth(): string {
@@ -30,19 +43,34 @@ export class BatchesController {
   async uploadCoa(
     @Param('batchId') batchId: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: { uploadedById: string; purityPercent?: number; testingLab?: string },
+    @Body() body: { purityPercent?: number; testingLab?: string },
+    @Req() request: Request,
   ) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
-    return this.batchesService.uploadCoa(
+    const result = await this.batchesService.uploadCoa(
       batchId,
       file,
-      body.uploadedById,
+      (request as any).user?.id,
       body.purityPercent ? parseFloat(body.purityPercent.toString()) : undefined,
       body.testingLab,
     );
+
+    await this.auditService.log({
+      adminId: (request as any).user?.id,
+      action: 'BATCH_COA_UPLOAD',
+      entityType: 'ProductBatch',
+      entityId: batchId,
+      metadata: {
+        purityPercent: body.purityPercent ?? null,
+        testingLab: body.testingLab ?? null,
+        coaFileId: result?.coaFile?.id ?? null,
+      },
+    });
+
+    return result;
   }
 
   /**
@@ -89,12 +117,26 @@ export class BatchesController {
   async updateBatchPurity(
     @Param('batchId') batchId: string,
     @Body() body: { purityPercent: number; testingLab?: string },
+    @Req() request: Request,
   ) {
-    return this.batchesService.updateBatchPurity(
+    const batch = await this.batchesService.updateBatchPurity(
       batchId,
       body.purityPercent,
       body.testingLab,
     );
+
+    await this.auditService.log({
+      adminId: (request as any).user?.id,
+      action: 'BATCH_PURITY_UPDATE',
+      entityType: 'ProductBatch',
+      entityId: batchId,
+      metadata: {
+        purityPercent: body.purityPercent,
+        testingLab: body.testingLab ?? null,
+      },
+    });
+
+    return batch;
   }
 
   /**
@@ -105,7 +147,20 @@ export class BatchesController {
   async deactivateBatch(
     @Param('batchId') batchId: string,
     @Body() body: { reason?: string },
+    @Req() request: Request,
   ) {
-    return this.batchesService.deactivateBatch(batchId, body.reason);
+    const result = await this.batchesService.deactivateBatch(batchId, body.reason);
+
+    await this.auditService.log({
+      adminId: (request as any).user?.id,
+      action: 'BATCH_DEACTIVATE',
+      entityType: 'ProductBatch',
+      entityId: batchId,
+      metadata: {
+        reason: body.reason ?? null,
+      },
+    });
+
+    return result;
   }
 }

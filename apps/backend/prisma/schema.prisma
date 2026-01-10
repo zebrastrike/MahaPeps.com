@@ -62,6 +62,46 @@ enum StrengthUnit {
   ML
 }
 
+enum ProductVisibility {
+  B2C_ONLY
+  B2B_ONLY
+  BOTH
+}
+
+enum StockStatus {
+  IN_STOCK
+  LOW_STOCK
+  OUT_OF_STOCK
+  DISCONTINUED
+  BACKORDER
+}
+
+enum KycStatus {
+  NOT_SUBMITTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DocumentType {
+  BUSINESS_LICENSE
+  TAX_ID
+  FACILITY_LICENSE
+  OFFICER_ID
+  ADDRESS_PROOF
+}
+
+enum DocumentReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CatalogType {
+  B2C_ONLY
+  B2B_ONLY
+}
+
 model User {
   id                        String                     @id @default(uuid())
   email                     String                     @unique
@@ -72,8 +112,48 @@ model User {
   uploads                   BatchFile[]
   orders                    Order[]
   complianceAcknowledgments ComplianceAcknowledgment[]
+  kycVerification           KycVerification?
+  stockNotifications        StockNotification[]
   createdAt                 DateTime                   @default(now())
   updatedAt                 DateTime                   @updatedAt
+}
+
+model KycVerification {
+  id              String      @id @default(uuid())
+  userId          String      @unique
+  status          KycStatus   @default(NOT_SUBMITTED)
+  submittedAt     DateTime?
+  approvedAt      DateTime?
+  approvedBy      String?
+  rejectedAt      DateTime?
+  rejectionReason String?
+  lastRejectionAt DateTime?
+  canResubmitAt   DateTime?
+  internalNotes   String?
+  user            User        @relation(fields: [userId], references: [id])
+  documents       KycDocument[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([status])
+  @@index([canResubmitAt])
+}
+
+model KycDocument {
+  id             String               @id @default(uuid())
+  verificationId String
+  documentType   DocumentType
+  fileId         String
+  status         DocumentReviewStatus @default(PENDING)
+  uploadedAt     DateTime             @default(now())
+  reviewedAt     DateTime?
+  reviewedBy     String?
+  rejectionReason String?
+  verification   KycVerification      @relation(fields: [verificationId], references: [id])
+  file           File                 @relation(fields: [fileId], references: [id])
+
+  @@index([verificationId, documentType])
+  @@index([status])
 }
 
 model Org {
@@ -127,9 +207,19 @@ model Product {
   concentration    String?
   casNumber        String? // Chemical Abstracts Service number
   molecularFormula String? // e.g., "C19H34N6O5"
+  visibility       ProductVisibility   @default(B2C_ONLY)
+  isDraft          Boolean             @default(true)
+  currentStock     Int                 @default(0)
+  lowStockThreshold Int?               @default(25)
+  stockStatus      StockStatus         @default(OUT_OF_STOCK)
+  expectedRestockDate DateTime?
+  displayOrder     Int?
+  isFeatured       Boolean             @default(false)
   isActive         Boolean          @default(true)
   variants         ProductVariant[]
   batches          ProductBatch[]
+  priceTiers       PriceTier[]
+  stockNotifications StockNotification[]
   priceListItems   PriceListItem[]
   orderItems       OrderItem[]
   inventory        Inventory[]
@@ -170,12 +260,22 @@ model ProductBatch {
   qtyAvailable        Decimal     @db.Decimal(12, 2)
   testingLab          String? // Lab that performed COA testing
   coaFileId           String? // Reference to COA file (required before activation)
+  coaFile             File?       @relation("BatchCoaFile", fields: [coaFileId], references: [id])
+  testDate            DateTime?
+  methodology         String?
+  concentration       Decimal?    @db.Decimal(10, 2)
+  molecularWeight     Decimal?    @db.Decimal(10, 2)
+  appearance          String?
+  solubility          String?
   isActive            Boolean     @default(false) // ✅ Requires COA before activation
+  isAvailable         Boolean     @default(true)
   files               BatchFile[]
+  priceTiers          PriceTier[]
   createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
 
   @@index([variantId])
+  @@index([variantId, isActive])
 }
 
 model BatchFile {
@@ -188,6 +288,29 @@ model BatchFile {
   uploadedBy   User?         @relation(fields: [uploadedById], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+}
+
+model File {
+  id              String    @id @default(uuid())
+  filename        String
+  originalName    String
+  mimetype        String
+  size            Int
+  storageProvider String    @default("r2")
+  storageBucket   String
+  storageKey      String
+  storageUrl      String?
+  uploadedBy      String?
+  isPublic        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  productBatches  ProductBatch[] @relation("BatchCoaFile")
+  kycDocuments    KycDocument[]
+
+  @@index([storageKey])
+  @@index([uploadedBy])
+  @@index([storageBucket])
 }
 
 model PriceList {
@@ -219,6 +342,25 @@ model PriceListItem {
   product      Product   @relation(fields: [productId], references: [id])
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+model PriceTier {
+  id          String      @id @default(uuid())
+  productId   String?
+  batchId     String?
+  catalogType CatalogType
+  minQuantity Int         @default(1)
+  maxQuantity Int?
+  price       Decimal     @db.Decimal(12, 2)
+  label       String?
+  isActive    Boolean     @default(true)
+  product     Product?    @relation(fields: [productId], references: [id])
+  batch       ProductBatch? @relation(fields: [batchId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([productId, catalogType, minQuantity])
+  @@index([batchId, catalogType, minQuantity])
 }
 
 enum OrderStatus {
@@ -326,13 +468,42 @@ model Inventory {
   updatedAt DateTime @updatedAt
 }
 
+model StockNotification {
+  id         String   @id @default(uuid())
+  productId  String
+  email      String
+  userId     String?
+  notified   Boolean  @default(false)
+  notifiedAt DateTime?
+  product    Product  @relation(fields: [productId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([productId, notified])
+  @@index([email])
+  @@unique([productId, email, notified])
+}
+
 model AuditLog {
   id        String   @id @default(uuid())
   action    String
   userId    String?
+  adminId   String?
   orgId     String?
+  entityType String?
+  entityId  String?
+  changesBefore Json?
+  changesAfter  Json?
   metadata  Json?
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
   createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([entityType, entityId])
+  @@index([timestamp])
 }
 
 // ✅ COMPLIANCE MODELS - Required for GUARDRAILS.md enforcement

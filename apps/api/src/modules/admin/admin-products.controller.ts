@@ -12,14 +12,18 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
+import { User, UserRole } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ComplianceValidationPipe } from '../../compliance/compliance.pipe';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
 import { AdminActor } from './admin.decorator';
-import { AdminGuard, AdminUserContext } from './admin.guard';
 import { AdminProductsService } from './admin-products.service';
 
 @Controller('admin')
-@UseGuards(AdminGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.ADMIN)
 export class AdminProductsController {
   constructor(private readonly adminProductsService: AdminProductsService) {}
 
@@ -49,7 +53,7 @@ export class AdminProductsController {
   @UsePipes(ComplianceValidationPipe)
   async createProduct(
     @Body() body: unknown,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     return this.adminProductsService.createProduct(body, actor);
   }
@@ -59,7 +63,7 @@ export class AdminProductsController {
   async updateProduct(
     @Param('productId') productId: string,
     @Body() body: unknown,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     return this.adminProductsService.updateProduct(productId, body, actor);
   }
@@ -67,7 +71,7 @@ export class AdminProductsController {
   @Post('products/bulk')
   async bulkUpdate(
     @Body() body: unknown,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     return this.adminProductsService.bulkUpdate(body, actor);
   }
@@ -76,7 +80,7 @@ export class AdminProductsController {
   async createVariant(
     @Param('productId') productId: string,
     @Body() body: unknown,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     return this.adminProductsService.createVariant(productId, body, actor);
   }
@@ -85,7 +89,7 @@ export class AdminProductsController {
   async updateVariant(
     @Param('variantId') variantId: string,
     @Body() body: unknown,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     return this.adminProductsService.updateVariant(variantId, body, actor);
   }
@@ -94,7 +98,7 @@ export class AdminProductsController {
   async createBatch(
     @Param('variantId') variantId: string,
     @Body() body: unknown,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     return this.adminProductsService.createBatch(variantId, body, actor);
   }
@@ -105,7 +109,7 @@ export class AdminProductsController {
     @Param('batchId') batchId: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: unknown,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
@@ -117,7 +121,7 @@ export class AdminProductsController {
   @Post('batches/:batchId/activate')
   async activateBatch(
     @Param('batchId') batchId: string,
-    @AdminActor() actor: AdminUserContext,
+    @AdminActor() actor: User,
   ) {
     return this.adminProductsService.activateBatch(batchId, actor);
   }

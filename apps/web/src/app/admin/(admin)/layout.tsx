@@ -6,7 +6,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <LayoutShell
       title="Admin"
-      subtitle="Platform administration and governance"
+      subtitle="Platform operations and governance"
       navigationDescription="Admin navigation"
       navigationItems={[
         { label: "Overview", href: "/admin" },
@@ -20,3 +20,4 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     </LayoutShell>
   );
 }
+

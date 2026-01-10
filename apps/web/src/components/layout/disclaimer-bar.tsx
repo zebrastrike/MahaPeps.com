@@ -1,7 +1,7 @@
 ﻿type DisclaimerVariant = "footer" | "product" | "checkout";
 
 const DISCLAIMER_COPY: Record<DisclaimerVariant, string> = {
-  footer: `All statements on this website have not been evaluated by the Food and Drug Administration (FDA).
+  footer: `All statements on this website have not been evaluated by the FDA.
 All products are sold strictly for research, laboratory, or analytical purposes only.
 Products are not intended to diagnose, treat, cure, or prevent any disease.
 

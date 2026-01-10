@@ -13,6 +13,8 @@ interface ForbiddenTerm {
   createdAt: string;
 }
 
+const maskSensitiveTerm = (value: string) => (value ? "[redacted]" : value);
+
 export default function ForbiddenTermsManager() {
   const [terms, setTerms] = useState<ForbiddenTerm[]>([]);
   const [loading, setLoading] = useState(true);
@@ -187,12 +189,16 @@ export default function ForbiddenTermsManager() {
                   Term <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   value={formData.term}
                   onChange={(e) => setFormData({ ...formData, term: e.target.value })}
-                  placeholder="e.g., supplement"
+                  placeholder="e.g., restricted term"
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  autoComplete="off"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Term values are hidden in the UI for compliance.
+                </p>
               </div>
 
               <div>
@@ -224,7 +230,7 @@ export default function ForbiddenTermsManager() {
                   type="text"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  placeholder="e.g., medical, dosing"
+                  placeholder="e.g., medical, claims"
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -307,7 +313,7 @@ export default function ForbiddenTermsManager() {
                 <tr key={term.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <code className="px-2 py-1 bg-gray-100 rounded text-sm font-mono">
-                      {term.term}
+                      {maskSensitiveTerm(term.term)}
                     </code>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -325,7 +331,7 @@ export default function ForbiddenTermsManager() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {term.replacement ? (
                       <code className="px-2 py-1 bg-green-50 text-green-700 rounded text-xs">
-                        {term.replacement}
+                        {maskSensitiveTerm(term.replacement)}
                       </code>
                     ) : (
                       "—"
@@ -375,7 +381,7 @@ function getMockTerms(): ForbiddenTerm[] {
   return [
     {
       id: "1",
-      term: "supplement",
+      term: "restricted-term-1",
       severity: "CRITICAL",
       category: "medical",
       replacement: "research peptide",
@@ -384,7 +390,7 @@ function getMockTerms(): ForbiddenTerm[] {
     },
     {
       id: "2",
-      term: "dosage",
+      term: "restricted-term-2",
       severity: "CRITICAL",
       category: "dosing",
       replacement: "concentration",
@@ -393,7 +399,7 @@ function getMockTerms(): ForbiddenTerm[] {
     },
     {
       id: "3",
-      term: "treatment",
+      term: "restricted-term-3",
       severity: "CRITICAL",
       category: "medical",
       replacement: "research application",
@@ -402,3 +408,4 @@ function getMockTerms(): ForbiddenTerm[] {
     },
   ];
 }
+
