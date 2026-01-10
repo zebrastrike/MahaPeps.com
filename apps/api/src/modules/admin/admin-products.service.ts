@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, StrengthUnit } from '@prisma/client';
+import { Prisma, ProductVisibility, StockStatus, StrengthUnit, User } from '@prisma/client';
+import { AuditService } from '../../audit/audit.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BatchesService } from '../batches/batches.service';
-import { AdminUserContext } from './admin.guard';
+import { StockNotificationsService } from '../notifications/stock-notifications.service';
 
 interface ProductListFilters {
   q?: string;
@@ -32,6 +33,10 @@ interface CreateProductInput {
   molecularFormula?: string;
   isActive?: boolean | string;
   slug?: string;
+  visibility?: string;
+  stockStatus?: string;
+  currentStock?: number | string;
+  expectedRestockDate?: string;
 }
 
 interface UpdateProductInput {
@@ -45,6 +50,10 @@ interface UpdateProductInput {
   molecularFormula?: string | null;
   isActive?: boolean | string;
   slug?: string | null;
+  visibility?: string | null;
+  stockStatus?: string | null;
+  currentStock?: number | string | null;
+  expectedRestockDate?: string | null;
 }
 
 interface CreateVariantInput {
@@ -85,6 +94,8 @@ export class AdminProductsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly batchesService: BatchesService,
+    private readonly auditService: AuditService,
+    private readonly stockNotifications: StockNotificationsService,
   ) {}
 
   async listProducts(filters: ProductListFilters) {
@@ -110,6 +121,8 @@ export class AdminProductsService {
       where.isActive = filters.isActive;
     }
 
+    const now = new Date();
+
     const [total, products] = await this.prisma.$transaction([
       this.prisma.product.count({ where }),
       this.prisma.product.findMany({
@@ -121,7 +134,12 @@ export class AdminProductsService {
           variants: {
             include: {
               batches: {
-                where: { isActive: true, coaFileId: { not: null } },
+                where: {
+                  isActive: true,
+                  coaFileId: { not: null },
+                  isAvailable: true,
+                  expiresAt: { gt: now },
+                },
                 select: { id: true },
               },
             },
@@ -148,10 +166,7 @@ export class AdminProductsService {
             batches: {
               orderBy: { manufacturedAt: 'desc' },
               include: {
-                files: {
-                  where: { type: 'COA' },
-                  select: { id: true },
-                },
+                coaFile: true,
               },
             },
           },
@@ -167,7 +182,7 @@ export class AdminProductsService {
     return this.mapAdminProductDetail(product);
   }
 
-  async createProduct(input: unknown, actor: AdminUserContext) {
+  async createProduct(input: unknown, actor: User) {
     const payload = input as CreateProductInput;
 
     if (!payload?.name) {
@@ -192,10 +207,32 @@ export class AdminProductsService {
       casNumber: payload.casNumber ?? null,
       molecularFormula: payload.molecularFormula ?? null,
       isActive: this.parseOptionalBoolean(payload.isActive) ?? true,
+      isDraft: false,
     };
 
     if (payload.category) {
       data.category = payload.category as any;
+    }
+
+    const visibility = this.parseVisibility(payload.visibility);
+    if (visibility) {
+      data.visibility = visibility;
+    }
+
+    const stockStatus = this.parseStockStatus(payload.stockStatus);
+    if (stockStatus) {
+      data.stockStatus = stockStatus;
+    }
+
+    if (payload.currentStock !== undefined) {
+      data.currentStock = this.parseNumber(payload.currentStock, 'currentStock');
+    }
+
+    if (payload.expectedRestockDate) {
+      data.expectedRestockDate = this.parseDate(
+        payload.expectedRestockDate,
+        'expectedRestockDate',
+      );
     }
 
     const product = await this.prisma.product.create({ data });
@@ -208,7 +245,7 @@ export class AdminProductsService {
     return product;
   }
 
-  async updateProduct(productId: string, input: unknown, actor: AdminUserContext) {
+  async updateProduct(productId: string, input: unknown, actor: User) {
     const payload = input as UpdateProductInput;
 
     const existing = await this.prisma.product.findUnique({
@@ -220,6 +257,8 @@ export class AdminProductsService {
     }
 
     const data: Prisma.ProductUpdateInput = {};
+    const previousStockStatus = existing.stockStatus;
+    const previousStock = existing.currentStock ?? 0;
 
     if (payload.name !== undefined) {
       data.name = payload.name ?? existing.name;
@@ -266,6 +305,31 @@ export class AdminProductsService {
       );
     }
 
+    if (payload.visibility !== undefined) {
+      data.visibility = payload.visibility
+        ? this.parseVisibility(payload.visibility)
+        : null;
+    }
+
+    if (payload.stockStatus !== undefined) {
+      data.stockStatus = payload.stockStatus
+        ? this.parseStockStatus(payload.stockStatus)
+        : null;
+    }
+
+    if (payload.currentStock !== undefined) {
+      data.currentStock =
+        payload.currentStock === null
+          ? null
+          : this.parseNumber(payload.currentStock, 'currentStock');
+    }
+
+    if (payload.expectedRestockDate !== undefined) {
+      data.expectedRestockDate = payload.expectedRestockDate
+        ? this.parseDate(payload.expectedRestockDate, 'expectedRestockDate')
+        : null;
+    }
+
     const updated = await this.prisma.product.update({
       where: { id: productId },
       data,
@@ -276,10 +340,22 @@ export class AdminProductsService {
       sku: updated.sku,
     });
 
+    const stockNow = updated.currentStock ?? 0;
+    const stockStatus = updated.stockStatus;
+    const becameAvailable =
+      (previousStockStatus === StockStatus.OUT_OF_STOCK &&
+        stockStatus &&
+        stockStatus !== StockStatus.OUT_OF_STOCK) ||
+      (previousStock <= 0 && stockNow > 0);
+
+    if (becameAvailable && updated.isActive) {
+      await this.stockNotifications.enqueueBackInStock(updated.id);
+    }
+
     return updated;
   }
 
-  async bulkUpdate(input: unknown, actor: AdminUserContext) {
+  async bulkUpdate(input: unknown, actor: User) {
     const payload = input as BulkUpdateInput;
 
     const productIds = Array.isArray(payload.productIds)
@@ -349,7 +425,7 @@ export class AdminProductsService {
     return { updatedProducts: productCount, updatedVariants: variantCount };
   }
 
-  async createVariant(productId: string, input: unknown, actor: AdminUserContext) {
+  async createVariant(productId: string, input: unknown, actor: User) {
     const payload = input as CreateVariantInput;
 
     const product = await this.prisma.product.findUnique({
@@ -385,7 +461,7 @@ export class AdminProductsService {
     return variant;
   }
 
-  async updateVariant(variantId: string, input: unknown, actor: AdminUserContext) {
+  async updateVariant(variantId: string, input: unknown, actor: User) {
     const payload = input as UpdateVariantInput;
 
     const existing = await this.prisma.productVariant.findUnique({
@@ -437,7 +513,7 @@ export class AdminProductsService {
     return updated;
   }
 
-  async createBatch(variantId: string, input: unknown, actor: AdminUserContext) {
+  async createBatch(variantId: string, input: unknown, actor: User) {
     const payload = input as CreateBatchInput;
 
     if (!payload?.batchCode) {
@@ -469,6 +545,7 @@ export class AdminProductsService {
         storageInstructions: payload.storageInstructions ?? null,
         testingLab: payload.testingLab ?? null,
         isActive: false,
+        isAvailable: true,
       },
     });
 
@@ -485,7 +562,7 @@ export class AdminProductsService {
     batchId: string,
     file: Express.Multer.File,
     input: unknown,
-    actor: AdminUserContext,
+    actor: User,
   ) {
     const payload = input as UploadCoaInput;
     const purityPercent =
@@ -505,13 +582,13 @@ export class AdminProductsService {
     await this.logAudit('BATCH_COA_UPLOAD', actor, {
       batchId,
       coaFileId: result.coaFile?.id,
-      filePath: result.coaFile?.filePath,
+      storageKey: result.coaFile?.storageKey,
     });
 
     return result;
   }
 
-  async activateBatch(batchId: string, actor: AdminUserContext) {
+  async activateBatch(batchId: string, actor: User) {
     const batch = await this.prisma.productBatch.findUnique({
       where: { id: batchId },
     });
@@ -530,6 +607,27 @@ export class AdminProductsService {
         message: 'Batch already active',
       };
     }
+
+    if (!batch.variantId) {
+      throw new BadRequestException('Batch must be linked to a variant');
+    }
+
+    if (!batch.isAvailable) {
+      throw new BadRequestException('Batch is marked unavailable');
+    }
+
+    if (batch.expiresAt && batch.expiresAt < new Date()) {
+      throw new BadRequestException('Batch is expired');
+    }
+
+    await this.prisma.productBatch.updateMany({
+      where: {
+        variantId: batch.variantId,
+        isActive: true,
+        id: { not: batchId },
+      },
+      data: { isActive: false },
+    });
 
     const updated = await this.prisma.productBatch.update({
       where: { id: batchId },
@@ -566,7 +664,11 @@ export class AdminProductsService {
       sku: product.sku,
       description: product.description,
       category: product.category,
+      visibility: product.visibility,
       isActive: product.isActive,
+      stockStatus: product.stockStatus,
+      currentStock: product.currentStock,
+      expectedRestockDate: product.expectedRestockDate,
       variants,
     };
   }
@@ -583,7 +685,11 @@ export class AdminProductsService {
       concentration: product.concentration,
       casNumber: product.casNumber,
       molecularFormula: product.molecularFormula,
+      visibility: product.visibility,
       isActive: product.isActive,
+      stockStatus: product.stockStatus,
+      currentStock: product.currentStock,
+      expectedRestockDate: product.expectedRestockDate,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
       variants: (product.variants || []).map((variant: any) => ({
@@ -601,8 +707,8 @@ export class AdminProductsService {
           expiresAt: batch.expiresAt,
           testingLab: batch.testingLab,
           isActive: batch.isActive,
+          isAvailable: batch.isAvailable,
           hasCoa: !!batch.coaFileId,
-          coaFileCount: batch.files ? batch.files.length : 0,
         })),
       })),
     };
@@ -714,17 +820,51 @@ export class AdminProductsService {
 
   private async logAudit(
     action: string,
-    actor: AdminUserContext,
+    actor: User,
     metadata: Record<string, unknown>,
   ) {
     if (!actor?.id) return;
 
-    await this.prisma.auditLog.create({
-      data: {
-        action,
-        userId: actor.id,
-        metadata,
-      },
+    const entityId =
+      (metadata.productId as string | undefined) ||
+      (metadata.variantId as string | undefined) ||
+      (metadata.batchId as string | undefined);
+    const entityType = metadata.productId
+      ? 'Product'
+      : metadata.variantId
+      ? 'ProductVariant'
+      : metadata.batchId
+      ? 'ProductBatch'
+      : undefined;
+
+    await this.auditService.log({
+      adminId: actor.id,
+      action,
+      entityType,
+      entityId,
+      metadata,
     });
+  }
+
+  private parseStockStatus(value: unknown): StockStatus | undefined {
+    if (!value || typeof value !== 'string') return undefined;
+    const normalized = value.toUpperCase();
+    if (!Object.values(StockStatus).includes(normalized as StockStatus)) {
+      throw new BadRequestException('Invalid stockStatus');
+    }
+    return normalized as StockStatus;
+  }
+
+  private parseVisibility(value: unknown): ProductVisibility | undefined {
+    if (!value || typeof value !== 'string') return undefined;
+    const normalized = value.toUpperCase();
+    if (
+      !Object.values(ProductVisibility).includes(
+        normalized as ProductVisibility,
+      )
+    ) {
+      throw new BadRequestException('Invalid visibility');
+    }
+    return normalized as ProductVisibility;
   }
 }

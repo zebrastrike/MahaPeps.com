@@ -17,10 +17,10 @@ interface Batch {
 
 interface BatchSelectorProps {
   productId: string;
-  variantId-: string;
-  selectedBatchId-: string;
+  variantId?: string;
+  selectedBatchId?: string;
   onBatchSelect: (batch: Batch) => void;
-  onViewCoa-: (batchId: string) => void;
+  onViewCoa?: (batchId: string) => void;
 }
 
 export function BatchSelector({
@@ -42,7 +42,7 @@ export function BatchSelector({
     try {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
       const endpoint = variantId
-        - `${apiBaseUrl}/batches/variant/${variantId}`
+        ? `${apiBaseUrl}/batches/variant/${variantId}`
         : `${apiBaseUrl}/batches/product/${productId}`;
       const response = await fetch(endpoint);
 
@@ -101,7 +101,7 @@ export function BatchSelector({
           onClick={() => setIsOpen(!isOpen)}
           className="w-full px-4 py-3 border rounded-lg bg-white hover:bg-gray-50 transition-colors text-left flex items-center justify-between"
         >
-          {selectedBatch - (
+          {selectedBatch ? (
             <div className="flex items-center gap-3 flex-1">
               <div className="flex-1">
                 <p className="font-semibold text-gray-900">{selectedBatch.batchCode}</p>
@@ -132,7 +132,7 @@ export function BatchSelector({
           )}
 
           <svg
-            className={`w-5 h-5 text-gray-400 transition-transform ${isOpen - "rotate-180" : ""}`}
+            className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -158,8 +158,8 @@ export function BatchSelector({
                   }}
                   disabled={!batch.isActive}
                   className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b last:border-b-0 ${
-                    !batch.isActive - "opacity-50 cursor-not-allowed" : ""
-                  } ${batch.id === selectedBatchId - "bg-blue-50" : ""}`}
+                    !batch.isActive ? "opacity-50 cursor-not-allowed" : ""
+                  } ${batch.id === selectedBatchId ? "bg-blue-50" : ""}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">

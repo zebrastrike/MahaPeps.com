@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { BatchSelector } from "@/components/product/batch-selector";
 import { CoaViewer } from "@/components/product/coa-viewer";
-import { ProductCard } from "@/components/product/product-card";
+import { Recommendations } from "@/components/product/recommendations";
 import {
   ShoppingCart,
   FileText,
@@ -39,6 +39,8 @@ interface ProductDetail {
   casNumber?: string;
   molecularFormula?: string;
   isActive: boolean;
+  stockStatus?: string;
+  expectedRestockDate?: string | null;
   variants: ProductVariant[];
   defaultVariantId?: string | null;
 }
@@ -74,6 +76,8 @@ export default function ProductDetailPage() {
   const [showCoaViewer, setShowCoaViewer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+  const [notifyStatus, setNotifyStatus] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProductDetails();
@@ -85,6 +89,7 @@ export default function ProductDetailPage() {
 
   const fetchProductDetails = async () => {
     try {
+      setError(null);
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
       const response = await fetch(`${apiBaseUrl}/catalog/products/${productId}`);
 
@@ -103,10 +108,8 @@ export default function ProductDetailPage() {
       }
     } catch (error) {
       console.error("Error fetching product:", error);
-      // Load mock data for development
-      const mockProduct = getMockProduct(productId);
-      setProduct(mockProduct);
-      setSelectedVariantId(mockProduct.variants[0]?.id || null);
+      setError("Unable to load product details right now.");
+      setProduct(null);
     } finally {
       setLoading(false);
     }
@@ -117,6 +120,7 @@ export default function ProductDetailPage() {
   const canPurchase = Boolean(
     product?.isActive && selectedVariant?.purchasable && selectedBatch
   );
+  const isOutOfStock = product?.stockStatus === "OUT_OF_STOCK";
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
@@ -145,6 +149,30 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleNotify = async () => {
+    const email = prompt("Enter your email to be notified when this item is available.");
+    if (!email) return;
+
+    try {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+      const response = await fetch(`${apiBaseUrl}/stock-notifications`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ productId, email })
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to create notification request.");
+      }
+
+      setNotifyStatus("Notification request saved.");
+    } catch (err) {
+      setNotifyStatus("Unable to save notification request.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -161,8 +189,10 @@ export default function ProductDetailPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
-          <p className="text-gray-600">The requested product could not be found.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Unavailable</h2>
+          <p className="text-gray-600">
+            {error || "The requested product could not be found."}
+          </p>
         </div>
       </div>
     );
@@ -258,7 +288,7 @@ export default function ProductDetailPage() {
                     <li>- This product is intended for laboratory research use only</li>
                     <li>- Not for human consumption or therapeutic applications</li>
                     <li>- Must be handled by qualified research personnel</li>
-                    <li>- Proper safety protocols and disposal methods required</li>
+                    <li>- Proper safety procedures and disposal methods required</li>
                   </ul>
                 </div>
               </div>
@@ -349,6 +379,24 @@ export default function ProductDetailPage() {
                 Add to Research Cart
               </button>
 
+              {!canPurchase && isOutOfStock && (
+                <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                  <p className="font-semibold text-slate-800">Currently unavailable</p>
+                  <p className="text-xs text-slate-500">
+                    Request an availability update when this item returns.
+                  </p>
+                  <button
+                    onClick={handleNotify}
+                    className="mt-3 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                  >
+                    Notify When Available
+                  </button>
+                  {notifyStatus && (
+                    <p className="mt-2 text-xs text-slate-500">{notifyStatus}</p>
+                  )}
+                </div>
+              )}
+
               {/* Wishlist Button */}
               <button className="w-full px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5" />
@@ -385,14 +433,11 @@ export default function ProductDetailPage() {
 
         {/* Related Products Section */}
         <div className="mt-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Researchers Also Viewed
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {getMockRelatedProducts().map((relatedProduct) => (
-              <ProductCard key={relatedProduct.id} {...relatedProduct} />
-            ))}
-          </div>
+          <Recommendations
+            type="similar"
+            productId={productId}
+            title="Researchers Also Viewed"
+          />
         </div>
       </div>
 
@@ -408,131 +453,3 @@ export default function ProductDetailPage() {
   );
 }
 
-// Mock data functions
-function getMockProduct(id: string): ProductDetail {
-  return {
-    id,
-    name: "BPC-157 Research Peptide",
-    sku: "BPC-157",
-    description:
-      "Body Protection Compound (BPC-157) is a synthetic peptide supplied for in vitro laboratory research. Each batch undergoes analytical testing including HPLC and mass spectrometry to confirm identity and purity.",
-    category: "RESEARCH_PEPTIDES",
-    form: "Lyophilized powder",
-    concentration: "5mg per vial",
-    casNumber: "137525-51-0",
-    molecularFormula: "C62H98N16O22",
-    isActive: true,
-    variants: [
-      {
-        id: "mock-5mg",
-        strengthValue: 5,
-        strengthUnit: "MG",
-        sku: "BPC-157-5MG",
-        priceCents: 4599,
-        isActive: true,
-        hasCoa: true,
-        purchasable: true
-      },
-      {
-        id: "mock-10mg",
-        strengthValue: 10,
-        strengthUnit: "MG",
-        sku: "BPC-157-10MG",
-        priceCents: 0,
-        isActive: true,
-        hasCoa: false,
-        purchasable: false
-      }
-    ],
-    defaultVariantId: "mock-5mg"
-  };
-}
-
-function getMockRelatedProducts() {
-  return [
-    {
-      id: "2",
-      name: "TB-500",
-      sku: "TB500",
-      description: "Thymosin Beta-4 derivative for research",
-      category: "RESEARCH_PEPTIDES",
-      hasCoa: true,
-      isActive: true,
-      variants: [
-        {
-          id: "2-5mg",
-          strengthValue: 5,
-          strengthUnit: "MG",
-          sku: "TB500-5MG",
-          priceCents: 5299,
-          isActive: true,
-          hasCoa: true,
-          purchasable: true
-        }
-      ]
-    },
-    {
-      id: "3",
-      name: "GHK-Cu",
-      sku: "GHKCU",
-      description: "Copper peptide complex for research",
-      category: "RESEARCH_PEPTIDES",
-      hasCoa: false,
-      isActive: true,
-      variants: [
-        {
-          id: "3-10mg",
-          strengthValue: 10,
-          strengthUnit: "MG",
-          sku: "GHKCU-10MG",
-          priceCents: 3899,
-          isActive: true,
-          hasCoa: false,
-          purchasable: false
-        }
-      ]
-    },
-    {
-      id: "5",
-      name: "Bacteriostatic Water",
-      sku: "BAC-WATER",
-      description: "Laboratory-grade reconstitution solution",
-      category: "LABORATORY_ADJUNCTS",
-      hasCoa: false,
-      isActive: true,
-      variants: [
-        {
-          id: "5-10ml",
-          strengthValue: 10,
-          strengthUnit: "ML",
-          sku: "BAC-WATER-10ML",
-          priceCents: 1299,
-          isActive: true,
-          hasCoa: false,
-          purchasable: false
-        }
-      ]
-    },
-    {
-      id: "6",
-      name: "MOTS-c",
-      sku: "MOTSC",
-      description: "Mitochondrial peptide for metabolic research",
-      category: "RESEARCH_PEPTIDES",
-      hasCoa: true,
-      isActive: true,
-      variants: [
-        {
-          id: "6-5mg",
-          strengthValue: 5,
-          strengthUnit: "MG",
-          sku: "MOTSC-5MG",
-          priceCents: 4899,
-          isActive: true,
-          hasCoa: true,
-          purchasable: true
-        }
-      ]
-    }
-  ];
-}

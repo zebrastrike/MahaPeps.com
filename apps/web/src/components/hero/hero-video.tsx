@@ -52,7 +52,7 @@ export function HeroVideo() {
     <div className="absolute inset-0 z-0 overflow-hidden">
       <video
         ref={videoRef}
-        className="h-full w-full object-cover transition-transform duration-200 ease-out"
+        className="h-full w-full object-cover transition-transform duration-200 ease-out opacity-40 md:opacity-75"
         autoPlay={allowMotion}
         muted
         loop
@@ -62,6 +62,10 @@ export function HeroVideo() {
       >
         <source src="/media/hero-whisk.mp4" type="video/mp4" />
       </video>
+            <div
+        className="absolute inset-0 hero-ambient"
+        style={allowMotion ? undefined : { animation: "none" }}
+      />
       <div className="absolute inset-0 bg-charcoal-900/60" />
       <div className="absolute inset-0 bg-gradient-to-b from-charcoal-900/70 via-charcoal-900/40 to-charcoal-900" />
     </div>

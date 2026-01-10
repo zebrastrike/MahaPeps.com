@@ -33,6 +33,7 @@ interface Product {
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -40,6 +41,7 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
+      setError(null);
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
       const response = await fetch(`${apiBaseUrl}/catalog/products`);
 
@@ -63,8 +65,8 @@ export default function ProductsPage() {
       setProducts(transformedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
-      // Load mock data for development
-      setProducts(getMockProducts());
+      setError("Unable to load products right now.");
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -117,6 +119,11 @@ export default function ProductsPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {error && (
+          <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            {error}
+          </div>
+        )}
         <ProductGrid
           products={products}
           onAddToCart={handleAddToCart}
@@ -126,76 +133,4 @@ export default function ProductsPage() {
       </div>
     </div>
   );
-}
-
-// Mock data for development
-function getMockProducts(): Product[] {
-  return [
-    {
-      id: "1",
-      name: "BPC-157 Research Peptide",
-      sku: "BPC-157",
-      description: "Body Protection Compound for tissue repair research applications",
-      purityPercent: 98.5,
-      category: "RESEARCH_PEPTIDES",
-      hasCoa: true,
-      isActive: true,
-      variants: [
-        {
-          id: "1-5mg",
-          strengthValue: 5,
-          strengthUnit: "MG",
-          sku: "BPC-157-5MG",
-          priceCents: 4599,
-          isActive: true,
-          hasCoa: true,
-          purchasable: true
-        }
-      ]
-    },
-    {
-      id: "2",
-      name: "TB-500 Analytical Reference",
-      sku: "TB500",
-      description: "Thymosin Beta-4 derivative for cellular migration studies",
-      purityPercent: 99.2,
-      category: "ANALYTICAL_REFERENCE_MATERIALS",
-      hasCoa: true,
-      isActive: true,
-      variants: [
-        {
-          id: "2-2mg",
-          strengthValue: 2,
-          strengthUnit: "MG",
-          sku: "TB500-2MG",
-          priceCents: 5299,
-          isActive: true,
-          hasCoa: true,
-          purchasable: true
-        }
-      ]
-    },
-    {
-      id: "3",
-      name: "GHK-Cu Research Material",
-      sku: "GHKCU",
-      description: "Copper peptide complex for collagen synthesis research",
-      purityPercent: 97.8,
-      category: "RESEARCH_PEPTIDES",
-      hasCoa: false,
-      isActive: true,
-      variants: [
-        {
-          id: "3-10mg",
-          strengthValue: 10,
-          strengthUnit: "MG",
-          sku: "GHKCU-10MG",
-          priceCents: 3899,
-          isActive: true,
-          hasCoa: false,
-          purchasable: false
-        }
-      ]
-    }
-  ];
 }

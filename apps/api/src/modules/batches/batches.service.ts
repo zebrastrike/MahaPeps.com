@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import { FileStorageService } from '../files/file-storage.service';
 
 @Injectable()
 export class BatchesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly fileStorage: FileStorageService,
+  ) {}
 
   getHealth(): string {
     return 'batches-ok';
@@ -14,7 +16,7 @@ export class BatchesService {
 
   /**
    * Upload COA file for a batch
-   * Extracts purity percentage and activates batch if valid
+   * Extracts purity percentage and stores COA metadata
    */
   async uploadCoa(
     batchId: string,
@@ -22,12 +24,12 @@ export class BatchesService {
     uploadedById: string,
     purityPercent?: number,
     testingLab?: string,
-    activateOnUpload: boolean = true,
+    activateOnUpload: boolean = false,
   ) {
     // Verify batch exists
     const batch = await this.prisma.productBatch.findUnique({
       where: { id: batchId },
-      include: { product: true },
+      include: { product: true, variant: true },
     });
 
     if (!batch) {
@@ -39,31 +41,44 @@ export class BatchesService {
       throw new BadRequestException('COA files must be PDF format');
     }
 
-    // Store file (in production, use S3/Cloudinary)
-    const uploadDir = path.join(process.cwd(), 'uploads', 'coa');
-    await fs.mkdir(uploadDir, { recursive: true });
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('COA files must be 5MB or smaller');
+    }
 
-    const fileName = `${batchId}_COA_${Date.now()}.pdf`;
-    const filePath = path.join(uploadDir, fileName);
-    await fs.writeFile(filePath, file.buffer);
-
-    // Create BatchFile record
-    const batchFile = await this.prisma.batchFile.create({
-      data: {
-        batchId,
-        type: 'COA',
-        filePath: `/uploads/coa/${fileName}`,
-        uploadedById,
-      },
+    const fileRecord = await this.fileStorage.uploadFile(file, {
+      bucket: 'coa',
+      uploadedBy: uploadedById,
+      prefix: 'coa',
     });
 
     const updateData: Prisma.ProductBatchUpdateInput = {
-      coaFileId: batchFile.id,
+      coaFileId: fileRecord.id,
       testingLab: testingLab || 'Unknown Lab',
       purityPercent: purityPercent ?? batch.purityPercent,
     };
 
     if (activateOnUpload) {
+      if (!batch.variantId) {
+        throw new BadRequestException('Batch must be linked to a variant');
+      }
+
+      if (!batch.isAvailable) {
+        throw new BadRequestException('Batch is marked unavailable');
+      }
+
+      if (batch.expiresAt && batch.expiresAt < new Date()) {
+        throw new BadRequestException('Batch is expired');
+      }
+
+      await this.prisma.productBatch.updateMany({
+        where: {
+          variantId: batch.variantId,
+          isActive: true,
+          id: { not: batchId },
+        },
+        data: { isActive: false },
+      });
+
       updateData.isActive = true;
     }
 
@@ -72,14 +87,14 @@ export class BatchesService {
       where: { id: batchId },
       data: updateData,
       include: {
-        files: true,
+        coaFile: true,
         product: true,
       },
     });
 
     return {
       batch: updatedBatch,
-      coaFile: batchFile,
+      coaFile: fileRecord,
       message: activateOnUpload
         ? 'COA uploaded successfully and batch activated'
         : 'COA uploaded successfully',
@@ -92,11 +107,7 @@ export class BatchesService {
   async getCoaFile(batchId: string) {
     const batch = await this.prisma.productBatch.findUnique({
       where: { id: batchId },
-      include: {
-        files: {
-          where: { type: 'COA' },
-        },
-      },
+      include: { coaFile: true },
     });
 
     if (!batch) {
@@ -107,16 +118,15 @@ export class BatchesService {
       throw new NotFoundException(`No COA found for batch ${batchId}`);
     }
 
-    const coaFile = batch.files.find(f => f.id === batch.coaFileId);
-
-    if (!coaFile) {
-      throw new NotFoundException(`COA file not found`);
-    }
+    const downloadUrl = await this.fileStorage.getSignedDownloadUrl(
+      batch.coaFileId,
+      86400,
+    );
 
     return {
-      fileId: coaFile.id,
-      filePath: coaFile.filePath,
-      uploadedAt: coaFile.createdAt,
+      fileId: batch.coaFileId,
+      downloadUrl,
+      uploadedAt: batch.coaFile?.createdAt ?? null,
       purityPercent: batch.purityPercent,
       testingLab: batch.testingLab,
       batchCode: batch.batchCode,
@@ -131,9 +141,7 @@ export class BatchesService {
       where: { id: batchId },
       include: {
         product: true,
-        files: {
-          orderBy: { createdAt: 'desc' },
-        },
+        coaFile: true,
       },
     });
 
@@ -151,9 +159,7 @@ export class BatchesService {
     const batches = await this.prisma.productBatch.findMany({
       where: { productId },
       include: {
-        files: {
-          where: { type: 'COA' },
-        },
+        coaFile: true,
       },
       orderBy: { manufacturedAt: 'desc' },
     });
@@ -168,7 +174,6 @@ export class BatchesService {
       testingLab: batch.testingLab,
       isActive: batch.isActive,
       hasCoa: !!batch.coaFileId,
-      coaFileCount: batch.files.length,
     }));
   }
 
@@ -179,9 +184,7 @@ export class BatchesService {
     const batches = await this.prisma.productBatch.findMany({
       where: { variantId },
       include: {
-        files: {
-          where: { type: 'COA' },
-        },
+        coaFile: true,
       },
       orderBy: { manufacturedAt: 'desc' },
     });
@@ -196,7 +199,6 @@ export class BatchesService {
       testingLab: batch.testingLab,
       isActive: batch.isActive,
       hasCoa: !!batch.coaFileId,
-      coaFileCount: batch.files.length,
     }));
   }
 

@@ -43,7 +43,7 @@ export default function NewProductPage() {
     event.preventDefault();
 
     if (missingAdminHeader) {
-      setError("Set NEXT_PUBLIC_ADMIN_USER_ID before creating products.");
+      setError("Set NEXT_PUBLIC_ADMIN_TOKEN before creating products.");
       return;
     }
 
@@ -223,3 +223,4 @@ export default function NewProductPage() {
     </div>
   );
 }
+

@@ -6,12 +6,12 @@ export default function ClientDashboardLayout({ children }: { children: ReactNod
   return (
     <LayoutShell
       title="Client Dashboard"
-      subtitle="Client view of MAHA therapy workflows"
+      subtitle="Client view of research workflows"
       navigationDescription="Client navigation"
       navigationItems={[
         { label: "Overview", href: "/dashboard" },
         { label: "Orders", href: "/dashboard/orders" },
-        { label: "Protocols", href: "/dashboard/protocols" },
+        { label: "Research Bundles", href: "/dashboard/bundles" },
         { label: "Messages", href: "/dashboard/messages" }
       ]}
     >

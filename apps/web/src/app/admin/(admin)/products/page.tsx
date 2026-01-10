@@ -209,7 +209,7 @@ export default function AdminProductsPage() {
 
       {missingAdminHeader && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          Missing admin credentials. Set NEXT_PUBLIC_ADMIN_USER_ID to use admin endpoints.
+          Missing admin credentials. Set NEXT_PUBLIC_ADMIN_TOKEN to use admin endpoints.
         </div>
       )}
 
@@ -436,3 +436,4 @@ export default function AdminProductsPage() {
     </div>
   );
 }
+

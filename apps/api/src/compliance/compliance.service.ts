@@ -1,15 +1,23 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 type ComplianceViolation = {
   term: string;
   severity: string;
-  category: string;
+  category: string | null;
+  replacement?: string | null;
 };
+
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 @Injectable()
 export class ComplianceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   async scanContent(text: string): Promise<{
     violations: ComplianceViolation[];
@@ -20,16 +28,20 @@ export class ComplianceService {
     });
 
     const violations: ComplianceViolation[] = [];
+    const normalizedText = text.toLowerCase();
 
     for (const term of terms) {
-      const escaped = term.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+      const escaped = escapeRegExp(term.term.toLowerCase());
+      const regex = term.term.includes(' ')
+        ? new RegExp(escaped, 'gi')
+        : new RegExp(`\\b${escaped}\\b`, 'gi');
 
-      if (regex.test(text)) {
+      if (regex.test(normalizedText)) {
         violations.push({
           term: term.term,
           severity: term.severity,
           category: term.category,
+          replacement: term.replacement,
         });
       }
     }
@@ -38,6 +50,29 @@ export class ComplianceService {
       violations,
       isCompliant: violations.length === 0,
     };
+  }
+
+  async enforceCompliance(text: string, entityId?: string): Promise<void> {
+    const result = await this.scanContent(text);
+
+    if (!result.isCompliant) {
+      await this.auditService.log({
+        action: 'forbidden_term_violation',
+        entityType: 'Product',
+        entityId,
+        metadata: { violations: result.violations },
+      });
+
+      throw new BadRequestException({
+        message: 'Content contains forbidden terms and cannot be saved',
+        hint: 'Please remove medical or measurement-related language.',
+        violations: result.violations.map((violation) => ({
+          severity: violation.severity,
+          category: violation.category,
+          replacement: violation.replacement,
+        })),
+      });
+    }
   }
 
   async seedForbiddenTerms(): Promise<void> {
