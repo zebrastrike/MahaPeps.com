@@ -2,26 +2,37 @@
 
 import { useState, useEffect } from "react";
 import { ProductGrid } from "@/components/product/product-grid";
-import { CoaViewer } from "@/components/product/coa-viewer";
 import { Beaker } from "lucide-react";
+
+interface ProductVariant {
+  id: string;
+  strengthValue: number;
+  strengthUnit: string;
+  sku: string;
+  priceCents: number | null;
+  isActive: boolean;
+  hasCoa?: boolean;
+  purchasable?: boolean;
+}
 
 interface Product {
   id: string;
+  slug?: string | null;
   name: string;
   sku: string;
   description?: string;
-  price: number;
   purityPercent?: number;
   category: string;
   imageUrl?: string;
   hasCoa?: boolean;
   isActive?: boolean;
+  variants?: ProductVariant[];
+  defaultVariantId?: string | null;
 }
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCoaBatchId, setSelectedCoaBatchId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -38,19 +49,15 @@ export default function ProductsPage() {
 
       const data = await response.json();
 
-      // Transform data to include batch info for COA
-      // TODO: Update this when batch integration is complete
-      const transformedProducts = data.map((product: any) => ({
-        id: product.id,
-        name: product.name,
-        sku: product.sku,
-        description: product.description,
-        price: parseFloat(product.price || "0"),
-        purityPercent: product.purityPercent ? parseFloat(product.purityPercent) : undefined,
+      const transformedProducts = (data || []).map((product: any) => ({
+        ...product,
         category: product.category || "RESEARCH_PEPTIDES",
-        imageUrl: product.imageUrl,
-        hasCoa: product.hasCoa || false,
-        isActive: product.isActive !== false,
+        description: product.description || undefined,
+        purityPercent: product.purityPercent ? parseFloat(product.purityPercent) : undefined,
+        variants: (product.variants || []).map((variant: any) => ({
+          ...variant,
+          strengthValue: parseFloat(variant.strengthValue)
+        }))
       }));
 
       setProducts(transformedProducts);
@@ -63,20 +70,12 @@ export default function ProductsPage() {
     }
   };
 
-  const handleAddToCart = (productId: string) => {
-    // TODO: Implement cart functionality
-    console.log("Add to cart:", productId);
-    alert(`Product ${productId} added to cart (cart functionality coming soon)`);
-  };
-
-  const handleViewCoa = (productId: string) => {
-    // For now, we'll use the product ID as batch ID
-    // TODO: Implement proper batch selection
-    setSelectedCoaBatchId(productId);
+  const handleAddToCart = (productId: string, variantId?: string) => {
+    console.log("Add to cart:", { productId, variantId });
+    alert("Cart functionality is coming soon.");
   };
 
   const handleToggleWishlist = (productId: string) => {
-    // TODO: Implement wishlist functionality
     console.log("Toggle wishlist:", productId);
   };
 
@@ -109,7 +108,7 @@ export default function ProductsPage() {
           {/* Compliance Banner */}
           <div className="mt-6 p-4 bg-yellow-500/20 border border-yellow-400/30 rounded-lg">
             <p className="text-sm font-semibold">
-              ⚠️ RESEARCH USE ONLY - All products are intended for laboratory research applications only.
+              RESEARCH USE ONLY - All products are intended for laboratory research applications only.
               Not for human consumption or therapeutic use.
             </p>
           </div>
@@ -121,20 +120,10 @@ export default function ProductsPage() {
         <ProductGrid
           products={products}
           onAddToCart={handleAddToCart}
-          onViewCoa={handleViewCoa}
           onToggleWishlist={handleToggleWishlist}
           showFilters={true}
         />
       </div>
-
-      {/* COA Viewer Modal */}
-      {selectedCoaBatchId && (
-        <CoaViewer
-          batchId={selectedCoaBatchId}
-          isOpen={true}
-          onClose={() => setSelectedCoaBatchId(null)}
-        />
-      )}
     </div>
   );
 }
@@ -145,67 +134,68 @@ function getMockProducts(): Product[] {
     {
       id: "1",
       name: "BPC-157 Research Peptide",
-      sku: "BPC-157-5MG",
+      sku: "BPC-157",
       description: "Body Protection Compound for tissue repair research applications",
-      price: 45.99,
       purityPercent: 98.5,
       category: "RESEARCH_PEPTIDES",
       hasCoa: true,
       isActive: true,
+      variants: [
+        {
+          id: "1-5mg",
+          strengthValue: 5,
+          strengthUnit: "MG",
+          sku: "BPC-157-5MG",
+          priceCents: 4599,
+          isActive: true,
+          hasCoa: true,
+          purchasable: true
+        }
+      ]
     },
     {
       id: "2",
       name: "TB-500 Analytical Reference",
-      sku: "TB500-2MG",
+      sku: "TB500",
       description: "Thymosin Beta-4 derivative for cellular migration studies",
-      price: 52.99,
       purityPercent: 99.2,
       category: "ANALYTICAL_REFERENCE_MATERIALS",
       hasCoa: true,
       isActive: true,
+      variants: [
+        {
+          id: "2-2mg",
+          strengthValue: 2,
+          strengthUnit: "MG",
+          sku: "TB500-2MG",
+          priceCents: 5299,
+          isActive: true,
+          hasCoa: true,
+          purchasable: true
+        }
+      ]
     },
     {
       id: "3",
       name: "GHK-Cu Research Material",
-      sku: "GHKCU-10MG",
+      sku: "GHKCU",
       description: "Copper peptide complex for collagen synthesis research",
-      price: 38.99,
       purityPercent: 97.8,
       category: "RESEARCH_PEPTIDES",
       hasCoa: false,
       isActive: true,
-    },
-    {
-      id: "4",
-      name: "Epithalon Reference Standard",
-      sku: "EPIT-5MG",
-      description: "Tetrapeptide for telomerase activation studies",
-      price: 62.99,
-      purityPercent: 99.5,
-      category: "ANALYTICAL_REFERENCE_MATERIALS",
-      hasCoa: true,
-      isActive: true,
-    },
-    {
-      id: "5",
-      name: "Bacteriostatic Water",
-      sku: "BAC-WATER-30ML",
-      description: "Laboratory-grade bacteriostatic water for reconstitution",
-      price: 12.99,
-      category: "LABORATORY_ADJUNCTS",
-      hasCoa: false,
-      isActive: true,
-    },
-    {
-      id: "6",
-      name: "MOTS-c Research Peptide",
-      sku: "MOTSC-5MG",
-      description: "Mitochondrial-derived peptide for metabolic research",
-      price: 48.99,
-      purityPercent: 98.1,
-      category: "RESEARCH_PEPTIDES",
-      hasCoa: true,
-      isActive: true,
-    },
+      variants: [
+        {
+          id: "3-10mg",
+          strengthValue: 10,
+          strengthUnit: "MG",
+          sku: "GHKCU-10MG",
+          priceCents: 3899,
+          isActive: true,
+          hasCoa: false,
+          purchasable: false
+        }
+      ]
+    }
   ];
 }

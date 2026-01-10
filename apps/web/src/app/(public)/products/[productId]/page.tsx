@@ -16,18 +16,31 @@ import {
   Shield,
 } from "lucide-react";
 
+interface ProductVariant {
+  id: string;
+  strengthValue: number;
+  strengthUnit: string;
+  sku: string;
+  priceCents: number | null;
+  isActive: boolean;
+  hasCoa: boolean;
+  purchasable: boolean;
+}
+
 interface ProductDetail {
   id: string;
   name: string;
+  slug?: string | null;
   sku: string;
   description: string;
-  price: number;
   category: string;
   form?: string;
   concentration?: string;
   casNumber?: string;
   molecularFormula?: string;
   isActive: boolean;
+  variants: ProductVariant[];
+  defaultVariantId?: string | null;
 }
 
 interface Batch {
@@ -41,11 +54,22 @@ interface Batch {
   hasCoa: boolean;
 }
 
+const formatStrength = (value: number, unit: string) => `${value}${unit.toLowerCase()}`;
+
+const formatPrice = (priceCents: number | null | undefined) => {
+  if (!priceCents || priceCents === 0) {
+    return "Pricing on request";
+  }
+
+  return `$${(priceCents / 100).toFixed(2)}`;
+};
+
 export default function ProductDetailPage() {
   const params = useParams();
   const productId = params.productId as string;
 
   const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [showCoaViewer, setShowCoaViewer] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -54,6 +78,10 @@ export default function ProductDetailPage() {
   useEffect(() => {
     fetchProductDetails();
   }, [productId]);
+
+  useEffect(() => {
+    setSelectedBatch(null);
+  }, [selectedVariantId]);
 
   const fetchProductDetails = async () => {
     try {
@@ -66,16 +94,36 @@ export default function ProductDetailPage() {
 
       const data = await response.json();
       setProduct(data);
+
+      if (data?.variants?.length) {
+        const defaultVariant =
+          data.variants.find((variant: ProductVariant) => variant.id === data.defaultVariantId) ||
+          data.variants[0];
+        setSelectedVariantId(defaultVariant?.id ?? null);
+      }
     } catch (error) {
       console.error("Error fetching product:", error);
       // Load mock data for development
-      setProduct(getMockProduct(productId));
+      const mockProduct = getMockProduct(productId);
+      setProduct(mockProduct);
+      setSelectedVariantId(mockProduct.variants[0]?.id || null);
     } finally {
       setLoading(false);
     }
   };
 
+  const selectedVariant = product?.variants.find((variant) => variant.id === selectedVariantId);
+  const priceLabel = formatPrice(selectedVariant?.priceCents);
+  const canPurchase = Boolean(
+    product?.isActive && selectedVariant?.purchasable && selectedBatch
+  );
+
   const handleAddToCart = () => {
+    if (!selectedVariant) {
+      alert("Please select a strength first");
+      return;
+    }
+
     if (!selectedBatch) {
       alert("Please select a batch first");
       return;
@@ -83,11 +131,12 @@ export default function ProductDetailPage() {
 
     console.log("Add to cart:", {
       productId,
+      variantId: selectedVariant.id,
       batchId: selectedBatch.id,
       quantity,
     });
 
-    alert(`Added ${quantity} unit(s) to cart (cart functionality coming soon)`);
+    alert("Added to cart (cart functionality coming soon)");
   };
 
   const handleViewCoa = () => {
@@ -206,10 +255,10 @@ export default function ProductDetailPage() {
                 <div>
                   <h3 className="text-lg font-bold text-yellow-900 mb-2">Research Use Only</h3>
                   <ul className="space-y-1 text-sm text-yellow-800">
-                    <li>• This product is intended for laboratory research use only</li>
-                    <li>• Not for human consumption or therapeutic applications</li>
-                    <li>• Must be handled by qualified research personnel</li>
-                    <li>• Proper safety protocols and disposal methods required</li>
+                    <li>- This product is intended for laboratory research use only</li>
+                    <li>- Not for human consumption or therapeutic applications</li>
+                    <li>- Must be handled by qualified research personnel</li>
+                    <li>- Proper safety protocols and disposal methods required</li>
                   </ul>
                 </div>
               </div>
@@ -221,12 +270,34 @@ export default function ProductDetailPage() {
             {/* Main Purchase Card */}
             <div className="bg-white border rounded-lg p-6 sticky top-4">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
-              <p className="text-sm text-gray-600 mb-4">SKU: {product.sku}</p>
+              <p className="text-sm text-gray-600 mb-4">
+                SKU: {selectedVariant?.sku || product.sku}
+              </p>
+
+              {/* Variant Selector */}
+              {product.variants.length > 0 && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Strength
+                  </label>
+                  <select
+                    value={selectedVariantId || ""}
+                    onChange={(event) => setSelectedVariantId(event.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {product.variants.map((variant) => (
+                      <option key={variant.id} value={variant.id}>
+                        {formatStrength(variant.strengthValue, variant.strengthUnit)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               {/* Price */}
               <div className="mb-6 pb-6 border-b">
                 <div className="text-3xl font-bold text-gray-900 mb-1">
-                  ${product.price.toFixed(2)}
+                  {priceLabel}
                 </div>
                 <p className="text-sm text-gray-600">Per unit</p>
               </div>
@@ -235,6 +306,7 @@ export default function ProductDetailPage() {
               <div className="mb-6">
                 <BatchSelector
                   productId={productId}
+                  variantId={selectedVariantId || undefined}
                   selectedBatchId={selectedBatch?.id}
                   onBatchSelect={setSelectedBatch}
                   onViewCoa={handleViewCoa}
@@ -270,7 +342,7 @@ export default function ProductDetailPage() {
               {/* Add to Cart Button */}
               <button
                 onClick={handleAddToCart}
-                disabled={!product.isActive || !selectedBatch}
+                disabled={!canPurchase}
                 className="w-full px-6 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 mb-3"
               >
                 <ShoppingCart className="w-5 h-5" />
@@ -317,7 +389,6 @@ export default function ProductDetailPage() {
             Researchers Also Viewed
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* TODO: Replace with actual related products */}
             {getMockRelatedProducts().map((relatedProduct) => (
               <ProductCard key={relatedProduct.id} {...relatedProduct} />
             ))}
@@ -342,16 +413,38 @@ function getMockProduct(id: string): ProductDetail {
   return {
     id,
     name: "BPC-157 Research Peptide",
-    sku: "BPC-157-5MG",
+    sku: "BPC-157",
     description:
-      "Body Protection Compound (BPC-157) is a synthetic peptide derived from a protective gastric protein. This research material is supplied for in vitro laboratory investigations studying tissue repair mechanisms, cellular proliferation pathways, and angiogenesis signaling. The compound has been characterized in multiple peer-reviewed studies examining its effects on fibroblast migration and collagen synthesis in controlled laboratory environments. Each batch undergoes rigorous analytical testing including HPLC, mass spectrometry, and purity verification by accredited third-party laboratories.",
-    price: 45.99,
+      "Body Protection Compound (BPC-157) is a synthetic peptide supplied for in vitro laboratory research. Each batch undergoes analytical testing including HPLC and mass spectrometry to confirm identity and purity.",
     category: "RESEARCH_PEPTIDES",
     form: "Lyophilized powder",
     concentration: "5mg per vial",
     casNumber: "137525-51-0",
-    molecularFormula: "C₆₂H₉₈N₁₆O₂₂",
+    molecularFormula: "C62H98N16O22",
     isActive: true,
+    variants: [
+      {
+        id: "mock-5mg",
+        strengthValue: 5,
+        strengthUnit: "MG",
+        sku: "BPC-157-5MG",
+        priceCents: 4599,
+        isActive: true,
+        hasCoa: true,
+        purchasable: true
+      },
+      {
+        id: "mock-10mg",
+        strengthValue: 10,
+        strengthUnit: "MG",
+        sku: "BPC-157-10MG",
+        priceCents: 0,
+        isActive: true,
+        hasCoa: false,
+        purchasable: false
+      }
+    ],
+    defaultVariantId: "mock-5mg"
   };
 }
 
@@ -360,45 +453,86 @@ function getMockRelatedProducts() {
     {
       id: "2",
       name: "TB-500",
-      sku: "TB500-2MG",
+      sku: "TB500",
       description: "Thymosin Beta-4 derivative for research",
-      price: 52.99,
-      purityPercent: 99.2,
       category: "RESEARCH_PEPTIDES",
       hasCoa: true,
       isActive: true,
+      variants: [
+        {
+          id: "2-5mg",
+          strengthValue: 5,
+          strengthUnit: "MG",
+          sku: "TB500-5MG",
+          priceCents: 5299,
+          isActive: true,
+          hasCoa: true,
+          purchasable: true
+        }
+      ]
     },
     {
       id: "3",
       name: "GHK-Cu",
-      sku: "GHKCU-10MG",
+      sku: "GHKCU",
       description: "Copper peptide complex for research",
-      price: 38.99,
-      purityPercent: 97.8,
       category: "RESEARCH_PEPTIDES",
       hasCoa: false,
       isActive: true,
+      variants: [
+        {
+          id: "3-10mg",
+          strengthValue: 10,
+          strengthUnit: "MG",
+          sku: "GHKCU-10MG",
+          priceCents: 3899,
+          isActive: true,
+          hasCoa: false,
+          purchasable: false
+        }
+      ]
     },
     {
       id: "5",
       name: "Bacteriostatic Water",
-      sku: "BAC-WATER-30ML",
+      sku: "BAC-WATER",
       description: "Laboratory-grade reconstitution solution",
-      price: 12.99,
       category: "LABORATORY_ADJUNCTS",
       hasCoa: false,
       isActive: true,
+      variants: [
+        {
+          id: "5-10ml",
+          strengthValue: 10,
+          strengthUnit: "ML",
+          sku: "BAC-WATER-10ML",
+          priceCents: 1299,
+          isActive: true,
+          hasCoa: false,
+          purchasable: false
+        }
+      ]
     },
     {
       id: "6",
       name: "MOTS-c",
-      sku: "MOTSC-5MG",
+      sku: "MOTSC",
       description: "Mitochondrial peptide for metabolic research",
-      price: 48.99,
-      purityPercent: 98.1,
       category: "RESEARCH_PEPTIDES",
       hasCoa: true,
       isActive: true,
-    },
+      variants: [
+        {
+          id: "6-5mg",
+          strengthValue: 5,
+          strengthUnit: "MG",
+          sku: "MOTSC-5MG",
+          priceCents: 4899,
+          isActive: true,
+          hasCoa: true,
+          purchasable: true
+        }
+      ]
+    }
   ];
 }

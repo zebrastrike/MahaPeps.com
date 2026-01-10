@@ -4,29 +4,54 @@ import { useState } from "react";
 import { ProductCard } from "./product-card";
 import { Grid, List, SlidersHorizontal } from "lucide-react";
 
+interface ProductVariant {
+  id: string;
+  strengthValue: number;
+  strengthUnit: string;
+  sku: string;
+  priceCents: number | null;
+  isActive: boolean;
+  hasCoa?: boolean;
+  purchasable?: boolean;
+}
+
 interface Product {
   id: string;
+  slug?: string | null;
   name: string;
   sku: string;
   description?: string;
-  price: number;
   purityPercent?: number;
   category: string;
   imageUrl?: string;
   hasCoa?: boolean;
   isActive?: boolean;
+  variants?: ProductVariant[];
+  defaultVariantId?: string | null;
 }
 
 interface ProductGridProps {
   products: Product[];
-  onAddToCart?: (productId: string) => void;
-  onViewCoa?: (productId: string) => void;
+  onAddToCart?: (productId: string, variantId?: string) => void;
+  onViewCoa?: (productId: string, variantId?: string) => void;
   onToggleWishlist?: (productId: string) => void;
   showFilters?: boolean;
 }
 
 type ViewMode = "grid" | "list";
 type SortOption = "name" | "price-low" | "price-high" | "purity";
+
+const getProductPriceCents = (product: Product) => {
+  const variants = product.variants || [];
+  const preferredVariant =
+    variants.find((variant) => variant.id === product.defaultVariantId) ||
+    variants.find((variant) => variant.priceCents && variant.priceCents > 0) ||
+    variants[0];
+
+  const priceCents = preferredVariant?.priceCents ?? null;
+  if (!priceCents || priceCents <= 0) return null;
+  return priceCents;
+};
 
 export function ProductGrid({
   products,
@@ -51,18 +76,26 @@ export function ProductGrid({
   }
 
   if (showOnlyWithCoa) {
-    filteredProducts = filteredProducts.filter((p) => p.hasCoa);
+    filteredProducts = filteredProducts.filter((product) => {
+      if (product.variants && product.variants.length > 0) {
+        return product.variants.some((variant) => variant.hasCoa);
+      }
+      return product.hasCoa;
+    });
   }
 
   // Sort products
   filteredProducts.sort((a, b) => {
+    const priceA = getProductPriceCents(a);
+    const priceB = getProductPriceCents(b);
+
     switch (sortBy) {
       case "name":
         return a.name.localeCompare(b.name);
       case "price-low":
-        return a.price - b.price;
+        return (priceA ?? Number.POSITIVE_INFINITY) - (priceB ?? Number.POSITIVE_INFINITY);
       case "price-high":
-        return b.price - a.price;
+        return (priceB ?? Number.NEGATIVE_INFINITY) - (priceA ?? Number.NEGATIVE_INFINITY);
       case "purity":
         return (b.purityPercent || 0) - (a.purityPercent || 0);
       default:

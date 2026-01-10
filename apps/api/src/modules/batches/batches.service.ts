@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -21,6 +22,7 @@ export class BatchesService {
     uploadedById: string,
     purityPercent?: number,
     testingLab?: string,
+    activateOnUpload: boolean = true,
   ) {
     // Verify batch exists
     const batch = await this.prisma.productBatch.findUnique({
@@ -55,15 +57,20 @@ export class BatchesService {
       },
     });
 
-    // Update ProductBatch with COA info and activate
+    const updateData: Prisma.ProductBatchUpdateInput = {
+      coaFileId: batchFile.id,
+      testingLab: testingLab || 'Unknown Lab',
+      purityPercent: purityPercent ?? batch.purityPercent,
+    };
+
+    if (activateOnUpload) {
+      updateData.isActive = true;
+    }
+
+    // Update ProductBatch with COA info and optionally activate
     const updatedBatch = await this.prisma.productBatch.update({
       where: { id: batchId },
-      data: {
-        coaFileId: batchFile.id,
-        testingLab: testingLab || 'Unknown Lab',
-        purityPercent: purityPercent || batch.purityPercent,
-        isActive: true, // Activate batch now that COA is uploaded
-      },
+      data: updateData,
       include: {
         files: true,
         product: true,
@@ -73,7 +80,9 @@ export class BatchesService {
     return {
       batch: updatedBatch,
       coaFile: batchFile,
-      message: 'COA uploaded successfully and batch activated',
+      message: activateOnUpload
+        ? 'COA uploaded successfully and batch activated'
+        : 'COA uploaded successfully',
     };
   }
 
@@ -151,6 +160,35 @@ export class BatchesService {
 
     return batches.map(batch => ({
       id: batch.id,
+      variantId: batch.variantId,
+      batchCode: batch.batchCode,
+      purityPercent: batch.purityPercent,
+      manufacturedAt: batch.manufacturedAt,
+      expiresAt: batch.expiresAt,
+      testingLab: batch.testingLab,
+      isActive: batch.isActive,
+      hasCoa: !!batch.coaFileId,
+      coaFileCount: batch.files.length,
+    }));
+  }
+
+  /**
+   * List all batches for a variant with COA status
+   */
+  async getBatchesByVariant(variantId: string) {
+    const batches = await this.prisma.productBatch.findMany({
+      where: { variantId },
+      include: {
+        files: {
+          where: { type: 'COA' },
+        },
+      },
+      orderBy: { manufacturedAt: 'desc' },
+    });
+
+    return batches.map(batch => ({
+      id: batch.id,
+      variantId: batch.variantId,
       batchCode: batch.batchCode,
       purityPercent: batch.purityPercent,
       manufacturedAt: batch.manufacturedAt,

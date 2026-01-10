@@ -17,13 +17,15 @@ interface Batch {
 
 interface BatchSelectorProps {
   productId: string;
-  selectedBatchId?: string;
+  variantId-: string;
+  selectedBatchId-: string;
   onBatchSelect: (batch: Batch) => void;
-  onViewCoa?: (batchId: string) => void;
+  onViewCoa-: (batchId: string) => void;
 }
 
 export function BatchSelector({
   productId,
+  variantId,
   selectedBatchId,
   onBatchSelect,
   onViewCoa,
@@ -34,12 +36,15 @@ export function BatchSelector({
 
   useEffect(() => {
     fetchBatches();
-  }, [productId]);
+  }, [productId, variantId]);
 
   const fetchBatches = async () => {
     try {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-      const response = await fetch(`${apiBaseUrl}/batches/product/${productId}`);
+      const endpoint = variantId
+        - `${apiBaseUrl}/batches/variant/${variantId}`
+        : `${apiBaseUrl}/batches/product/${productId}`;
+      const response = await fetch(endpoint);
 
       if (!response.ok) {
         throw new Error("Failed to fetch batches");
@@ -48,9 +53,11 @@ export function BatchSelector({
       const data = await response.json();
       setBatches(data);
 
-      // Auto-select first active batch if none selected
+      // Auto-select first active batch with COA if none selected
       if (!selectedBatchId && data.length > 0) {
-        const firstActive = data.find((b: Batch) => b.isActive);
+        const firstActive =
+          data.find((b: Batch) => b.isActive && b.hasCoa) ||
+          data.find((b: Batch) => b.isActive);
         if (firstActive) {
           onBatchSelect(firstActive);
         }
@@ -94,7 +101,7 @@ export function BatchSelector({
           onClick={() => setIsOpen(!isOpen)}
           className="w-full px-4 py-3 border rounded-lg bg-white hover:bg-gray-50 transition-colors text-left flex items-center justify-between"
         >
-          {selectedBatch ? (
+          {selectedBatch - (
             <div className="flex items-center gap-3 flex-1">
               <div className="flex-1">
                 <p className="font-semibold text-gray-900">{selectedBatch.batchCode}</p>
@@ -102,7 +109,7 @@ export function BatchSelector({
                   <span className="font-medium text-blue-600">
                     {parseFloat(selectedBatch.purityPercent).toFixed(2)}% Purity
                   </span>
-                  <span>•</span>
+                  <span>-</span>
                   <span>Exp: {new Date(selectedBatch.expiresAt).toLocaleDateString()}</span>
                 </div>
               </div>
@@ -125,7 +132,7 @@ export function BatchSelector({
           )}
 
           <svg
-            className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            className={`w-5 h-5 text-gray-400 transition-transform ${isOpen - "rotate-180" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -151,8 +158,8 @@ export function BatchSelector({
                   }}
                   disabled={!batch.isActive}
                   className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b last:border-b-0 ${
-                    !batch.isActive ? "opacity-50 cursor-not-allowed" : ""
-                  } ${batch.id === selectedBatchId ? "bg-blue-50" : ""}`}
+                    !batch.isActive - "opacity-50 cursor-not-allowed" : ""
+                  } ${batch.id === selectedBatchId - "bg-blue-50" : ""}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -172,9 +179,9 @@ export function BatchSelector({
                         <span className="font-medium text-blue-600">
                           {parseFloat(batch.purityPercent).toFixed(2)}%
                         </span>
-                        <span>•</span>
+                        <span>-</span>
                         <span>Mfg: {new Date(batch.manufacturedAt).toLocaleDateString()}</span>
-                        <span>•</span>
+                        <span>-</span>
                         <span>Exp: {new Date(batch.expiresAt).toLocaleDateString()}</span>
                       </div>
 
