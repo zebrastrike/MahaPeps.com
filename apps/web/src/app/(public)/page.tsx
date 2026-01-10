@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { HeroVideo } from "@/components/hero/hero-video";
 import { Beaker, Shield, FileText, MapPin, ChevronRight } from "lucide-react";
 
 export default function HomePage() {
@@ -7,9 +8,10 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-charcoal-900 to-charcoal-800 py-20 lg:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(58,127,140,0.1),transparent_50%)]" />
+        <HeroVideo />
+        <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_30%_20%,rgba(58,127,140,0.1),transparent_50%)]" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative z-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             {/* Logo */}
             <div className="mb-8 flex justify-center">

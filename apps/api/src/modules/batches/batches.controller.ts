@@ -73,6 +73,15 @@ export class BatchesController {
   }
 
   /**
+   * Get all batches for a variant
+   * GET /batches/variant/:variantId
+   */
+  @Get('variant/:variantId')
+  async getBatchesByVariant(@Param('variantId') variantId: string) {
+    return this.batchesService.getBatchesByVariant(variantId);
+  }
+
+  /**
    * Update batch purity
    * PATCH /batches/:batchId/purity
    */

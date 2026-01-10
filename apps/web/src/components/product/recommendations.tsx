@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { ProductCard } from "./product-card";
 import { TrendingUp, Users } from "lucide-react";
 
-interface Product {
+interface RecommendationProduct {
   id: string;
   name: string;
   sku: string;
   description?: string;
-  price: number;
+  price?: number;
   purityPercent?: number;
   category: string;
   imageUrl?: string;
@@ -23,8 +23,8 @@ interface RecommendationsProps {
   type: "product" | "user" | "trending" | "similar";
   title?: string;
   limit?: number;
-  onAddToCart?: (productId: string) => void;
-  onViewCoa?: (productId: string) => void;
+  onAddToCart?: (productId: string, variantId?: string) => void;
+  onViewCoa?: (productId: string, variantId?: string) => void;
   onToggleWishlist?: (productId: string) => void;
 }
 
@@ -38,7 +38,7 @@ export function Recommendations({
   onViewCoa,
   onToggleWishlist,
 }: RecommendationsProps) {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<RecommendationProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export function Recommendations({
       if (!response.ok) throw new Error("Failed to fetch recommendations");
 
       const data = await response.json();
-      setProducts(data);
+      setProducts(data || []);
     } catch (error) {
       console.error("Error fetching recommendations:", error);
       setProducts([]);
@@ -143,7 +143,16 @@ export function Recommendations({
         {products.map((product) => (
           <ProductCard
             key={product.id}
-            {...product}
+            id={product.id}
+            name={product.name}
+            sku={product.sku}
+            description={product.description}
+            purityPercent={product.purityPercent}
+            category={product.category || "RESEARCH_PEPTIDES"}
+            imageUrl={product.imageUrl}
+            hasCoa={product.hasCoa}
+            isActive={product.isActive}
+            priceCents={product.price ? Math.round(product.price * 100) : null}
             onAddToCart={onAddToCart}
             onViewCoa={onViewCoa}
             onToggleWishlist={onToggleWishlist}

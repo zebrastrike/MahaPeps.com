@@ -1,4 +1,4 @@
-﻿import { Body, Controller, Get, Post, Param, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Query, UsePipes } from '@nestjs/common';
 import { ComplianceValidationPipe } from '../../compliance/compliance.pipe';
 import { CatalogService } from './catalog.service';
 import { RecommendationsService } from './recommendations.service';
@@ -26,6 +26,16 @@ export class CatalogController {
   @Get('health')
   getHealth(): string {
     return this.catalogService.getHealth();
+  }
+
+  /**
+   * Get public catalog products
+   * GET /catalog/products
+   */
+  @Get('products')
+  async getProducts(@Query('limit') limit?: string) {
+    const limitNum = limit ? parseInt(limit, 10) : undefined;
+    return this.catalogService.listProducts(limitNum);
   }
 
   /**
@@ -75,6 +85,15 @@ export class CatalogController {
   ) {
     const limitNum = limit ? parseInt(limit, 10) : 4;
     return this.recommendationsService.getSimilarProducts(productId, limitNum);
+  }
+
+  /**
+   * Get product by slug or id
+   * GET /catalog/products/:slugOrId
+   */
+  @Get('products/:slugOrId')
+  async getProductBySlug(@Param('slugOrId') slugOrId: string) {
+    return this.catalogService.getProductBySlug(slugOrId);
   }
 
   /**
