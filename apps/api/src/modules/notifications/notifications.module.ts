@@ -7,6 +7,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { buildRedisConfig } from './redis.config';
 import { StockNotificationsService } from './stock-notifications.service';
 import { StockNotificationsProcessor } from './stock-notifications.processor';
+import { EmailTemplatesService } from './email-templates.service';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { StockNotificationsProcessor } from './stock-notifications.processor';
     NotificationsService,
     StockNotificationsService,
     StockNotificationsProcessor,
+    EmailTemplatesService,
   ],
-  exports: [NotificationsService, StockNotificationsService],
+  exports: [NotificationsService, StockNotificationsService, EmailTemplatesService],
 })
 export class NotificationsModule {}

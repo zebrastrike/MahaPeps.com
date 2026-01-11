@@ -19,6 +19,7 @@ export class FileStorageService {
       'R2_SECRET_ACCESS_KEY',
       'R2_KYC_BUCKET',
       'R2_COA_BUCKET',
+      'R2_PAYMENT_PROOFS_BUCKET',
     ];
 
     for (const key of required) {
@@ -37,16 +38,20 @@ export class FileStorageService {
     });
   }
 
-  private getBucketName(bucket: 'kyc' | 'coa') {
-    return bucket === 'kyc'
-      ? (process.env.R2_KYC_BUCKET as string)
-      : (process.env.R2_COA_BUCKET as string);
+  private getBucketName(bucket: 'kyc' | 'coa' | 'payment-proofs') {
+    if (bucket === 'kyc') {
+      return process.env.R2_KYC_BUCKET as string;
+    } else if (bucket === 'coa') {
+      return process.env.R2_COA_BUCKET as string;
+    } else {
+      return process.env.R2_PAYMENT_PROOFS_BUCKET as string;
+    }
   }
 
   async uploadFile(
     file: Express.Multer.File,
     options: {
-      bucket: 'kyc' | 'coa';
+      bucket: 'kyc' | 'coa' | 'payment-proofs';
       isPublic?: boolean;
       uploadedBy?: string;
       prefix?: string;

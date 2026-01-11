@@ -15,6 +15,7 @@ import { OrgsModule } from './modules/orgs/orgs.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { UsersModule } from './modules/users/users.module';
 import { KycModule } from './modules/kyc/kyc.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { KycModule } from './modules/kyc/kyc.module';
     UsersModule,
     OrgsModule,
     CatalogModule,
+    CartModule,
     BatchesModule,
     FilesModule,
     OrdersModule,

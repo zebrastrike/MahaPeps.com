@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getAdminHeaders, getApiBaseUrl, hasAdminHeader } from "@/lib/admin";
+import { ForbiddenTermScanner } from "@/components/admin/forbidden-term-scanner";
 
 const categories = [
   "RESEARCH_PEPTIDES",
@@ -46,6 +47,8 @@ export default function NewProductPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nameViolations, setNameViolations] = useState(false);
+  const [descriptionViolations, setDescriptionViolations] = useState(false);
 
   const handleChange = (field: string, value: string | boolean) => {
     setProductForm((prev) => ({ ...prev, [field]: value }));
@@ -61,6 +64,13 @@ export default function NewProductPage() {
 
     if (!productForm.name.trim() || !productForm.sku.trim()) {
       setError("Name and SKU are required.");
+      return;
+    }
+
+    // CRITICAL COMPLIANCE CHECK: Block submission if forbidden terms detected
+    if (nameViolations || descriptionViolations) {
+      setError("⛔ COMPLIANCE VIOLATION: Cannot create product with forbidden medical claims. Please remove all highlighted terms before proceeding.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
@@ -127,7 +137,7 @@ export default function NewProductPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="space-y-2">
+          <div className="space-y-2 lg:col-span-2">
             <label className="text-sm font-medium text-slate-700">Name</label>
             <input
               type="text"
@@ -135,6 +145,11 @@ export default function NewProductPage() {
               onChange={(event) => handleChange("name", event.target.value)}
               className="w-full rounded-md border border-slate-200 px-3 py-2"
               required
+            />
+            <ForbiddenTermScanner
+              text={productForm.name}
+              fieldName="Product Name"
+              onViolationsChange={setNameViolations}
             />
           </div>
           <div className="space-y-2">
@@ -268,6 +283,11 @@ export default function NewProductPage() {
           <p className="text-xs text-slate-500">
             Keep language compliance-safe and research focused.
           </p>
+          <ForbiddenTermScanner
+            text={productForm.description}
+            fieldName="Product Description"
+            onViolationsChange={setDescriptionViolations}
+          />
         </div>
 
         <label className="flex items-center gap-2 text-sm text-slate-700">

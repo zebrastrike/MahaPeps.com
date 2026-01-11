@@ -174,6 +174,87 @@ export class ShippoService {
     });
   }
 
+  /**
+   * Get live shipping rates for checkout
+   * Called BEFORE order finalization to display real-time rates
+   */
+  async getShippingRates(params: {
+    toAddress: ShippingAddress;
+    weightLb?: number;
+    lengthIn?: number;
+    widthIn?: number;
+    heightIn?: number;
+  }) {
+    if (!this.isConfigured || !this.shippo) {
+      // Return fallback rate if Shippo not configured
+      this.logger.warn('Shippo not configured - returning fallback rate');
+      return [
+        {
+          provider: 'USPS',
+          serviceName: 'Priority Mail',
+          estimatedDays: '2-3',
+          amount: '15.00',
+          currency: 'USD',
+        },
+      ];
+    }
+
+    try {
+      const shipment = await this.shippo.shipments.create({
+        addressFrom: process.env.SHIPPO_RETURN_ADDRESS_ID || {
+          name: 'MAHA Peptides',
+          street1: '123 Warehouse St',
+          city: 'San Francisco',
+          state: 'CA',
+          zip: '94102',
+          country: 'US',
+        },
+        addressTo: {
+          street1: params.toAddress.line1,
+          street2: params.toAddress.line2 || '',
+          city: params.toAddress.city,
+          state: params.toAddress.state,
+          zip: params.toAddress.postalCode,
+          country: params.toAddress.country,
+        },
+        parcels: [
+          {
+            length: (params.lengthIn || 10).toString(),
+            width: (params.widthIn || 8).toString(),
+            height: (params.heightIn || 4).toString(),
+            distanceUnit: 'in',
+            weight: (params.weightLb || 1).toString(),
+            massUnit: 'lb',
+          },
+        ],
+        async: false,
+      });
+
+      const rates = shipment.rates || [];
+
+      return rates.map((rate: any) => ({
+        rateId: rate.objectId,
+        provider: rate.provider,
+        serviceName: rate.servicelevel?.name,
+        estimatedDays: rate.estimatedDays?.toString() || rate.durationTerms || 'N/A',
+        amount: rate.amount,
+        currency: rate.currency,
+      }));
+    } catch (error: any) {
+      this.logger.error(`Failed to get shipping rates: ${error.message}`, error.stack);
+      // Return fallback rate on error
+      return [
+        {
+          provider: 'USPS',
+          serviceName: 'Priority Mail',
+          estimatedDays: '2-3',
+          amount: '15.00',
+          currency: 'USD',
+        },
+      ];
+    }
+  }
+
   private selectRate(rates: any[], carrier: string, service: string) {
     const serviceMap: Record<string, string[]> = {
       PRIORITY: ['Priority', 'Priority Mail', '2-Day'],
