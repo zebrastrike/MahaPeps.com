@@ -178,6 +178,34 @@ export class NotificationsService {
     }
   }
 
+  /**
+   * Generic email sending method (used with EmailTemplatesService)
+   */
+  async sendEmail(params: {
+    to: string;
+    subject: string;
+    html: string;
+  }): Promise<void> {
+    try {
+      if (this.isProduction && this.mailgunClient) {
+        await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
+          from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
+          to: [params.to],
+          subject: params.subject,
+          html: params.html,
+        });
+        this.logger.log(`Email sent to ${params.to}: ${params.subject}`);
+      } else {
+        this.logger.log(`[DEV] Would send email to ${params.to}`);
+        this.logger.debug(`Subject: ${params.subject}`);
+        this.logger.debug(`Body preview: ${params.html.substring(0, 200)}...`);
+      }
+    } catch (error: any) {
+      this.logger.error(`Failed to send email: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
   private generateInvoiceTemplate(order: Order): string {
     const zelleId = process.env.ZELLE_ID || 'payments@mahapeptides.com';
     const cashAppTag = process.env.CASHAPP_TAG || '$MahaPeptides';

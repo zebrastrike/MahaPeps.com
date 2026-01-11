@@ -16,7 +16,10 @@
       "mcp__tessl__status",
       "mcp__tessl__query_library_docs",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(del nul)"
     ]
   }
 }
