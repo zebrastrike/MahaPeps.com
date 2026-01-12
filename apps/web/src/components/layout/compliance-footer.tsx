@@ -48,7 +48,7 @@ export function ComplianceFooter() {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link href="/support" className="text-sm text-slate-600 hover:text-teal-600">
+                <Link href="/contact" className="text-sm text-slate-600 hover:text-teal-600">
                   Contact Us
                 </Link>
               </li>
@@ -82,7 +82,7 @@ export function ComplianceFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimers" className="text-sm text-slate-600 hover:text-teal-600">
+                <Link href="/research-use" className="text-sm text-slate-600 hover:text-teal-600">
                   Disclaimers
                 </Link>
               </li>

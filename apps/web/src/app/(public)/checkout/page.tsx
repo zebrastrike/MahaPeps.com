@@ -74,8 +74,26 @@ export default function CheckoutPage() {
   const [selectedRate, setSelectedRate] = useState<ShippingRate | null>(null);
   const [fetchingRates, setFetchingRates] = useState(false);
 
+  // Order insurance and processing options
+  const [orderInsurance, setOrderInsurance] = useState(false);
+  const [processingType, setProcessingType] = useState<'STANDARD' | 'EXPEDITED' | 'RUSH'>('STANDARD');
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Calculate insurance fee (2% of subtotal, min $2, max $50)
+  const calculateInsurance = (subtotal: number) => {
+    if (!orderInsurance) return 0;
+    const fee = subtotal * 0.02;
+    return Math.max(2, Math.min(50, fee));
+  };
+
+  // Processing fees
+  const processingFees: Record<string, number> = {
+    STANDARD: 0,
+    EXPEDITED: 25,
+    RUSH: 50,
+  };
 
   useEffect(() => {
     fetchCart();
@@ -186,6 +204,8 @@ export default function CheckoutPage() {
             amount: selectedRate.amount,
           },
           compliance,
+          orderInsurance,
+          processingType,
         }),
       });
 
@@ -450,6 +470,129 @@ export default function CheckoutPage() {
               </section>
             )}
 
+            {/* Processing Speed */}
+            {shippingRates.length > 0 && (
+              <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
+                <h2 className="mb-4 text-xl font-bold text-clinical-white">Processing Speed</h2>
+                <div className="space-y-3">
+                  {/* STANDARD */}
+                  <label
+                    className={`flex cursor-pointer items-start justify-between rounded-md border p-4 transition-colors ${
+                      processingType === 'STANDARD'
+                        ? "border-accent-500 bg-accent-900/20"
+                        : "border-charcoal-600 hover:border-charcoal-500"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="processingType"
+                        checked={processingType === 'STANDARD'}
+                        onChange={() => setProcessingType('STANDARD')}
+                        className="mt-1 text-accent-500"
+                      />
+                      <div>
+                        <div className="font-medium text-clinical-white">Standard Processing</div>
+                        <div className="text-sm text-charcoal-400">2 business days - FREE</div>
+                        <div className="text-xs text-charcoal-500 mt-1">
+                          Orders paid before 10 AM MST may ship same day
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-lg font-bold text-clinical-white">FREE</div>
+                  </label>
+
+                  {/* EXPEDITED */}
+                  <label
+                    className={`flex cursor-pointer items-start justify-between rounded-md border p-4 transition-colors ${
+                      processingType === 'EXPEDITED'
+                        ? "border-accent-500 bg-accent-900/20"
+                        : "border-charcoal-600 hover:border-charcoal-500"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="processingType"
+                        checked={processingType === 'EXPEDITED'}
+                        onChange={() => setProcessingType('EXPEDITED')}
+                        className="mt-1 text-accent-500"
+                      />
+                      <div>
+                        <div className="font-medium text-clinical-white">Expedited Processing</div>
+                        <div className="text-sm text-charcoal-400">1 business day</div>
+                      </div>
+                    </div>
+                    <div className="text-lg font-bold text-clinical-white">+$25.00</div>
+                  </label>
+
+                  {/* RUSH */}
+                  <label
+                    className={`flex cursor-pointer items-start justify-between rounded-md border p-4 transition-colors ${
+                      processingType === 'RUSH'
+                        ? "border-accent-500 bg-accent-900/20"
+                        : "border-charcoal-600 hover:border-charcoal-500"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="processingType"
+                        checked={processingType === 'RUSH'}
+                        onChange={() => setProcessingType('RUSH')}
+                        className="mt-1 text-accent-500"
+                      />
+                      <div>
+                        <div className="font-medium text-clinical-white">Rush Processing</div>
+                        <div className="text-sm text-charcoal-400">Same day (if ordered before 10 AM MST)</div>
+                        <div className="text-xs text-charcoal-500 mt-1">
+                          Guaranteed same-day processing
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-lg font-bold text-clinical-white">+$50.00</div>
+                  </label>
+                </div>
+              </section>
+            )}
+
+            {/* Order Insurance */}
+            {shippingRates.length > 0 && (
+              <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
+                <h2 className="mb-4 text-xl font-bold text-clinical-white">Shipping Protection</h2>
+
+                <label className="flex cursor-pointer items-start gap-4 rounded-md border border-charcoal-600 bg-charcoal-900/50 p-4 hover:border-accent-500 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={orderInsurance}
+                    onChange={(e) => setOrderInsurance(e.target.checked)}
+                    className="mt-1 h-5 w-5 rounded border-charcoal-600 bg-charcoal-900 text-accent-500 focus:ring-2 focus:ring-accent-500/20"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-semibold text-clinical-white">🛡️ Order Protection</span>
+                      <span className="font-bold text-accent-400">
+                        +${calculateInsurance(cart.subtotal).toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-charcoal-300 mb-2">
+                      Protect your order against loss, theft, or damage during shipping.
+                      Get a full refund or replacement if something goes wrong.
+                    </p>
+                    <ul className="text-xs text-charcoal-400 space-y-1">
+                      <li>✓ Coverage for lost packages</li>
+                      <li>✓ Protection against shipping damage</li>
+                      <li>✓ Theft protection</li>
+                      <li>✓ Fast claim processing</li>
+                    </ul>
+                    <p className="text-xs text-charcoal-500 mt-2">
+                      Cost: 2% of order total (min $2.00, max $50.00)
+                    </p>
+                  </div>
+                </label>
+              </section>
+            )}
+
             {/* Billing Address */}
             <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
               <h2 className="mb-4 text-xl font-bold text-clinical-white">Billing Address</h2>
@@ -508,6 +651,14 @@ export default function CheckoutPage() {
                 </span>
               </div>
               <div className="flex justify-between text-charcoal-300">
+                <span>Processing</span>
+                <span>${processingFees[processingType].toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-charcoal-300">
+                <span>Shipping Protection</span>
+                <span>${calculateInsurance(cart.subtotal).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-charcoal-300">
                 <span>Tax</span>
                 <span>$0.00</span>
               </div>
@@ -515,8 +666,8 @@ export default function CheckoutPage() {
                 <span>Total</span>
                 <span>
                   ${selectedRate
-                    ? (cart.subtotal + parseFloat(selectedRate.amount)).toFixed(2)
-                    : cart.subtotal.toFixed(2)}
+                    ? (cart.subtotal + parseFloat(selectedRate.amount) + processingFees[processingType] + calculateInsurance(cart.subtotal)).toFixed(2)
+                    : (cart.subtotal + processingFees[processingType] + calculateInsurance(cart.subtotal)).toFixed(2)}
                 </span>
               </div>
             </div>

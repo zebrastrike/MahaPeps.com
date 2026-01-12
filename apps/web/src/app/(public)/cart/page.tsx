@@ -135,7 +135,7 @@ export default function CartPage() {
         <div className="rounded-lg border border-red-200 bg-red-50 p-8 text-center">
           <div className="text-red-900">{error}</div>
           <div className="mt-4">
-            <Link href="/login">
+            <Link href="/sign-in">
               <Button>Log In</Button>
             </Link>
           </div>

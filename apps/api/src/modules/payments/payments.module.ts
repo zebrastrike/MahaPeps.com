@@ -6,9 +6,10 @@ import { PaymentVerificationService } from './payment-verification.service';
 import { FilesModule } from '../files/files.module';
 import { AuditModule } from '../../audit/audit.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { PrismaModule } from '../../prisma/prisma.module';
 
 @Module({
-  imports: [FilesModule, AuditModule, NotificationsModule],
+  imports: [PrismaModule, FilesModule, AuditModule, NotificationsModule],
   controllers: [PaymentsController, PaymentVerificationController],
   providers: [PaymentsService, PaymentVerificationService],
   exports: [PaymentsService, PaymentVerificationService],

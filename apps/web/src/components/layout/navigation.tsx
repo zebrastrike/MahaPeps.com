@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export type NavigationItem = {
   label: string;
-  href: string;
+  href: any;
 };
 
 type NavigationProps = {

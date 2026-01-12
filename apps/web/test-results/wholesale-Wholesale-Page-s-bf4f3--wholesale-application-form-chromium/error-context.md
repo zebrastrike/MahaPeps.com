@@ -1,0 +1,298 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - img "MAHA Peptides" [ref=e5]
+    - generic [ref=e6]:
+      - generic [ref=e7]: ⚠️
+      - heading "Legal Agreement Required" [level=1] [ref=e8]
+      - paragraph [ref=e9]: You must read and accept all terms before accessing this website
+    - generic [ref=e10]:
+      - paragraph [ref=e11]: RESEARCH CHEMICALS - NOT FOR HUMAN CONSUMPTION
+      - paragraph [ref=e12]:
+        - text: This website contains research chemicals and peptides intended
+        - strong [ref=e13]: SOLELY FOR LABORATORY RESEARCH AND ANALYTICAL USE
+        - text: . Products are
+        - strong [ref=e14]: NOT for human consumption, animal consumption, or any in-vivo application
+        - text: .
+    - generic [ref=e15]:
+      - generic [ref=e16] [cursor=pointer]:
+        - checkbox "Age Verification (Required) I confirm that I am at least 18 years of age and have the legal capacity to enter into binding agreements." [ref=e17]
+        - generic [ref=e18]:
+          - paragraph [ref=e19]: Age Verification (Required)
+          - paragraph [ref=e20]:
+            - text: I confirm that I am
+            - strong [ref=e21]: at least 18 years of age
+            - text: and have the legal capacity to enter into binding agreements.
+      - generic [ref=e22] [cursor=pointer]:
+        - checkbox "Terms of Service (Required) I have read and agree to the Terms of Service, including acknowledgment that ALL SALES ARE FINAL with NO REFUNDS or RETURNS." [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Terms of Service (Required)
+          - paragraph [ref=e26]:
+            - text: I have read and agree to the
+            - link "Terms of Service" [ref=e27]:
+              - /url: /terms
+            - text: ", including acknowledgment that"
+            - strong [ref=e28]: ALL SALES ARE FINAL with NO REFUNDS or RETURNS
+            - text: .
+      - generic [ref=e29] [cursor=pointer]:
+        - checkbox "Research Use Only Policy (Required) I have read and agree to the Research Use Only Policy, confirming that products are for IN-VITRO RESEARCH ONLY and NOT for human or animal consumption." [ref=e30]
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: Research Use Only Policy (Required)
+          - paragraph [ref=e33]:
+            - text: I have read and agree to the
+            - link "Research Use Only Policy" [ref=e34]:
+              - /url: /research-use
+            - text: ", confirming that products are for"
+            - strong [ref=e35]: IN-VITRO RESEARCH ONLY
+            - text: and
+            - strong [ref=e36]: NOT for human or animal consumption
+            - text: .
+    - generic [ref=e37]:
+      - paragraph [ref=e38]: "By checking all boxes above, I acknowledge:"
+      - list [ref=e39]:
+        - listitem [ref=e40]: • I possess adequate training and facilities to handle research chemicals safely
+        - listitem [ref=e41]: • I am responsible for compliance with all applicable federal, state, and local laws
+        - listitem [ref=e42]: • I assume ALL risks associated with purchase, handling, storage, and use of products
+        - listitem [ref=e43]: • I release MAHA Peptides from liability for any harm or damages resulting from product use
+        - listitem [ref=e44]: • I understand that no medical advice or therapeutic guidance is provided
+    - generic [ref=e45]:
+      - button "I Do Not Accept - Exit" [ref=e46] [cursor=pointer]
+      - button "I Accept All Terms - Enter Site" [disabled] [ref=e47]
+    - paragraph [ref=e48]: By entering this website, you confirm acceptance of all terms, policies, and legal disclaimers. Your acceptance is legally binding and will be recorded with timestamp and IP address.
+  - generic [ref=e49]:
+    - banner [ref=e50]:
+      - generic [ref=e52]:
+        - link "MAHA Peptides" [ref=e54] [cursor=pointer]:
+          - /url: /
+          - img "MAHA Peptides" [ref=e55]
+        - navigation [ref=e56]:
+          - link "Products" [ref=e57] [cursor=pointer]:
+            - /url: /products
+          - link "Solutions" [ref=e58] [cursor=pointer]:
+            - /url: /solutions
+          - link "Wholesale" [ref=e59] [cursor=pointer]:
+            - /url: /wholesale
+          - link "Contact" [ref=e60] [cursor=pointer]:
+            - /url: /contact
+        - generic [ref=e61]:
+          - button "Search" [ref=e62] [cursor=pointer]:
+            - img [ref=e63]
+          - link "Account" [ref=e66] [cursor=pointer]:
+            - /url: /sign-in
+            - img [ref=e67]
+          - link "Cart" [ref=e70] [cursor=pointer]:
+            - /url: /checkout
+            - img [ref=e71]
+          - link "Browse Catalog" [ref=e75] [cursor=pointer]:
+            - /url: /products
+    - main [ref=e76]:
+      - generic [ref=e77]:
+        - generic [ref=e80]:
+          - link "MAHA Peptides" [ref=e82] [cursor=pointer]:
+            - /url: /
+            - img "MAHA Peptides" [ref=e83]
+          - heading "Wholesale Research Solutions for Institutions & Facilities" [level=1] [ref=e84]
+          - paragraph [ref=e85]: Partner with MAHA Peptides for premium wholesale pricing, dedicated account management, and priority processing for your laboratory, research institution, or biotech facility.
+          - link "Already have an account? Sign In" [ref=e87] [cursor=pointer]:
+            - /url: /sign-in
+            - img [ref=e88]
+            - text: Already have an account? Sign In
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - heading "Wholesale Partner Benefits" [level=2] [ref=e94]
+            - paragraph [ref=e95]: Everything you need for seamless bulk ordering and institutional purchasing
+          - generic [ref=e96]:
+            - generic [ref=e97]:
+              - img [ref=e99]
+              - heading "Volume Discounts" [level=3] [ref=e102]
+              - paragraph [ref=e103]: Save 10-30% with tiered wholesale pricing based on monthly order volume. The more you order, the more you save on pharmaceutical-grade peptides.
+            - generic [ref=e104]:
+              - img [ref=e106]
+              - heading "Dedicated Account Manager" [level=3] [ref=e108]
+              - paragraph [ref=e109]: Get assigned a personal account manager who understands your research needs and provides priority support for ordering and technical questions.
+            - generic [ref=e110]:
+              - img [ref=e112]
+              - heading "Priority Processing" [level=3] [ref=e114]
+              - paragraph [ref=e115]: Wholesale orders receive expedited processing and shipping to ensure your research timelines stay on track with faster turnaround times.
+            - generic [ref=e116]:
+              - img [ref=e118]
+              - heading "Net Payment Terms" [level=3] [ref=e122]
+              - paragraph [ref=e123]: Qualified institutions receive Net-30 payment terms for improved cash flow management and simplified procurement processes.
+            - generic [ref=e124]:
+              - img [ref=e126]
+              - heading "Custom Pricing Solutions" [level=3] [ref=e128]
+              - paragraph [ref=e129]: Large volume or specialized research needs? We offer custom pricing packages tailored to your institution's specific requirements.
+            - generic [ref=e130]:
+              - img [ref=e132]
+              - heading "Full Documentation & COAs" [level=3] [ref=e134]
+              - paragraph [ref=e135]: Every batch includes complete Certificate of Analysis, HPLC results, and mass spectrometry data for your regulatory and compliance needs.
+        - generic [ref=e137]:
+          - generic [ref=e138]:
+            - heading "Wholesale Discount Tiers" [level=2] [ref=e139]
+            - paragraph [ref=e140]: Transparent volume-based pricing for institutional purchasers
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - heading "Starter" [level=3] [ref=e144]
+                - paragraph [ref=e145]: Small research teams
+              - generic [ref=e146]:
+                - paragraph [ref=e147]: 10% OFF
+                - paragraph [ref=e148]: Monthly orders $500 - $2,499
+              - list [ref=e149]:
+                - listitem [ref=e150]:
+                  - img [ref=e151]
+                  - generic [ref=e154]: Email support
+                - listitem [ref=e155]:
+                  - img [ref=e156]
+                  - generic [ref=e159]: Standard processing
+                - listitem [ref=e160]:
+                  - img [ref=e161]
+                  - generic [ref=e164]: Full COA documentation
+            - generic [ref=e165]:
+              - generic [ref=e166]:
+                - heading "Professional" [level=3] [ref=e167]
+                - paragraph [ref=e168]: Established institutions
+              - generic [ref=e169]:
+                - paragraph [ref=e170]: 20% OFF
+                - paragraph [ref=e171]: Monthly orders $2,500 - $9,999
+              - list [ref=e172]:
+                - listitem [ref=e173]:
+                  - img [ref=e174]
+                  - generic [ref=e177]: Dedicated account manager
+                - listitem [ref=e178]:
+                  - img [ref=e179]
+                  - generic [ref=e182]: Priority processing
+                - listitem [ref=e183]:
+                  - img [ref=e184]
+                  - generic [ref=e187]: Net-30 payment terms
+                - listitem [ref=e188]:
+                  - img [ref=e189]
+                  - generic [ref=e192]: Phone & email support
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - heading "Enterprise" [level=3] [ref=e195]
+                - paragraph [ref=e196]: Major research facilities
+              - generic [ref=e197]:
+                - paragraph [ref=e198]: 30% OFF
+                - paragraph [ref=e199]: Monthly orders $10,000+
+              - list [ref=e200]:
+                - listitem [ref=e201]:
+                  - img [ref=e202]
+                  - generic [ref=e205]: Custom pricing available
+                - listitem [ref=e206]:
+                  - img [ref=e207]
+                  - generic [ref=e210]: Premium account manager
+                - listitem [ref=e211]:
+                  - img [ref=e212]
+                  - generic [ref=e215]: Expedited shipping
+                - listitem [ref=e216]:
+                  - img [ref=e217]
+                  - generic [ref=e220]: Net-60 payment terms
+                - listitem [ref=e221]:
+                  - img [ref=e222]
+                  - generic [ref=e225]: 24/7 priority support
+        - generic [ref=e228]:
+          - generic [ref=e230]:
+            - img [ref=e232]
+            - heading "Wholesale Requirements" [level=3] [ref=e236]
+            - list [ref=e237]:
+              - listitem [ref=e238]:
+                - img [ref=e239]
+                - generic [ref=e242]:
+                  - paragraph [ref=e243]: Business License
+                  - paragraph [ref=e244]: Valid business registration required
+              - listitem [ref=e245]:
+                - img [ref=e246]
+                - generic [ref=e249]:
+                  - paragraph [ref=e250]: "Minimum Order: $500"
+                  - paragraph [ref=e251]: Monthly minimum for wholesale pricing
+              - listitem [ref=e252]:
+                - img [ref=e253]
+                - generic [ref=e256]:
+                  - paragraph [ref=e257]: Tax ID / EIN
+                  - paragraph [ref=e258]: Required for institutional accounts
+              - listitem [ref=e259]:
+                - img [ref=e260]
+                - generic [ref=e263]:
+                  - paragraph [ref=e264]: Research Compliance
+                  - paragraph [ref=e265]: Acknowledgment of research-use-only policy
+          - generic [ref=e267]:
+            - generic [ref=e268]:
+              - heading "Apply for Wholesale Account" [level=2] [ref=e269]
+              - paragraph [ref=e270]: Complete the form below and our team will review your application within 1-2 business days
+            - generic [ref=e271]:
+              - generic [ref=e272]:
+                - generic [ref=e273]:
+                  - generic [ref=e274]: Company / Institution Name *
+                  - textbox "Company / Institution Name *" [ref=e275]:
+                    - /placeholder: Research Institute or Company Name
+                - generic [ref=e276]:
+                  - generic [ref=e277]: Contact Person *
+                  - textbox "Contact Person *" [ref=e278]:
+                    - /placeholder: Dr. Jane Smith
+                - generic [ref=e279]:
+                  - generic [ref=e280]: Email Address *
+                  - textbox "Email Address *" [ref=e281]:
+                    - /placeholder: procurement@institution.edu
+                - generic [ref=e282]:
+                  - generic [ref=e283]: Phone Number *
+                  - textbox "Phone Number *" [ref=e284]:
+                    - /placeholder: +1 (555) 123-4567
+                - generic [ref=e285]:
+                  - generic [ref=e286]: Business Type *
+                  - combobox "Business Type *" [ref=e287]:
+                    - option "Select Type" [selected]
+                    - option "University / Academic Institution"
+                    - option "Research Laboratory"
+                    - option "Clinical Research Facility"
+                    - option "Biotech / Pharmaceutical Company"
+                    - option "Distributor / Reseller"
+                    - option "Other"
+                - generic [ref=e288]:
+                  - generic [ref=e289]: Tax ID / EIN *
+                  - textbox "Tax ID / EIN *" [ref=e290]:
+                    - /placeholder: 12-3456789
+                - generic [ref=e291]:
+                  - generic [ref=e292]: Business License Number *
+                  - textbox "Business License Number *" [ref=e293]:
+                    - /placeholder: BL-123456
+                - generic [ref=e294]:
+                  - generic [ref=e295]: Estimated Monthly Order Volume *
+                  - combobox "Estimated Monthly Order Volume *" [ref=e296]:
+                    - option "Select Range" [selected]
+                    - option "$500 - $2,499 (10% discount)"
+                    - option "$2,500 - $9,999 (20% discount)"
+                    - option "$10,000+ (30% discount)"
+                - generic [ref=e297]:
+                  - generic [ref=e298]: Additional Information
+                  - textbox "Additional Information" [ref=e299]:
+                    - /placeholder: Tell us about your research needs, specific product requirements, or any questions...
+              - button "Submit Wholesale Application" [ref=e300] [cursor=pointer]
+            - paragraph [ref=e302]: By submitting this application, you certify that your organization will use MAHA Peptides products solely for laboratory research purposes and not for human or veterinary consumption. All wholesale accounts are subject to verification and approval.
+    - generic [ref=e304]:
+      - generic [ref=e305]:
+        - heading "RESEARCH USE ONLY" [level=4] [ref=e306]
+        - paragraph [ref=e307]: All products sold on this platform are intended solely for lawful laboratory research and analytical use. Not for human or veterinary consumption.
+      - generic [ref=e308]:
+        - heading "FDA DISCLAIMER" [level=4] [ref=e309]
+        - paragraph [ref=e310]: All statements on this website have not been evaluated by the Food and Drug Administration (FDA). All products are sold strictly for research, laboratory, or analytical purposes only. Products are not intended to diagnose, treat, cure, or prevent any disease.
+      - generic [ref=e311]:
+        - heading "NON-PHARMACY DISCLAIMER" [level=4] [ref=e312]
+        - paragraph [ref=e313]: This site operates solely as a chemical and research materials supplier. We are not a compounding pharmacy or chemical compounding facility as defined under Section 503A of the Federal Food, Drug, and Cosmetic Act. We are not an outsourcing facility as defined under Section 503B of the Federal Food, Drug, and Cosmetic Act.
+      - generic [ref=e314]:
+        - heading "LIABILITY & RESPONSIBILITY" [level=4] [ref=e315]
+        - paragraph [ref=e316]: The purchaser assumes full responsibility for the proper handling, storage, use, and disposal of all products. The purchaser is responsible for ensuring compliance with all applicable local, state, federal, and international laws.
+      - generic [ref=e317]:
+        - heading "NO MEDICAL ADVICE" [level=4] [ref=e318]
+        - paragraph [ref=e319]: Nothing on this website constitutes medical, clinical, or healthcare advice. All information provided is for educational and research discussion purposes only.
+      - generic [ref=e320]:
+        - heading "AGE RESTRICTION" [level=4] [ref=e321]
+        - paragraph [ref=e322]: You must be at least 18 years of age to access this website or purchase products. By using this website, you represent and warrant that you are at least 18 years old.
+      - generic [ref=e323]:
+        - heading "INTERNATIONAL DISCLAIMER" [level=4] [ref=e324]
+        - paragraph [ref=e325]: International customers are responsible for ensuring compliance with their country's import regulations. We do not guarantee deliverability to countries where peptides are controlled or prohibited substances.
+      - generic [ref=e326]: © 2026 MAHA Peptides. All rights reserved. Research materials only.
+  - alert [ref=e327]
+```

@@ -83,7 +83,7 @@ export function ProductCard({
   const variantSku = selectedVariant?.sku || sku;
   const priceLabel = formatPrice(selectedVariant?.priceCents ?? priceCents);
   const canPurchase =
-    isActive && (selectedVariant?.purchasable ?? false || variants.length === 0);
+    isActive && ((selectedVariant?.purchasable ?? false) || variants.length === 0);
 
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();
@@ -197,7 +197,7 @@ export function ProductCard({
             <select
               value={selectedVariantId}
               onChange={(event) => setSelectedVariantId(event.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-200 px-2 py-2 text-sm"
+              className="mt-1 w-full rounded-md border border-gray-200 px-2 py-2 text-sm bg-white text-gray-900 [&>option]:bg-accent-500 [&>option]:text-white"
             >
               {variants.map((variant) => (
                 <option key={variant.id} value={variant.id}>

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
+import { EmailTemplatesService } from './email-templates.service';
 
 interface Order {
   id: string;
@@ -28,7 +29,7 @@ export class NotificationsService {
   private mailgunClient: any;
   private readonly isProduction: boolean;
 
-  constructor() {
+  constructor(private readonly emailTemplatesService: EmailTemplatesService) {
     this.isProduction = process.env.NODE_ENV === 'production';
 
     if (process.env.MAILGUN_API_KEY && this.isProduction) {
@@ -176,6 +177,22 @@ export class NotificationsService {
       this.logger.error(`Failed to send stock email: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
+  /**
+   * Send payment verified email using EmailTemplatesService
+   */
+  async sendPaymentVerifiedEmail(params: {
+    orderId: string;
+    customerEmail: string;
+    orderTotal: string;
+  }): Promise<void> {
+    const { subject, html } = this.emailTemplatesService.getPaymentVerifiedEmail(params);
+    await this.sendEmail({
+      to: params.customerEmail,
+      subject,
+      html,
+    });
   }
 
   /**

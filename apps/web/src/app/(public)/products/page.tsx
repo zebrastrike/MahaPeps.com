@@ -64,21 +64,19 @@ export default function ProductsPage() {
 
       setProducts(transformedProducts);
     } catch (error) {
-      console.error("Error fetching products:", error);
       setError("Unable to load products right now.");
       setProducts([]);
-    } finally {
+    } finally{
       setLoading(false);
     }
   };
 
   const handleAddToCart = (productId: string, variantId?: string) => {
-    console.log("Add to cart:", { productId, variantId });
     alert("Cart functionality is coming soon.");
   };
 
   const handleToggleWishlist = (productId: string) => {
-    console.log("Toggle wishlist:", productId);
+    // Wishlist functionality placeholder
   };
 
   if (loading) {

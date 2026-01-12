@@ -24,9 +24,9 @@ export function Header({ title, subtitle }: HeaderProps) {
               <Image
                 src="/branding/maha-logo.png"
                 alt="MAHA Peptides"
-                width={140}
-                height={50}
-                className="h-12 w-auto"
+                width={180}
+                height={65}
+                className="h-16 w-auto [filter:drop-shadow(0_0_8px_rgba(220,38,38,0.6))_drop-shadow(0_0_16px_rgba(255,255,255,0.4))]"
                 priority
               />
             </Link>
@@ -47,7 +47,7 @@ export function Header({ title, subtitle }: HeaderProps) {
               Solutions
             </Link>
             <Link
-              href="/pricing"
+              href="/wholesale"
               className="text-sm font-medium text-clinical-white hover:text-accent-400 transition-colors"
             >
               Wholesale
@@ -116,7 +116,7 @@ export function Header({ title, subtitle }: HeaderProps) {
               Solutions
             </Link>
             <Link
-              href="/pricing"
+              href="/wholesale"
               className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
             >
               Wholesale

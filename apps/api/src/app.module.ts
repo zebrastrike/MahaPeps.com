@@ -16,6 +16,9 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { UsersModule } from './modules/users/users.module';
 import { KycModule } from './modules/kyc/kyc.module';
 import { CartModule } from './modules/cart/cart.module';
+import { ContactModule } from './modules/contact/contact.module';
+import { FaqModule } from './modules/faq/faq.module';
+import { BlogModule } from './modules/blog/blog.module';
 
 @Module({
   imports: [
@@ -24,19 +27,19 @@ import { CartModule } from './modules/cart/cart.module';
       validationSchema: Joi.object({
         JWT_SECRET: Joi.string().min(32).required(),
         ENCRYPTION_KEY: Joi.string().length(64).required(),
-        R2_ENDPOINT: Joi.string().uri().required(),
-        R2_ACCESS_KEY_ID: Joi.string().required(),
-        R2_SECRET_ACCESS_KEY: Joi.string().required(),
-        R2_KYC_BUCKET: Joi.string().required(),
-        R2_COA_BUCKET: Joi.string().required(),
+        R2_ENDPOINT: Joi.string().uri().optional().allow(''),
+        R2_ACCESS_KEY_ID: Joi.string().optional().allow(''),
+        R2_SECRET_ACCESS_KEY: Joi.string().optional().allow(''),
+        R2_KYC_BUCKET: Joi.string().optional().allow(''),
+        R2_COA_BUCKET: Joi.string().optional().allow(''),
         DATABASE_URL: Joi.string().required(),
         REDIS_URL: Joi.string().required(),
       }),
     }),
-    ThrottlerModule.forRoot({
-      ttl: 60,
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
       limit: 10,
-    }),
+    }]),
     AuthModule,
     UsersModule,
     OrgsModule,
@@ -50,6 +53,9 @@ import { CartModule } from './modules/cart/cart.module';
     ComplianceModule,
     AdminModule,
     KycModule,
+    ContactModule,
+    FaqModule,
+    BlogModule,
   ],
   providers: [
     {

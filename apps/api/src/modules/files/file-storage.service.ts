@@ -5,12 +5,14 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class FileStorageService {
-  private readonly s3Client: S3Client;
+  private readonly s3Client?: S3Client;
+  private readonly isConfigured: boolean;
+  private readonly logger = new Logger(FileStorageService.name);
 
   constructor(private readonly prisma: PrismaService) {
     const required = [
@@ -22,12 +24,16 @@ export class FileStorageService {
       'R2_PAYMENT_PROOFS_BUCKET',
     ];
 
-    for (const key of required) {
-      if (!process.env[key]) {
-        throw new Error(`${key} environment variable is required`);
-      }
+    // Check if all required variables are present
+    const missingVars = required.filter(key => !process.env[key]);
+
+    if (missingVars.length > 0) {
+      this.isConfigured = false;
+      this.logger.warn(`R2 storage not configured - missing: ${missingVars.join(', ')}. File storage operations will be disabled.`);
+      return;
     }
 
+    this.isConfigured = true;
     this.s3Client = new S3Client({
       region: 'auto',
       endpoint: process.env.R2_ENDPOINT,
@@ -57,6 +63,10 @@ export class FileStorageService {
       prefix?: string;
     },
   ) {
+    if (!this.isConfigured || !this.s3Client) {
+      throw new Error('R2 storage not configured');
+    }
+
     const bucketName = this.getBucketName(options.bucket);
     const safeName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
     const prefix = options.prefix ? `${options.prefix.replace(/\/+$/, '')}/` : '';
@@ -87,6 +97,10 @@ export class FileStorageService {
   }
 
   async getSignedDownloadUrl(fileId: string, expiresIn = 3600) {
+    if (!this.isConfigured || !this.s3Client) {
+      throw new Error('R2 storage not configured');
+    }
+
     const file = await this.prisma.file.findUnique({ where: { id: fileId } });
     if (!file) {
       throw new NotFoundException('File not found');
@@ -101,6 +115,10 @@ export class FileStorageService {
   }
 
   async deleteFile(fileId: string) {
+    if (!this.isConfigured || !this.s3Client) {
+      throw new Error('R2 storage not configured');
+    }
+
     const file = await this.prisma.file.findUnique({ where: { id: fileId } });
     if (!file) {
       throw new NotFoundException('File not found');
