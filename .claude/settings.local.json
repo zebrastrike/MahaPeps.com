@@ -20,7 +20,26 @@
       "Bash(npm run build:*)",
       "Bash(npx tsc:*)",
       "Bash(del nul)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(npx prisma db seed:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(set PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=proceed)",
+      "Bash(powershell -Command \"$env:PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=''proceed''; npx prisma db push --force-reset --skip-generate\")",
+      "Bash(.reset-db.bat)",
+      "Bash(cmd.exe /c reset-db.bat)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File reset-db.ps1)",
+      "Bash(del reset-db.bat reset-db.ps1)",
+      "Bash(docker compose:*)",
+      "Bash(lsof:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(dir \"c:\\\\Users\\\\keyse_pt9dxr4\\\\MAHAPEPS\\\\MahaPeps.com\\\\apps\\\\web\\\\src\\\\app\\\\\\(public\\)\" /B)",
+      "Bash(npx playwright install:*)",
+      "Bash(npm run:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(1)"
     ]
   }
 }

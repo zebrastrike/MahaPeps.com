@@ -268,7 +268,7 @@ export default function PaymentPage() {
                     setPaymentMethod(e.target.value as "ZELLE" | "CASHAPP" | "WIRE_TRANSFER")
                   }
                   className="w-full rounded-md border border-charcoal-600 bg-charcoal-900 px-3 py-2 text-clinical-white"
-                  disabled={isExpired}
+                  disabled={isExpired ?? false}
                 >
                   <option value="ZELLE">Zelle</option>
                   <option value="CASHAPP">CashApp</option>
@@ -286,7 +286,7 @@ export default function PaymentPage() {
                   onChange={(e) => setTransactionReference(e.target.value)}
                   placeholder="e.g., Confirmation number, last 4 digits"
                   className="w-full rounded-md border border-charcoal-600 bg-charcoal-900 px-3 py-2 text-clinical-white"
-                  disabled={isExpired}
+                  disabled={isExpired ?? false}
                 />
               </div>
 
@@ -299,7 +299,7 @@ export default function PaymentPage() {
                   accept="image/*,.pdf"
                   onChange={handleFileChange}
                   className="w-full rounded-md border border-charcoal-600 bg-charcoal-900 px-3 py-2 text-clinical-white file:mr-4 file:rounded file:border-0 file:bg-teal-600 file:px-4 file:py-2 file:text-sm file:text-white hover:file:bg-teal-700"
-                  disabled={isExpired}
+                  disabled={isExpired ?? false}
                   required
                 />
                 <p className="mt-1 text-xs text-charcoal-400">

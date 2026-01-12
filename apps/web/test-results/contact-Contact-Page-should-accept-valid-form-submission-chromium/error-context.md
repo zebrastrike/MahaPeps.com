@@ -1,0 +1,195 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - img "MAHA Peptides" [ref=e5]
+    - generic [ref=e6]:
+      - generic [ref=e7]: ⚠️
+      - heading "Legal Agreement Required" [level=1] [ref=e8]
+      - paragraph [ref=e9]: You must read and accept all terms before accessing this website
+    - generic [ref=e10]:
+      - paragraph [ref=e11]: RESEARCH CHEMICALS - NOT FOR HUMAN CONSUMPTION
+      - paragraph [ref=e12]:
+        - text: This website contains research chemicals and peptides intended
+        - strong [ref=e13]: SOLELY FOR LABORATORY RESEARCH AND ANALYTICAL USE
+        - text: . Products are
+        - strong [ref=e14]: NOT for human consumption, animal consumption, or any in-vivo application
+        - text: .
+    - generic [ref=e15]:
+      - generic [ref=e16] [cursor=pointer]:
+        - checkbox "Age Verification (Required) I confirm that I am at least 18 years of age and have the legal capacity to enter into binding agreements." [ref=e17]
+        - generic [ref=e18]:
+          - paragraph [ref=e19]: Age Verification (Required)
+          - paragraph [ref=e20]:
+            - text: I confirm that I am
+            - strong [ref=e21]: at least 18 years of age
+            - text: and have the legal capacity to enter into binding agreements.
+      - generic [ref=e22] [cursor=pointer]:
+        - checkbox "Terms of Service (Required) I have read and agree to the Terms of Service, including acknowledgment that ALL SALES ARE FINAL with NO REFUNDS or RETURNS." [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Terms of Service (Required)
+          - paragraph [ref=e26]:
+            - text: I have read and agree to the
+            - link "Terms of Service" [ref=e27]:
+              - /url: /terms
+            - text: ", including acknowledgment that"
+            - strong [ref=e28]: ALL SALES ARE FINAL with NO REFUNDS or RETURNS
+            - text: .
+      - generic [ref=e29] [cursor=pointer]:
+        - checkbox "Research Use Only Policy (Required) I have read and agree to the Research Use Only Policy, confirming that products are for IN-VITRO RESEARCH ONLY and NOT for human or animal consumption." [ref=e30]
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: Research Use Only Policy (Required)
+          - paragraph [ref=e33]:
+            - text: I have read and agree to the
+            - link "Research Use Only Policy" [ref=e34]:
+              - /url: /research-use
+            - text: ", confirming that products are for"
+            - strong [ref=e35]: IN-VITRO RESEARCH ONLY
+            - text: and
+            - strong [ref=e36]: NOT for human or animal consumption
+            - text: .
+    - generic [ref=e37]:
+      - paragraph [ref=e38]: "By checking all boxes above, I acknowledge:"
+      - list [ref=e39]:
+        - listitem [ref=e40]: • I possess adequate training and facilities to handle research chemicals safely
+        - listitem [ref=e41]: • I am responsible for compliance with all applicable federal, state, and local laws
+        - listitem [ref=e42]: • I assume ALL risks associated with purchase, handling, storage, and use of products
+        - listitem [ref=e43]: • I release MAHA Peptides from liability for any harm or damages resulting from product use
+        - listitem [ref=e44]: • I understand that no medical advice or therapeutic guidance is provided
+    - generic [ref=e45]:
+      - button "I Do Not Accept - Exit" [ref=e46] [cursor=pointer]
+      - button "I Accept All Terms - Enter Site" [disabled] [ref=e47]
+    - paragraph [ref=e48]: By entering this website, you confirm acceptance of all terms, policies, and legal disclaimers. Your acceptance is legally binding and will be recorded with timestamp and IP address.
+  - generic [ref=e49]:
+    - banner [ref=e50]:
+      - generic [ref=e52]:
+        - link "MAHA Peptides" [ref=e54] [cursor=pointer]:
+          - /url: /
+          - img "MAHA Peptides" [ref=e55]
+        - navigation [ref=e56]:
+          - link "Products" [ref=e57] [cursor=pointer]:
+            - /url: /products
+          - link "Solutions" [ref=e58] [cursor=pointer]:
+            - /url: /solutions
+          - link "Wholesale" [ref=e59] [cursor=pointer]:
+            - /url: /wholesale
+          - link "Contact" [ref=e60] [cursor=pointer]:
+            - /url: /contact
+        - generic [ref=e61]:
+          - button "Search" [ref=e62] [cursor=pointer]:
+            - img [ref=e63]
+          - link "Account" [ref=e66] [cursor=pointer]:
+            - /url: /sign-in
+            - img [ref=e67]
+          - link "Cart" [ref=e70] [cursor=pointer]:
+            - /url: /checkout
+            - img [ref=e71]
+          - link "Browse Catalog" [ref=e75] [cursor=pointer]:
+            - /url: /products
+    - main [ref=e76]:
+      - generic [ref=e77]:
+        - generic [ref=e80]:
+          - link "MAHA Peptides" [ref=e82] [cursor=pointer]:
+            - /url: /
+            - img "MAHA Peptides" [ref=e83]
+          - heading "Contact Our Research Team" [level=1] [ref=e84]
+          - paragraph [ref=e85]: Have questions about our pharmaceutical-grade peptides or need support with your research project? Our team of experts is here to help with product specifications, bulk ordering, and technical guidance.
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - img [ref=e92]
+              - heading "Email Us" [level=3] [ref=e95]
+              - paragraph [ref=e96]: For research inquiries, product questions, and technical support
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - paragraph [ref=e99]: General Inquiries
+                  - link "info@mahapeps.com" [ref=e100] [cursor=pointer]:
+                    - /url: mailto:info@mahapeps.com
+                - generic [ref=e101]:
+                  - paragraph [ref=e102]: Sales & Wholesale
+                  - link "sales@mahapeps.com" [ref=e103] [cursor=pointer]:
+                    - /url: mailto:sales@mahapeps.com
+                - generic [ref=e104]:
+                  - paragraph [ref=e105]: Customer Support
+                  - link "support@mahapeps.com" [ref=e106] [cursor=pointer]:
+                    - /url: mailto:support@mahapeps.com
+            - generic [ref=e107]:
+              - img [ref=e109]
+              - heading "Call Us" [level=3] [ref=e111]
+              - paragraph [ref=e112]: Speak with our sales team about bulk orders and custom solutions
+              - link "+1 (800) 555-1234" [ref=e113] [cursor=pointer]:
+                - /url: tel:+18005551234
+              - paragraph [ref=e114]: "Mon-Fri: 9AM - 6PM EST"
+            - generic [ref=e115]:
+              - img [ref=e117]
+              - heading "Location" [level=3] [ref=e120]
+              - paragraph [ref=e121]: American-made peptides from our USA-based laboratory
+              - paragraph [ref=e122]:
+                - text: United States
+                - text: Pharmaceutical Research Facility
+          - generic [ref=e124]:
+            - generic [ref=e125]:
+              - heading "Send Us a Message" [level=2] [ref=e126]
+              - paragraph [ref=e127]: Fill out the form below and our research team will respond within 24 hours
+            - generic [ref=e128]:
+              - generic [ref=e129]:
+                - generic [ref=e130]: Full Name *
+                - textbox "Full Name *" [ref=e131]:
+                  - /placeholder: Dr. John Smith
+                  - text: Dr. John Smith
+              - generic [ref=e132]:
+                - generic [ref=e133]: Email Address *
+                - textbox "Email Address *" [ref=e134]:
+                  - /placeholder: research@institution.edu
+                  - text: john.smith@test.com
+              - generic [ref=e135]:
+                - generic [ref=e136]: Phone Number (Optional)
+                - textbox "Phone Number (Optional)" [ref=e137]:
+                  - /placeholder: +1 (555) 123-4567
+                  - text: +1 (555) 123-4567
+              - generic [ref=e138]:
+                - generic [ref=e139]: Subject *
+                - textbox "Subject *" [ref=e140]:
+                  - /placeholder: Product inquiry, bulk ordering, technical support...
+                  - text: Product inquiry
+              - generic [ref=e141]:
+                - generic [ref=e142]: Message *
+                - textbox "Message *" [active] [ref=e143]:
+                  - /placeholder: Tell us about your research needs, product questions, or how we can assist you...
+                  - text: I am interested in learning more about your GLP-1 peptides for research.
+              - button "Send Message" [ref=e144] [cursor=pointer]:
+                - img [ref=e145]
+                - text: Send Message
+            - paragraph [ref=e149]: By submitting this form, you acknowledge that MAHA Peptides products are intended for laboratory research use only and not for human or veterinary consumption. All inquiries are subject to our compliance and regulatory policies.
+        - generic [ref=e152]:
+          - img [ref=e153]
+          - heading "Have a Quick Question?" [level=2] [ref=e155]
+          - paragraph [ref=e156]: Check out our comprehensive FAQ section for immediate answers about peptide purity standards, COA documentation, shipping protocols, and research compliance requirements.
+          - link "Visit FAQ Section" [ref=e157] [cursor=pointer]:
+            - /url: /faq
+    - generic [ref=e159]:
+      - generic [ref=e160]:
+        - heading "RESEARCH USE ONLY" [level=4] [ref=e161]
+        - paragraph [ref=e162]: All products sold on this platform are intended solely for lawful laboratory research and analytical use. Not for human or veterinary consumption.
+      - generic [ref=e163]:
+        - heading "FDA DISCLAIMER" [level=4] [ref=e164]
+        - paragraph [ref=e165]: All statements on this website have not been evaluated by the Food and Drug Administration (FDA). All products are sold strictly for research, laboratory, or analytical purposes only. Products are not intended to diagnose, treat, cure, or prevent any disease.
+      - generic [ref=e166]:
+        - heading "NON-PHARMACY DISCLAIMER" [level=4] [ref=e167]
+        - paragraph [ref=e168]: This site operates solely as a chemical and research materials supplier. We are not a compounding pharmacy or chemical compounding facility as defined under Section 503A of the Federal Food, Drug, and Cosmetic Act. We are not an outsourcing facility as defined under Section 503B of the Federal Food, Drug, and Cosmetic Act.
+      - generic [ref=e169]:
+        - heading "LIABILITY & RESPONSIBILITY" [level=4] [ref=e170]
+        - paragraph [ref=e171]: The purchaser assumes full responsibility for the proper handling, storage, use, and disposal of all products. The purchaser is responsible for ensuring compliance with all applicable local, state, federal, and international laws.
+      - generic [ref=e172]:
+        - heading "NO MEDICAL ADVICE" [level=4] [ref=e173]
+        - paragraph [ref=e174]: Nothing on this website constitutes medical, clinical, or healthcare advice. All information provided is for educational and research discussion purposes only.
+      - generic [ref=e175]:
+        - heading "AGE RESTRICTION" [level=4] [ref=e176]
+        - paragraph [ref=e177]: You must be at least 18 years of age to access this website or purchase products. By using this website, you represent and warrant that you are at least 18 years old.
+      - generic [ref=e178]:
+        - heading "INTERNATIONAL DISCLAIMER" [level=4] [ref=e179]
+        - paragraph [ref=e180]: International customers are responsible for ensuring compliance with their country's import regulations. We do not guarantee deliverability to countries where peptides are controlled or prohibited substances.
+      - generic [ref=e181]: © 2026 MAHA Peptides. All rights reserved. Research materials only.
+  - alert [ref=e182]
+```

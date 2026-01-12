@@ -135,6 +135,91 @@ export class ShippoService {
     }
   }
 
+  /**
+   * Create Shippo order (draft mode) after payment confirmation
+   * Owner will purchase the label manually in Shippo dashboard
+   */
+  async createShippoOrder(order: any): Promise<void> {
+    if (!this.isConfigured || !this.shippo) {
+      this.logger.warn('Shippo not configured - skipping order creation');
+      return;
+    }
+
+    try {
+      // Create address objects
+      const addressTo = await this.shippo.addresses.create({
+        name: order.shippingAddress.fullName || `${order.user.firstName} ${order.user.lastName}`,
+        street1: order.shippingAddress.line1 || order.shippingAddress.addressLine1,
+        street2: order.shippingAddress.line2 || order.shippingAddress.addressLine2 || '',
+        city: order.shippingAddress.city,
+        state: order.shippingAddress.state,
+        zip: order.shippingAddress.postalCode || order.shippingAddress.zip,
+        country: order.shippingAddress.country || 'US',
+        phone: order.shippingAddress.phone || order.user.phone || '',
+        email: order.user.email,
+      });
+
+      // Create line items for the order
+      const lineItems = order.items.map((item: any) => ({
+        title: item.product.name,
+        quantity: item.quantity,
+        total_price: item.lineTotal.toString(),
+        currency: 'USD',
+        weight: '0.5', // Default weight, adjust based on product
+        weight_unit: 'lb',
+      }));
+
+      // Create order in Shippo
+      const shippoOrder = await this.shippo.orders.create({
+        toAddress: addressTo.objectId,
+        lineItems,
+        placedAt: new Date().toISOString(),
+        orderNumber: order.id,
+        orderStatus: 'PAID',
+        shippingMethod: this.getShippingMethodFromProcessingType(order.processingType),
+        shippingCost: order.shipping.toString(),
+        shippingCostCurrency: 'USD',
+        subtotalPrice: order.subtotal.toString(),
+        totalPrice: order.total.toString(),
+        totalTax: order.tax.toString(),
+        currency: 'USD',
+        weight: '1', // Total weight, adjust based on items
+        weightUnit: 'lb',
+        notes: `Processing: ${order.processingType}${order.insuranceSelected ? ' | Insurance: Yes' : ''}`,
+      });
+
+      this.logger.log(`Shippo order created: ${shippoOrder.objectId} for order ${order.id}`);
+
+      // Store Shippo order ID in database for reference
+      await this.prisma.order.update({
+        where: { id: order.id },
+        data: {
+          metadata: {
+            shippoOrderId: shippoOrder.objectId,
+          },
+        },
+      });
+    } catch (error: any) {
+      this.logger.error(`Failed to create Shippo order: ${error.message}`, error.stack);
+      // Don't throw - this is non-critical, owner can create manually
+    }
+  }
+
+  /**
+   * Map processing type to Shippo shipping method
+   */
+  private getShippingMethodFromProcessingType(processingType: string): string {
+    switch (processingType) {
+      case 'RUSH':
+        return 'Express';
+      case 'EXPEDITED':
+        return 'Priority';
+      case 'STANDARD':
+      default:
+        return 'Standard';
+    }
+  }
+
   async trackShipment(trackingNumber: string) {
     if (!this.isConfigured || !this.shippo) {
       throw new BadRequestException('Shippo is not configured');

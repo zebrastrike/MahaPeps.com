@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HeroVideo } from "@/components/hero/hero-video";
+import { MarketStats } from "@/components/home/market-stats";
 import { Beaker, Shield, FileText, MapPin, ChevronRight } from "lucide-react";
 
 export default function HomePage() {
@@ -18,9 +19,9 @@ export default function HomePage() {
               <Image
                 src="/branding/maha-logo.png"
                 alt="MAHA Peptides"
-                width={280}
-                height={100}
-                className="h-20 w-auto md:h-24"
+                width={400}
+                height={145}
+                className="h-32 w-auto md:h-40 [filter:drop-shadow(0_0_10px_rgba(220,38,38,0.7))_drop-shadow(0_0_20px_rgba(255,255,255,0.5))]"
                 priority
               />
             </div>
@@ -89,6 +90,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Market Data Stats */}
+      <MarketStats />
 
       {/* Features Section */}
       <section className="bg-charcoal-800 py-16 lg:py-24">

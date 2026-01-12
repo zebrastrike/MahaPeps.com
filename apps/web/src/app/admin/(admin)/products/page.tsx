@@ -63,7 +63,7 @@ export default function AdminProductsPage() {
   const rows = useMemo(() => {
     return products.flatMap((product) => {
       if (!product.variants || product.variants.length === 0) {
-        return [{ product, variant: null }];
+        return [] as { product: typeof product; variant: any }[];
       }
       return product.variants.map((variant) => ({ product, variant }));
     });
