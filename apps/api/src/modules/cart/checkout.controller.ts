@@ -68,11 +68,10 @@ export class CheckoutController {
         postalCode: string;
         country: string;
       };
-      selectedShippingRate?: {
-        provider: string;
-        serviceName: string;
-        amount: string;
-      };
+      shippingTier: 'standard' | 'priority' | 'express';
+      shippingCost: number;
+      orderInsurance?: boolean;
+      processingType?: 'STANDARD' | 'EXPEDITED' | 'RUSH';
       compliance: {
         researchPurposeOnly: boolean;
         responsibilityAccepted: boolean;

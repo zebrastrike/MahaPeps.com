@@ -76,7 +76,7 @@ export function ProductCard({
     variants.find((variant) => variant.id === selectedVariantId) || variants[0];
 
   const displayImage = imageError || !imageUrl
-    ? "/images/placeholder-product.png"
+    ? "/products/placeholder.png"
     : imageUrl;
 
   const variantHasCoa = selectedVariant?.hasCoa ?? hasCoa;

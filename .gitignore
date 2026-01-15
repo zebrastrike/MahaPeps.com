@@ -6,6 +6,10 @@
 .env.test
 .env.production
 
+# Test files with credentials
+e2e-test.js
+**/e2e-test.js
+
 # Dependencies
 node_modules/
 

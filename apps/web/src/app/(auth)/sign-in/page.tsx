@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Mail, Lock, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,21 +38,22 @@ export default function SignInPage() {
         throw new Error(data.message || 'Invalid email or password');
       }
 
-      // Store token
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem('auth_token', data.access_token);
-      storage.setItem('user', JSON.stringify(data.user));
+      // Store token (use both keys for compatibility)
+      const token = data.accessToken || data.access_token;
+      localStorage.setItem('token', token);
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user', JSON.stringify(data.user));
 
-      // Redirect based on user role
-      const role = data.user?.role;
-      if (role === 'ADMIN') {
-        router.push('/admin');
-      } else if (role === 'CLINIC') {
-        router.push('/dashboard'); // Clinic dashboard
-      } else if (role === 'DISTRIBUTOR') {
-        router.push('/dashboard'); // Distributor dashboard
+      // Redirect to intended destination or based on user role
+      if (redirectTo) {
+        router.push(redirectTo);
       } else {
-        router.push('/dashboard'); // Client dashboard
+        const role = data.user?.role;
+        if (role === 'ADMIN') {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during sign in');

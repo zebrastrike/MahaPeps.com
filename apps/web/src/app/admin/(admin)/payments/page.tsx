@@ -39,11 +39,7 @@ export default function AdminPaymentsPage() {
 
   const fetchPendingPayments = async () => {
     try {
-      const response = await fetch("/api/payments/pending", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch("/api/admin/payments/pending");
 
       if (response.ok) {
         const data = await response.json();
@@ -66,10 +62,9 @@ export default function AdminPaymentsPage() {
     setActionInProgress(paymentId);
 
     try {
-      const response = await fetch(`/api/payments/${paymentId}/approve`, {
+      const response = await fetch(`/api/admin/payments/${paymentId}/approve`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
       });
@@ -98,10 +93,9 @@ export default function AdminPaymentsPage() {
     setActionInProgress(paymentId);
 
     try {
-      const response = await fetch(`/api/payments/${paymentId}/reject`, {
+      const response = await fetch(`/api/admin/payments/${paymentId}/reject`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ reason: rejectionReason }),

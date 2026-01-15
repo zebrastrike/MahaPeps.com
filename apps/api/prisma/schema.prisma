@@ -208,6 +208,7 @@ model Product {
   slug             String?          @unique
   description      String?
   sku              String           @unique
+  imageUrl         String?          // Product image URL (local path or external URL)
   category         ProductCategory? // ✅ Now uses enum instead of String
   form             String?
   concentration    String?

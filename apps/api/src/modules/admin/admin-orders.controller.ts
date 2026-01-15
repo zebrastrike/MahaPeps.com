@@ -60,7 +60,7 @@ export class AdminOrdersController {
             select: {
               id: true,
               email: true,
-              name: true,
+              phone: true,
             },
           },
           items: {
@@ -114,15 +114,13 @@ export class AdminOrdersController {
           select: {
             id: true,
             email: true,
-            name: true,
+            phone: true,
             role: true,
           },
         },
         items: {
           include: {
             product: true,
-            variant: true,
-            batch: true,
           },
         },
         shippingAddress: true,
@@ -135,11 +133,7 @@ export class AdminOrdersController {
             createdAt: 'desc',
           },
         },
-        paymentLink: {
-          include: {
-            paymentProof: true,
-          },
-        },
+        paymentLink: true,
       },
     });
 

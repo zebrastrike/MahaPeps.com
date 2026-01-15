@@ -71,8 +71,45 @@ export default function ProductsPage() {
     }
   };
 
-  const handleAddToCart = (productId: string, variantId?: string) => {
-    alert("Cart functionality is coming soon.");
+  const handleAddToCart = async (productId: string, variantId?: string) => {
+    if (!variantId) {
+      alert("Please select a product variant first");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to add items to your cart");
+      window.location.href = "/sign-in";
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/cart/items", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          variantId,
+          quantity: 1,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Added to cart!");
+      } else if (response.status === 401) {
+        alert("Please log in to add items to your cart");
+        window.location.href = "/sign-in";
+      } else {
+        const data = await response.json();
+        alert(data.message || "Failed to add to cart");
+      }
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      alert("Failed to add to cart");
+    }
   };
 
   const handleToggleWishlist = (productId: string) => {

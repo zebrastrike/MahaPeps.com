@@ -40,8 +40,9 @@ export class CatalogService {
               where: {
                 isActive: true,
                 isAvailable: true,
-                coaFileId: { not: null },
-                expiresAt: { gt: now },
+                // COA enforcement temporarily disabled
+                // coaFileId: { not: null },
+                // expiresAt: { gt: now },
               },
               take: 1,
               include: { coaFile: true },
@@ -74,8 +75,9 @@ export class CatalogService {
               where: {
                 isActive: true,
                 isAvailable: true,
-                coaFileId: { not: null },
-                expiresAt: { gt: now },
+                // COA enforcement temporarily disabled
+                // coaFileId: { not: null },
+                // expiresAt: { gt: now },
               },
               take: 1,
               include: { coaFile: true },
@@ -145,6 +147,7 @@ export class CatalogService {
       name: product.name,
       description: product.description,
       sku: product.sku,
+      imageUrl: product.imageUrl,
       category: product.category,
       isActive: product.isActive,
       stockStatus: product.stockStatus,

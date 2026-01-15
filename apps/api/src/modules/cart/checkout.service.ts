@@ -6,6 +6,20 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { EmailTemplatesService } from '../notifications/email-templates.service';
 import { randomBytes } from 'crypto';
 
+// Flat rate shipping tier pricing
+const SHIPPING_TIER_PRICES: Record<string, number> = {
+  standard: 15,
+  priority: 25,
+  express: 45,
+};
+
+// Processing fee pricing
+const PROCESSING_FEES: Record<string, number> = {
+  STANDARD: 0,
+  EXPEDITED: 25,
+  RUSH: 50,
+};
+
 interface CheckoutDto {
   shippingAddress: {
     line1: string;
@@ -23,11 +37,10 @@ interface CheckoutDto {
     postalCode: string;
     country: string;
   };
-  selectedShippingRate?: {
-    provider: string;
-    serviceName: string;
-    amount: string;
-  };
+  shippingTier: 'standard' | 'priority' | 'express';
+  shippingCost: number;
+  orderInsurance?: boolean;
+  processingType?: 'STANDARD' | 'EXPEDITED' | 'RUSH';
   compliance: {
     researchPurposeOnly: boolean;
     responsibilityAccepted: boolean;
@@ -103,18 +116,29 @@ export class CheckoutService {
       data: dto.billingAddress,
     });
 
-    // Calculate final shipping cost
-    const shippingCost = dto.selectedShippingRate
-      ? new Prisma.Decimal(dto.selectedShippingRate.amount)
-      : new Prisma.Decimal(15.00); // Fallback if no rate selected
+    // Calculate shipping cost from flat rate tier (validate against server-side pricing)
+    const serverShippingPrice = SHIPPING_TIER_PRICES[dto.shippingTier] || 15;
+    const shippingCost = new Prisma.Decimal(serverShippingPrice);
+
+    // Calculate processing fee
+    const processingType = dto.processingType || 'STANDARD';
+    const processingFee = new Prisma.Decimal(PROCESSING_FEES[processingType] || 0);
+
+    // Calculate insurance fee (2% of subtotal, min $2, max $50)
+    let insuranceFee = new Prisma.Decimal(0);
+    if (dto.orderInsurance) {
+      const subtotalNum = parseFloat(cart.subtotal.toString());
+      const insuranceAmount = Math.max(2, Math.min(50, subtotalNum * 0.02));
+      insuranceFee = new Prisma.Decimal(insuranceAmount);
+    }
 
     // TODO: Calculate tax based on shipping address (Avalara/TaxJar integration)
     const tax = new Prisma.Decimal(0);
 
-    // Recalculate total with final shipping
-    const total = cart.subtotal.add(tax).add(shippingCost);
+    // Recalculate total with shipping + processing + insurance
+    const total = cart.subtotal.add(tax).add(shippingCost).add(processingFee).add(insuranceFee);
 
-    // Update order with addresses, shipping, and transition to PENDING_PAYMENT
+    // Update order with addresses, shipping, processing, and transition to PENDING_PAYMENT
     const order = await this.prisma.order.update({
       where: { id: cart.id },
       data: {
@@ -122,6 +146,8 @@ export class CheckoutService {
         shippingAddressId: shippingAddress.id,
         billingAddressId: billingAddress.id,
         shipping: shippingCost,
+        processingType: processingType as any,
+        processingFee,
         tax,
         total,
       },
@@ -166,6 +192,7 @@ export class CheckoutService {
         currency: 'USD',
         status: 'PENDING',
         expiresAt,
+        customerEmail: order.user.email,
       },
     });
 

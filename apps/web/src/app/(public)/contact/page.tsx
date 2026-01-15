@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, Phone, MapPin, Send, AlertCircle, CheckCircle, Loader2, MessageSquare } from 'lucide-react';
+import { Mail, MapPin, Send, AlertCircle, CheckCircle, Loader2, MessageSquare } from 'lucide-react';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -136,23 +136,20 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Phone Card */}
+              {/* Response Time Card */}
               <div className="rounded-xl border border-charcoal-700/50 bg-charcoal-800/90 p-6 shadow-glass backdrop-blur-sm">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent-500/10 text-accent-400">
-                  <Phone className="h-6 w-6" />
+                  <MessageSquare className="h-6 w-6" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-clinical-white">Call Us</h3>
+                <h3 className="mb-2 text-lg font-semibold text-clinical-white">Quick Response</h3>
                 <p className="mb-3 text-sm text-charcoal-300">
-                  Speak with our sales team about bulk orders and custom solutions
+                  Our team responds to all inquiries within 24 hours
                 </p>
-                <a
-                  href="tel:+18005551234"
-                  className="text-sm font-medium text-accent-400 hover:text-accent-300"
-                >
-                  +1 (800) 555-1234
-                </a>
+                <p className="text-sm text-accent-400 font-medium">
+                  Use the form to send us a message
+                </p>
                 <p className="mt-2 text-xs text-charcoal-400">
-                  Mon-Fri: 9AM - 6PM EST
+                  Business hours: Mon-Fri 9AM - 6PM MST
                 </p>
               </div>
 

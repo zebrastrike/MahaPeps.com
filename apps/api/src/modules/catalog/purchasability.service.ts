@@ -19,7 +19,8 @@ export class PurchasabilityService {
           where: {
             isActive: true,
             isAvailable: true,
-            coaFileId: { not: null },
+            // COA enforcement temporarily disabled - will be re-enabled once COAs are uploaded
+            // coaFileId: { not: null },
           },
           take: 1,
         },
@@ -44,7 +45,9 @@ export class PurchasabilityService {
     const activeBatch = variant.batches[0];
 
     if (!activeBatch) {
-      return { purchasable: false, reason: 'No active batch with COA' };
+      // COA enforcement disabled - allow purchase without batch for now
+      // return { purchasable: false, reason: 'No active batch with COA' };
+      return { purchasable: true }; // Temporarily allow all products
     }
 
     if (activeBatch.expiresAt && activeBatch.expiresAt < new Date()) {

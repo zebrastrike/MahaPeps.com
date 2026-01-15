@@ -5,9 +5,11 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { AuditModule } from '../../audit/audit.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { OrdersModule } from '../orders/orders.module';
+import { PaymentsModule } from '../payments/payments.module';
 import { AdminController } from './admin.controller';
 import { AdminProductsController } from './admin-products.controller';
 import { AdminOrdersController } from './admin-orders.controller';
+import { AdminPaymentsController } from './admin-payments.controller';
 import { AdminService } from './admin.service';
 import { AdminProductsService } from './admin-products.service';
 
@@ -19,8 +21,9 @@ import { AdminProductsService } from './admin-products.service';
     AuditModule,
     NotificationsModule,
     OrdersModule,
+    PaymentsModule,
   ],
-  controllers: [AdminController, AdminProductsController, AdminOrdersController],
+  controllers: [AdminController, AdminProductsController, AdminOrdersController, AdminPaymentsController],
   providers: [AdminService, AdminProductsService],
   exports: [AdminService, AdminProductsService],
 })
