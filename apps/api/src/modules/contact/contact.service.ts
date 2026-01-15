@@ -1,17 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { EmailTemplatesService } from '../notifications/email-templates.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ContactService {
   private readonly logger = new Logger(ContactService.name);
 
-  constructor(private readonly emailTemplates: EmailTemplatesService) {}
+  constructor(
+    private readonly emailTemplates: EmailTemplatesService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   async submitContactForm(dto: CreateContactDto) {
     try {
-      // Send notification email to support team
-      await this.emailTemplates.sendContactFormNotification({
+      // Generate notification email for support team
+      const notificationEmail = this.emailTemplates.getContactFormNotificationEmail({
         name: dto.name,
         email: dto.email,
         phone: dto.phone || 'Not provided',
@@ -19,10 +23,23 @@ export class ContactService {
         message: dto.message,
       });
 
-      // Send confirmation email to user
-      await this.emailTemplates.sendContactConfirmation({
+      // Send notification email to support
+      await this.notifications.sendEmail({
+        to: process.env.ADMIN_EMAIL || 'support@mahapeps.com',
+        subject: notificationEmail.subject,
+        html: notificationEmail.html,
+      });
+
+      // Generate and send confirmation email to user
+      const confirmationEmail = this.emailTemplates.getContactConfirmationEmail({
         name: dto.name,
         email: dto.email,
+      });
+
+      await this.notifications.sendEmail({
+        to: dto.email,
+        subject: confirmationEmail.subject,
+        html: confirmationEmail.html,
       });
 
       this.logger.log(`Contact form submitted by ${dto.email}`);

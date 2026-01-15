@@ -80,7 +80,15 @@ export class PricingService {
       });
     }
 
+    // If no tier found, fall back to variant's priceCents (for retail products)
     if (!tier) {
+      if (variant.priceCents && variant.priceCents > 0) {
+        return {
+          price: new Prisma.Decimal(variant.priceCents).dividedBy(100),
+          tier: null,
+          catalogType,
+        };
+      }
       throw new BadRequestException('Pricing not available for this quantity');
     }
 

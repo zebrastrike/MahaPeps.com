@@ -39,7 +39,12 @@
       "Bash(npm run:*)",
       "Bash(curl:*)",
       "Bash(taskkill:*)",
-      "Bash(1)"
+      "Bash(1)",
+      "Bash(where:*)",
+      "Bash(timeout:*)",
+      "Bash(node -e:*)",
+      "Bash(node e2e-test.js:*)",
+      "Bash(git check-ignore:*)"
     ]
   }
 }

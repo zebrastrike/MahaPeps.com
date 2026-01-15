@@ -38,6 +38,7 @@ interface ProductDetail {
   concentration?: string;
   casNumber?: string;
   molecularFormula?: string;
+  imageUrl?: string | null;
   isActive: boolean;
   stockStatus?: string;
   expectedRestockDate?: string | null;
@@ -117,30 +118,51 @@ export default function ProductDetailPage() {
 
   const selectedVariant = product?.variants.find((variant) => variant.id === selectedVariantId);
   const priceLabel = formatPrice(selectedVariant?.priceCents);
+  // COA enforcement disabled - allow purchase without batch selection
   const canPurchase = Boolean(
-    product?.isActive && selectedVariant?.purchasable && selectedBatch
+    product?.isActive && selectedVariant
   );
   const isOutOfStock = product?.stockStatus === "OUT_OF_STOCK";
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedVariant) {
       alert("Please select a strength first");
       return;
     }
 
-    if (!selectedBatch) {
-      alert("Please select a batch first");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to add items to your cart");
+      window.location.href = "/sign-in";
       return;
     }
 
-    console.log("Add to cart:", {
-      productId,
-      variantId: selectedVariant.id,
-      batchId: selectedBatch.id,
-      quantity,
-    });
+    try {
+      const response = await fetch("/api/cart/items", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          variantId: selectedVariant.id,
+          quantity,
+        }),
+      });
 
-    alert("Added to cart (cart functionality coming soon)");
+      if (response.ok) {
+        alert(`Added ${quantity} item(s) to cart!`);
+      } else if (response.status === 401) {
+        alert("Please log in to add items to your cart");
+        window.location.href = "/sign-in";
+      } else {
+        const data = await response.json();
+        alert(data.message || "Failed to add to cart");
+      }
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      alert("Failed to add to cart");
+    }
   };
 
   const handleViewCoa = () => {
@@ -215,8 +237,19 @@ export default function ProductDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Product Image */}
             <div className="bg-white border rounded-lg p-8">
-              <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                <Beaker className="w-32 h-32 text-gray-300" />
+              <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                {product.imageUrl ? (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                ) : null}
+                <Beaker className={`w-32 h-32 text-gray-300 ${product.imageUrl ? 'hidden' : ''}`} />
               </div>
 
               {/* Quick Info Pills */}
@@ -313,7 +346,7 @@ export default function ProductDetailPage() {
                   <select
                     value={selectedVariantId || ""}
                     onChange={(event) => setSelectedVariantId(event.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-blue-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
                     {product.variants.map((variant) => (
                       <option key={variant.id} value={variant.id}>
@@ -353,7 +386,7 @@ export default function ProductDetailPage() {
                   min="1"
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-blue-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
 

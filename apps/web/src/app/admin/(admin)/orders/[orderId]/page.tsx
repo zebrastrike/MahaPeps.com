@@ -104,15 +104,15 @@ export default function OrderDetailPage() {
     setSubmitting(true);
 
     try {
-      const response = await fetch(`/api/admin/orders/${orderId}/mark-paid`, {
-        method: "PATCH",
+      const response = await fetch(`/api/admin/payments/orders/${orderId}/mark-paid`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           method: paymentMethod,
           transactionReference,
-          paymentProof,
+          notes: paymentProof,
         }),
       });
 

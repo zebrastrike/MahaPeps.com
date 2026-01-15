@@ -324,4 +324,26 @@ export class OrdersService {
       },
     });
   }
+
+  /**
+   * Admin marks order as paid directly (when seeing Zelle/CashApp come in)
+   * This is a convenience wrapper for the admin panel
+   */
+  async markAsPaidByAdmin(params: {
+    orderId: string;
+    adminId: string;
+    method: 'ZELLE' | 'CASHAPP' | 'WIRE_TRANSFER';
+    transactionReference?: string;
+    notes?: string;
+  }) {
+    return this.markOrderPaid(
+      params.orderId,
+      {
+        method: params.method,
+        transactionReference: params.transactionReference,
+        paymentProof: params.notes, // Store admin notes in paymentProof field
+      },
+      params.adminId,
+    );
+  }
 }

@@ -16,14 +16,30 @@ interface CartSummary {
   itemCount: number;
 }
 
-interface ShippingRate {
-  rateId: string;
-  provider: string;
-  serviceName: string;
-  estimatedDays: string;
-  amount: string;
-  currency: string;
-}
+// Flat rate shipping tiers
+const SHIPPING_TIERS = [
+  {
+    id: "standard",
+    name: "Standard Shipping",
+    description: "USPS Ground Advantage",
+    estimatedDays: "5-7 business days",
+    price: 15,
+  },
+  {
+    id: "priority",
+    name: "Priority Shipping",
+    description: "USPS Priority Mail",
+    estimatedDays: "2-3 business days",
+    price: 25,
+  },
+  {
+    id: "express",
+    name: "Express Shipping",
+    description: "USPS Priority Mail Express",
+    estimatedDays: "1-2 business days",
+    price: 45,
+  },
+];
 
 interface Address {
   line1: string;
@@ -69,10 +85,8 @@ export default function CheckoutPage() {
 
   const [sameAsShipping, setSameAsShipping] = useState(true);
 
-  // Shipping rates
-  const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
-  const [selectedRate, setSelectedRate] = useState<ShippingRate | null>(null);
-  const [fetchingRates, setFetchingRates] = useState(false);
+  // Shipping tier selection (flat rate)
+  const [selectedShippingTier, setSelectedShippingTier] = useState(SHIPPING_TIERS[0]);
 
   // Order insurance and processing options
   const [orderInsurance, setOrderInsurance] = useState(false);
@@ -129,47 +143,6 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleGetShippingRates = async () => {
-    if (
-      !shippingAddress.line1 ||
-      !shippingAddress.city ||
-      !shippingAddress.state ||
-      !shippingAddress.postalCode
-    ) {
-      alert("Please complete the shipping address first");
-      return;
-    }
-
-    setFetchingRates(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/checkout/shipping-rates", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ toAddress: shippingAddress }),
-      });
-
-      if (response.ok) {
-        const rates = await response.json();
-        setShippingRates(rates);
-        if (rates.length > 0) {
-          setSelectedRate(rates[0]); // Auto-select first rate
-        }
-      } else {
-        setError("Failed to fetch shipping rates");
-      }
-    } catch (err) {
-      console.error("Failed to fetch shipping rates:", err);
-      setError("Failed to fetch shipping rates");
-    } finally {
-      setFetchingRates(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -178,11 +151,6 @@ export default function CheckoutPage() {
     if (!Object.values(compliance).every((v) => v === true)) {
       setError("All compliance checkboxes must be accepted");
       window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-
-    if (!selectedRate) {
-      setError("Please select a shipping method");
       return;
     }
 
@@ -198,11 +166,8 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           shippingAddress,
           billingAddress: sameAsShipping ? shippingAddress : billingAddress,
-          selectedShippingRate: {
-            provider: selectedRate.provider,
-            serviceName: selectedRate.serviceName,
-            amount: selectedRate.amount,
-          },
+          shippingTier: selectedShippingTier.id,
+          shippingCost: selectedShippingTier.price,
           compliance,
           orderInsurance,
           processingType,
@@ -418,61 +383,45 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="mt-4">
-                <Button
-                  type="button"
-                  onClick={handleGetShippingRates}
-                  disabled={fetchingRates}
-                  variant="outline"
-                >
-                  {fetchingRates ? "Fetching rates..." : "Get Shipping Rates"}
-                </Button>
+            </section>
+
+            {/* Shipping Method - Flat Rate Tiers */}
+            <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
+              <h2 className="mb-4 text-xl font-bold text-clinical-white">Shipping Method</h2>
+              <div className="space-y-3">
+                {SHIPPING_TIERS.map((tier) => (
+                  <label
+                    key={tier.id}
+                    className={`flex cursor-pointer items-center justify-between rounded-md border p-4 transition-colors ${
+                      selectedShippingTier.id === tier.id
+                        ? "border-teal-500 bg-teal-900/20"
+                        : "border-charcoal-600 hover:border-charcoal-500"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="shippingTier"
+                        checked={selectedShippingTier.id === tier.id}
+                        onChange={() => setSelectedShippingTier(tier)}
+                        className="text-teal-500"
+                      />
+                      <div>
+                        <div className="font-medium text-clinical-white">{tier.name}</div>
+                        <div className="text-sm text-charcoal-400">{tier.description}</div>
+                        <div className="text-xs text-charcoal-500">{tier.estimatedDays}</div>
+                      </div>
+                    </div>
+                    <div className="text-lg font-bold text-clinical-white">
+                      ${tier.price.toFixed(2)}
+                    </div>
+                  </label>
+                ))}
               </div>
             </section>
 
-            {/* Shipping Rates */}
-            {shippingRates.length > 0 && (
-              <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
-                <h2 className="mb-4 text-xl font-bold text-clinical-white">Shipping Method</h2>
-                <div className="space-y-3">
-                  {shippingRates.map((rate) => (
-                    <label
-                      key={rate.rateId}
-                      className={`flex cursor-pointer items-center justify-between rounded-md border p-4 transition-colors ${
-                        selectedRate?.rateId === rate.rateId
-                          ? "border-teal-500 bg-teal-900/20"
-                          : "border-charcoal-600 hover:border-charcoal-500"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="shippingRate"
-                          checked={selectedRate?.rateId === rate.rateId}
-                          onChange={() => setSelectedRate(rate)}
-                          className="text-teal-500"
-                        />
-                        <div>
-                          <div className="font-medium text-clinical-white">
-                            {rate.provider} - {rate.serviceName}
-                          </div>
-                          <div className="text-sm text-charcoal-400">
-                            Estimated: {rate.estimatedDays} days
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-lg font-bold text-clinical-white">
-                        ${parseFloat(rate.amount).toFixed(2)}
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {/* Processing Speed */}
-            {shippingRates.length > 0 && (
-              <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
+            <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
                 <h2 className="mb-4 text-xl font-bold text-clinical-white">Processing Speed</h2>
                 <div className="space-y-3">
                   {/* STANDARD */}
@@ -554,12 +503,10 @@ export default function CheckoutPage() {
                   </label>
                 </div>
               </section>
-            )}
 
             {/* Order Insurance */}
-            {shippingRates.length > 0 && (
-              <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
-                <h2 className="mb-4 text-xl font-bold text-clinical-white">Shipping Protection</h2>
+            <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
+              <h2 className="mb-4 text-xl font-bold text-clinical-white">Shipping Protection</h2>
 
                 <label className="flex cursor-pointer items-start gap-4 rounded-md border border-charcoal-600 bg-charcoal-900/50 p-4 hover:border-accent-500 transition-colors">
                   <input
@@ -588,10 +535,9 @@ export default function CheckoutPage() {
                     <p className="text-xs text-charcoal-500 mt-2">
                       Cost: 2% of order total (min $2.00, max $50.00)
                     </p>
-                  </div>
-                </label>
-              </section>
-            )}
+                </div>
+              </label>
+            </section>
 
             {/* Billing Address */}
             <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
@@ -645,10 +591,8 @@ export default function CheckoutPage() {
                 <span>${cart.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-charcoal-300">
-                <span>Shipping</span>
-                <span>
-                  {selectedRate ? `$${parseFloat(selectedRate.amount).toFixed(2)}` : "TBD"}
-                </span>
+                <span>Shipping ({selectedShippingTier.name})</span>
+                <span>${selectedShippingTier.price.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-charcoal-300">
                 <span>Processing</span>
@@ -665,9 +609,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between border-t border-charcoal-700 pt-2 text-lg font-bold text-clinical-white">
                 <span>Total</span>
                 <span>
-                  ${selectedRate
-                    ? (cart.subtotal + parseFloat(selectedRate.amount) + processingFees[processingType] + calculateInsurance(cart.subtotal)).toFixed(2)
-                    : (cart.subtotal + processingFees[processingType] + calculateInsurance(cart.subtotal)).toFixed(2)}
+                  ${(cart.subtotal + selectedShippingTier.price + processingFees[processingType] + calculateInsurance(cart.subtotal)).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -675,15 +617,14 @@ export default function CheckoutPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={!allComplianceAccepted || !selectedRate || submitting}
+              disabled={!allComplianceAccepted || submitting}
             >
               {submitting ? "Processing..." : "Complete Checkout"}
             </Button>
 
-            {(!allComplianceAccepted || !selectedRate) && (
+            {!allComplianceAccepted && (
               <div className="rounded-md bg-amber-50 p-3 text-xs text-amber-900">
-                {!allComplianceAccepted && <p>✓ Accept all compliance terms</p>}
-                {!selectedRate && <p>✓ Select a shipping method</p>}
+                <p>Accept all compliance terms to proceed</p>
               </div>
             )}
           </aside>
