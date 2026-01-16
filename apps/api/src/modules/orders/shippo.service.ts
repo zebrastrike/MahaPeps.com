@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import Shippo from 'shippo';
+import { Shippo } from 'shippo';
 import { PrismaService } from '../../prisma/prisma.service';
 
 interface ShippingAddress {

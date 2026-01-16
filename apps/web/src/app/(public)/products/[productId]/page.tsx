@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { BatchSelector } from "@/components/product/batch-selector";
 import { CoaViewer } from "@/components/product/coa-viewer";
 import { Recommendations } from "@/components/product/recommendations";
+import { useCart } from "@/contexts/cart-context";
 import {
   ShoppingCart,
   FileText,
@@ -70,6 +71,7 @@ const formatPrice = (priceCents: number | null | undefined) => {
 export default function ProductDetailPage() {
   const params = useParams();
   const productId = params.productId as string;
+  const { refreshCart } = useCart();
 
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
@@ -151,6 +153,8 @@ export default function ProductDetailPage() {
       });
 
       if (response.ok) {
+        // Refresh cart count in navbar
+        await refreshCart();
         alert(`Added ${quantity} item(s) to cart!`);
       } else if (response.status === 401) {
         alert("Please log in to add items to your cart");

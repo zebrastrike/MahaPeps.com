@@ -138,10 +138,14 @@ export default function OrderDetailPage() {
     setSubmitting(true);
 
     try {
+      // Get JWT token from localStorage
+      const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+
       const response = await fetch(`/api/admin/orders/${orderId}/create-shipment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           carrier,

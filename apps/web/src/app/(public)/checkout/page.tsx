@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DisclaimerBar } from "@/components/layout/disclaimer-bar";
+import { Info } from "lucide-react";
 
 interface CartSummary {
   items: Array<{
@@ -54,6 +55,11 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [cart, setCart] = useState<CartSummary | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Customer information
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
 
   // Compliance checkboxes
   const [compliance, setCompliance] = useState({
@@ -110,7 +116,14 @@ export default function CheckoutPage() {
   };
 
   useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/sign-in?redirect=/checkout");
+      return;
+    }
     fetchCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCart = async () => {
@@ -148,6 +161,12 @@ export default function CheckoutPage() {
     setError(null);
 
     // Validation
+    if (!firstName || !lastName) {
+      setError("Please enter your first and last name");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     if (!Object.values(compliance).every((v) => v === true)) {
       setError("All compliance checkboxes must be accepted");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -164,6 +183,9 @@ export default function CheckoutPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          firstName,
+          lastName,
+          phone,
           shippingAddress,
           billingAddress: sameAsShipping ? shippingAddress : billingAddress,
           shippingTier: selectedShippingTier.id,
@@ -218,6 +240,20 @@ export default function CheckoutPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <h1 className="mb-8 text-3xl font-bold text-clinical-white">Checkout</h1>
+
+      {/* Payment Process Explanation */}
+      <div className="mb-6 rounded-lg border border-accent-500/30 bg-gradient-to-r from-accent-900/20 to-charcoal-800/50 p-4">
+        <div className="flex items-start gap-3">
+          <Info className="h-5 w-5 flex-shrink-0 text-accent-400 mt-0.5" />
+          <div className="text-sm text-charcoal-200">
+            <p className="font-semibold text-clinical-white mb-1">How Payment Works</p>
+            <p>
+              After checkout, you'll receive a secure payment invoice via email with instructions for Zelle, CashApp, or wire transfer.
+              Once payment is confirmed, order fulfillment begins immediately. <strong>Most orders ship the next business day.</strong>
+            </p>
+          </div>
+        </div>
+      </div>
 
       {error && (
         <div className="mb-6 rounded-lg border-2 border-red-500 bg-red-50 p-4 text-red-900">
@@ -302,6 +338,45 @@ export default function CheckoutPage() {
                   ⚠️ All compliance checkboxes must be accepted to proceed
                 </div>
               )}
+            </section>
+
+            {/* Customer Information */}
+            <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
+              <h2 className="mb-4 text-xl font-bold text-clinical-white">Contact Information</h2>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm text-charcoal-300">First Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full rounded-md border border-charcoal-600 bg-charcoal-900 px-3 py-2 text-clinical-white"
+                    placeholder="John"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm text-charcoal-300">Last Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full rounded-md border border-charcoal-600 bg-charcoal-900 px-3 py-2 text-clinical-white"
+                    placeholder="Smith"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="mb-1 block text-sm text-charcoal-300">Phone Number (optional)</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full rounded-md border border-charcoal-600 bg-charcoal-900 px-3 py-2 text-clinical-white"
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+              </div>
             </section>
 
             {/* Shipping Address */}
@@ -504,11 +579,11 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
-            {/* Order Insurance */}
+            {/* MAHA Shipping Protection */}
             <section className="rounded-lg border border-charcoal-700 bg-charcoal-800 p-6">
-              <h2 className="mb-4 text-xl font-bold text-clinical-white">Shipping Protection</h2>
+              <h2 className="mb-4 text-xl font-bold text-clinical-white">MAHA Shipping Protection</h2>
 
-                <label className="flex cursor-pointer items-start gap-4 rounded-md border border-charcoal-600 bg-charcoal-900/50 p-4 hover:border-accent-500 transition-colors">
+                <label className="flex cursor-pointer items-start gap-4 rounded-md border border-accent-500/30 bg-gradient-to-br from-charcoal-900/80 to-accent-900/10 p-4 hover:border-accent-500 transition-colors">
                   <input
                     type="checkbox"
                     checked={orderInsurance}
@@ -517,23 +592,24 @@ export default function CheckoutPage() {
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold text-clinical-white">🛡️ Order Protection</span>
+                      <span className="font-semibold text-clinical-white">🛡️ MAHA Protection Coverage</span>
                       <span className="font-bold text-accent-400">
                         +${calculateInsurance(cart.subtotal).toFixed(2)}
                       </span>
                     </div>
-                    <p className="text-sm text-charcoal-300 mb-2">
-                      Protect your order against loss, theft, or damage during shipping.
-                      Get a full refund or replacement if something goes wrong.
+                    <p className="text-sm text-charcoal-200 mb-3">
+                      MAHA Peptides guarantees your research materials arrive safely. If your order is lost,
+                      stolen, or damaged during transit, we'll replace it or provide a full refund—no questions asked.
                     </p>
-                    <ul className="text-xs text-charcoal-400 space-y-1">
-                      <li>✓ Coverage for lost packages</li>
-                      <li>✓ Protection against shipping damage</li>
-                      <li>✓ Theft protection</li>
-                      <li>✓ Fast claim processing</li>
+                    <ul className="text-xs text-charcoal-300 space-y-1 mb-2">
+                      <li>✓ Full replacement guarantee for lost packages</li>
+                      <li>✓ Temperature-controlled shipping damage coverage</li>
+                      <li>✓ Theft and porch piracy protection</li>
+                      <li>✓ Fast 24-48 hour claim processing</li>
+                      <li>✓ Backed by MAHA Peptides quality commitment</li>
                     </ul>
-                    <p className="text-xs text-charcoal-500 mt-2">
-                      Cost: 2% of order total (min $2.00, max $50.00)
+                    <p className="text-xs text-charcoal-400 mt-2">
+                      Protection Cost: 2% of order subtotal (minimum $2.00, maximum $50.00)
                     </p>
                 </div>
               </label>
@@ -599,7 +675,7 @@ export default function CheckoutPage() {
                 <span>${processingFees[processingType].toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-charcoal-300">
-                <span>Shipping Protection</span>
+                <span>MAHA Protection</span>
                 <span>${calculateInsurance(cart.subtotal).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-charcoal-300">
