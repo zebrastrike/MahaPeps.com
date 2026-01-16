@@ -6,6 +6,7 @@ import { ShoppingCart, User, Search, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { GlobalSearch } from "@/components/search/global-search";
+import { useCart } from "@/contexts/cart-context";
 
 export type HeaderProps = {
   title?: string;
@@ -15,6 +16,7 @@ export type HeaderProps = {
 export function Header({ title, subtitle }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { itemCount } = useCart();
 
   return (<header className="sticky top-0 z-50 border-b border-charcoal-700/50 bg-charcoal-900/95 backdrop-blur-sm">
       {searchOpen && <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
@@ -84,6 +86,11 @@ export function Header({ title, subtitle }: HeaderProps) {
                 aria-label="Cart"
               >
                 <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent-500 text-[10px] font-bold text-white">
+                    {itemCount > 9 ? '9+' : itemCount}
+                  </span>
+                )}
               </Link>
               <Button
                 asChild
@@ -119,37 +126,55 @@ export function Header({ title, subtitle }: HeaderProps) {
               <Link
                 href="/products"
                 className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Products
               </Link>
               <Link
                 href="/solutions"
                 className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Solutions
               </Link>
               <Link
                 href="/wholesale"
                 className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Wholesale
               </Link>
               <Link
                 href="/contact"
                 className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Contact
               </Link>
               <div className="pt-2 space-y-2">
                 <Link
+                  href="/checkout"
+                  className="flex items-center justify-between px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Cart</span>
+                  {itemCount > 0 && (
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent-500 text-xs font-bold text-white">
+                      {itemCount}
+                    </span>
+                  )}
+                </Link>
+                <Link
                   href="/sign-in"
                   className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/products"
                   className="block px-4 py-2 text-sm font-medium bg-accent-500 text-white hover:bg-accent-600 rounded-md transition-colors text-center"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   Browse Catalog
                 </Link>

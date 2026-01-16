@@ -52,7 +52,8 @@ export default function SignInPage() {
         if (role === 'ADMIN') {
           router.push('/admin');
         } else {
-          router.push('/dashboard');
+          // Redirect customers back to products page after login
+          router.push('/products');
         }
       }
     } catch (err: any) {

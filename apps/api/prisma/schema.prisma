@@ -112,6 +112,8 @@ model User {
   id                        String                     @id @default(uuid())
   email                     String                     @unique
   password                  String
+  firstName                 String?
+  lastName                  String?
   role                      UserRole                   @default(CLIENT)
   phone                     String?
   isActive                  Boolean                    @default(true)

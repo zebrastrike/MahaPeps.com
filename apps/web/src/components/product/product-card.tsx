@@ -129,7 +129,7 @@ export function ProductCard({
             src={displayImage}
             alt={name}
             onError={() => setImageError(true)}
-            className={`w-full h-full object-cover transition-transform duration-300 ${
+            className={`w-full h-full object-contain transition-transform duration-300 ${
               isHovered ? "scale-110" : "scale-100"
             }`}
           />

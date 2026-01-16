@@ -21,6 +21,9 @@ const PROCESSING_FEES: Record<string, number> = {
 };
 
 interface CheckoutDto {
+  firstName: string;
+  lastName: string;
+  phone?: string;
   shippingAddress: {
     line1: string;
     line2?: string;
@@ -64,6 +67,11 @@ export class CheckoutService {
    * Creates compliance acknowledgment and payment link
    */
   async checkout(userId: string, dto: CheckoutDto, ipAddress: string, userAgent?: string) {
+    // Validate firstName and lastName
+    if (!dto.firstName || !dto.lastName) {
+      throw new BadRequestException('First name and last name are required');
+    }
+
     // Validate all compliance checkboxes are TRUE
     if (
       !dto.compliance.researchPurposeOnly ||
@@ -137,6 +145,16 @@ export class CheckoutService {
 
     // Recalculate total with shipping + processing + insurance
     const total = cart.subtotal.add(tax).add(shippingCost).add(processingFee).add(insuranceFee);
+
+    // Update user with firstName, lastName, phone if provided
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        ...(dto.phone && { phone: dto.phone }),
+      },
+    });
 
     // Update order with addresses, shipping, processing, and transition to PENDING_PAYMENT
     const order = await this.prisma.order.update({
@@ -213,10 +231,15 @@ export class CheckoutService {
 
     // Send payment instructions email
     try {
+      // Build customer name from firstName/lastName or fallback to email
+      const customerName = order.user.firstName && order.user.lastName
+        ? `${order.user.firstName} ${order.user.lastName}`
+        : order.user.email.split('@')[0];
+
       const emailTemplate = this.emailTemplates.getPaymentInstructionsEmail({
         orderId: order.id,
         customerEmail: order.user.email,
-        customerName: order.user.name,
+        customerName,
         orderTotal: order.total.toString(),
         paymentToken: paymentLink.token,
         items: order.items.map((item) => ({

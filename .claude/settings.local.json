@@ -45,7 +45,10 @@
       "Bash(node -e:*)",
       "Bash(node e2e-test.js:*)",
       "Bash(git check-ignore:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(dir:*)",
+      "Bash(docker-compose:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }
