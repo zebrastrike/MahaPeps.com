@@ -44,7 +44,8 @@
       "Bash(timeout:*)",
       "Bash(node -e:*)",
       "Bash(node e2e-test.js:*)",
-      "Bash(git check-ignore:*)"
+      "Bash(git check-ignore:*)",
+      "Bash(chmod:*)"
     ]
   }
 }
