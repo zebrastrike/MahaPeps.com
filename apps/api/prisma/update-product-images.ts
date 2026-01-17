@@ -62,6 +62,11 @@ const PRODUCT_IMAGE_MAP: Record<string, string> = {
 
   // Sleep
   'dsip': '/products/dsip.png',
+
+  // Additional products with images
+  'tirzepatide': '/products/tirzepatide.png',
+  'mots-c': '/products/mots-c.png',
+  'melanotan-2': '/products/melanotan-2.png',
 };
 
 async function updateProductImages() {

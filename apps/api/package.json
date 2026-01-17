@@ -17,7 +17,8 @@
     "test:email": "ts-node src/test-email.ts",
     "seed:retail": "ts-node prisma/seed-retail-catalog.ts",
     "seed:admin": "ts-node prisma/seed-admin.ts",
-    "seed:images": "ts-node prisma/update-product-images.ts"
+    "seed:images": "ts-node prisma/update-product-images.ts",
+    "seed:batches": "ts-node prisma/seed-batches.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.540.0",

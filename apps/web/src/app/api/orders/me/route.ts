@@ -6,12 +6,19 @@ export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get("Authorization");
 
-    const response = await fetch(`${API_BASE_URL}/cart`, {
+    if (!authHeader) {
+      return NextResponse.json(
+        { error: "Authorization required" },
+        { status: 401 }
+      );
+    }
+
+    const response = await fetch(`${API_BASE_URL}/orders`, {
       method: "GET",
       headers: {
-        ...(authHeader ? { Authorization: authHeader } : {}),
+        Authorization: authHeader,
       },
-      cache: 'no-store', // Prevent Next.js from caching cart data
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -20,14 +27,9 @@ export async function GET(request: Request) {
     }
 
     const data = await response.json();
-    console.log("[API Route /api/cart] Returning cart data:", { itemCount: data?.itemCount, itemsLength: data?.items?.length });
-    return NextResponse.json(data, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-      },
-    });
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching cart:", error);
+    console.error("Error fetching user orders:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -21,8 +21,6 @@ import { BatchesService } from './batches.service';
 import { AuditService } from '../../audit/audit.service';
 
 @Controller('batches')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.ADMIN)
 export class BatchesController {
   constructor(
     private readonly batchesService: BatchesService,
@@ -39,6 +37,8 @@ export class BatchesController {
    * POST /batches/:batchId/coa
    */
   @Post(':batchId/coa')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   async uploadCoa(
     @Param('batchId') batchId: string,
@@ -114,6 +114,8 @@ export class BatchesController {
    * PATCH /batches/:batchId/purity
    */
   @Patch(':batchId/purity')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   async updateBatchPurity(
     @Param('batchId') batchId: string,
     @Body() body: { purityPercent: number; testingLab?: string },
@@ -144,6 +146,8 @@ export class BatchesController {
    * PATCH /batches/:batchId/deactivate
    */
   @Patch(':batchId/deactivate')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   async deactivateBatch(
     @Param('batchId') batchId: string,
     @Body() body: { reason?: string },

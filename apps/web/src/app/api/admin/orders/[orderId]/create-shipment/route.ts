@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 const API_BASE_URL = process.env.SERVER_API_BASE_URL || "http://localhost:3001";
 
@@ -10,14 +11,24 @@ export async function POST(
     const { orderId } = params;
     const body = await request.json();
 
-    // Get Authorization header from incoming request
+    // Get token from cookie or header
+    const cookieStore = cookies();
+    const tokenCookie = cookieStore.get("token");
     const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "") || tokenCookie?.value;
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Authorization required" },
+        { status: 401 }
+      );
+    }
 
     const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/create-shipment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(authHeader ? { Authorization: authHeader } : {}),
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });

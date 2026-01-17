@@ -153,8 +153,12 @@ export default function ProductDetailPage() {
       });
 
       if (response.ok) {
+        const cartData = await response.json();
+        console.log("[AddToCart] POST response:", cartData);
         // Refresh cart count in navbar
+        console.log("[AddToCart] Calling refreshCart...");
         await refreshCart();
+        console.log("[AddToCart] refreshCart completed");
         alert(`Added ${quantity} item(s) to cart!`);
       } else if (response.status === 401) {
         alert("Please log in to add items to your cart");

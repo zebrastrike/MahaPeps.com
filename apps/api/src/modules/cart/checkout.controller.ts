@@ -54,6 +54,7 @@ export class CheckoutController {
     body: {
       firstName: string;
       lastName: string;
+      email: string; // Email for payment invoice
       phone?: string;
       shippingAddress: {
         line1: string;
@@ -75,13 +76,7 @@ export class CheckoutController {
       shippingCost: number;
       orderInsurance?: boolean;
       processingType?: 'STANDARD' | 'EXPEDITED' | 'RUSH';
-      compliance: {
-        researchPurposeOnly: boolean;
-        responsibilityAccepted: boolean;
-        noMedicalAdvice: boolean;
-        ageConfirmation: boolean;
-        termsAccepted: boolean;
-      };
+      termsAccepted: boolean;
     },
     @Req() request: Request,
   ) {
