@@ -52,6 +52,9 @@ export class CheckoutController {
   async checkout(
     @Body()
     body: {
+      firstName: string;
+      lastName: string;
+      phone?: string;
       shippingAddress: {
         line1: string;
         line2?: string;

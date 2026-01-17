@@ -12,7 +12,6 @@ interface ProductVariantOption {
   priceCents: number | null;
   isActive: boolean;
   hasCoa?: boolean;
-  purchasable?: boolean;
 }
 
 interface ProductCardProps {
@@ -83,7 +82,8 @@ export function ProductCard({
   const variantSku = selectedVariant?.sku || sku;
   const priceLabel = formatPrice(selectedVariant?.priceCents ?? priceCents);
   const canPurchase =
-    isActive && ((selectedVariant?.purchasable ?? false) || variants.length === 0);
+    isActive &&
+    (selectedVariant ? selectedVariant.isActive && (selectedVariant.priceCents ?? 0) > 0 : true);
 
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();

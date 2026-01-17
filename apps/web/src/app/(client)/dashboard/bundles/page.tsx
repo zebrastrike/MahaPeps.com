@@ -1,7 +1,19 @@
-export default function ClientBundlesPage() {
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function BundlesPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to products - bundles feature not needed for B2C
+    router.push("/products");
+  }, [router]);
+
   return (
-    <p className="text-slate-700">
-      Research bundles placeholder for active and historical research applications.
-    </p>
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="text-charcoal-300">Redirecting...</p>
+    </div>
   );
 }

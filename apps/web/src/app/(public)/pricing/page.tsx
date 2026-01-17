@@ -1,3 +1,19 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function PricingPage() {
-  return <p className="text-slate-700">Summarize pricing tiers and plan comparisons.</p>;
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to products catalog - pricing shown on individual products
+    router.push("/products");
+  }, [router]);
+
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="text-charcoal-300">Redirecting to product catalog...</p>
+    </div>
+  );
 }
