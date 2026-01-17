@@ -9,12 +9,13 @@ export async function PATCH(
   try {
     const { orderId } = params;
     const body = await request.json();
+    const authHeader = request.headers.get("Authorization");
 
-    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/mark-paid`, {
+    const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/mark-paid`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        // TODO: Add authentication headers
+        ...(authHeader ? { Authorization: authHeader } : {}),
       },
       body: JSON.stringify(body),
     });

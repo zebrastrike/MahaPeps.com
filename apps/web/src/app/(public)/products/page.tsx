@@ -12,7 +12,6 @@ interface ProductVariant {
   priceCents: number | null;
   isActive: boolean;
   hasCoa?: boolean;
-  purchasable?: boolean;
 }
 
 interface Product {
@@ -112,9 +111,6 @@ export default function ProductsPage() {
     }
   };
 
-  const handleToggleWishlist = (productId: string) => {
-    // Wishlist functionality placeholder
-  };
 
   if (loading) {
     return (
@@ -162,7 +158,6 @@ export default function ProductsPage() {
         <ProductGrid
           products={products}
           onAddToCart={handleAddToCart}
-          onToggleWishlist={handleToggleWishlist}
           showFilters={true}
         />
       </div>

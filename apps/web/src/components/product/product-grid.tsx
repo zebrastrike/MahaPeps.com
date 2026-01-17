@@ -12,7 +12,6 @@ interface ProductVariant {
   priceCents: number | null;
   isActive: boolean;
   hasCoa?: boolean;
-  purchasable?: boolean;
 }
 
 interface Product {

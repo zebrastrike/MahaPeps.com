@@ -8,20 +8,19 @@ export async function GET(
 ) {
   try {
     const { orderId } = params;
+    const authHeader = request.headers.get("Authorization");
 
-    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+    const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // TODO: Add authentication headers
+        ...(authHeader ? { Authorization: authHeader } : {}),
       },
     });
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: "Failed to fetch order" },
-        { status: response.status }
-      );
+      const error = await response.json();
+      return NextResponse.json(error, { status: response.status });
     }
 
     const data = await response.json();
