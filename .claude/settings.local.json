@@ -48,7 +48,9 @@
       "Bash(chmod:*)",
       "Bash(dir:*)",
       "Bash(docker-compose:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(start \"\" \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\")",
+      "Bash(ping:*)"
     ]
   }
 }

@@ -413,6 +413,7 @@ model Address {
 
 model Order {
   id                       String                    @id @default(uuid())
+  orderNumber              String?                   @unique // Human-readable order number (e.g., "MP-2024-00001")
   userId                   String
   user                     User                      @relation(fields: [userId], references: [id])
   clinicId                 String?
@@ -421,6 +422,13 @@ model Order {
   distributor              Distributor?              @relation(fields: [distributorId], references: [id])
   accountType              OrderAccountType
   status                   OrderStatus
+
+  // Customer contact info (for invoice emails and shipping)
+  firstName                String?
+  lastName                 String?
+  phone                    String?
+  email                    String? // Email for payment invoice (may differ from user.email)
+
   subtotal                 Decimal                   @db.Decimal(12, 2)
   tax                      Decimal                   @db.Decimal(12, 2)
   shipping                 Decimal                   @db.Decimal(12, 2)
@@ -619,6 +627,21 @@ model Shipment {
 
   @@index([orderId])
   @@index([trackingNumber])
+}
+
+// ✅ SETTINGS - Store payment instructions and site config
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique // e.g., "PAYMENT_ZELLE_EMAIL", "PAYMENT_CASHAPP_TAG"
+  value     String   @db.Text
+  category  String?  // "PAYMENT", "SHIPPING", "GENERAL"
+  isPublic  Boolean  @default(false) // If true, can be accessed by frontend
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([category])
 }
 
 // ✅ CONTENT MANAGEMENT - Blog & FAQ

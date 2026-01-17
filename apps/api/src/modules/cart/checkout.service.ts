@@ -23,6 +23,7 @@ const PROCESSING_FEES: Record<string, number> = {
 interface CheckoutDto {
   firstName: string;
   lastName: string;
+  email: string; // Email for payment invoice
   phone?: string;
   shippingAddress: {
     line1: string;
@@ -44,13 +45,7 @@ interface CheckoutDto {
   shippingCost: number;
   orderInsurance?: boolean;
   processingType?: 'STANDARD' | 'EXPEDITED' | 'RUSH';
-  compliance: {
-    researchPurposeOnly: boolean;
-    responsibilityAccepted: boolean;
-    noMedicalAdvice: boolean;
-    ageConfirmation: boolean;
-    termsAccepted: boolean;
-  };
+  termsAccepted: boolean;
 }
 
 @Injectable()
@@ -67,21 +62,19 @@ export class CheckoutService {
    * Creates compliance acknowledgment and payment link
    */
   async checkout(userId: string, dto: CheckoutDto, ipAddress: string, userAgent?: string) {
-    // Validate firstName and lastName
+    // Validate firstName, lastName, and email
     if (!dto.firstName || !dto.lastName) {
       throw new BadRequestException('First name and last name are required');
     }
 
-    // Validate all compliance checkboxes are TRUE
-    if (
-      !dto.compliance.researchPurposeOnly ||
-      !dto.compliance.responsibilityAccepted ||
-      !dto.compliance.noMedicalAdvice ||
-      !dto.compliance.ageConfirmation ||
-      !dto.compliance.termsAccepted
-    ) {
+    if (!dto.email) {
+      throw new BadRequestException('Email address is required for payment invoice');
+    }
+
+    // Validate terms accepted
+    if (!dto.termsAccepted) {
       throw new BadRequestException(
-        'All compliance acknowledgments must be accepted before checkout',
+        'You must accept the Terms of Service to complete checkout',
       );
     }
 
@@ -156,11 +149,26 @@ export class CheckoutService {
       },
     });
 
-    // Update order with addresses, shipping, processing, and transition to PENDING_PAYMENT
+    // Generate order number (MP-YYYY-NNNNN format)
+    const year = new Date().getFullYear();
+    const orderCount = await this.prisma.order.count({
+      where: {
+        status: { not: OrderStatus.DRAFT },
+      },
+    });
+    const orderNumber = `MP-${year}-${String(orderCount + 1).padStart(5, '0')}`;
+
+    // Update order with addresses, shipping, processing, customer info, and transition to PENDING_PAYMENT
+    // Use email from checkout form (allows customer to specify different email for invoice)
     const order = await this.prisma.order.update({
       where: { id: cart.id },
       data: {
         status: OrderStatus.PENDING_PAYMENT,
+        orderNumber,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+        email: dto.email,
         shippingAddressId: shippingAddress.id,
         billingAddressId: billingAddress.id,
         shipping: shippingCost,
@@ -182,15 +190,16 @@ export class CheckoutService {
     });
 
     // Create compliance acknowledgment
+    // When user accepts terms, they acknowledge all compliance requirements
     await this.prisma.complianceAcknowledgment.create({
       data: {
         orderId: order.id,
         userId,
-        researchPurposeOnly: dto.compliance.researchPurposeOnly,
-        responsibilityAccepted: dto.compliance.responsibilityAccepted,
-        noMedicalAdvice: dto.compliance.noMedicalAdvice,
-        ageConfirmation: dto.compliance.ageConfirmation,
-        termsAccepted: dto.compliance.termsAccepted,
+        researchPurposeOnly: dto.termsAccepted,
+        responsibilityAccepted: dto.termsAccepted,
+        noMedicalAdvice: dto.termsAccepted,
+        ageConfirmation: dto.termsAccepted,
+        termsAccepted: dto.termsAccepted,
         ipAddress,
         userAgent,
       },
@@ -210,7 +219,7 @@ export class CheckoutService {
         currency: 'USD',
         status: 'PENDING',
         expiresAt,
-        customerEmail: order.user.email,
+        customerEmail: order.email,
       },
     });
 
@@ -231,14 +240,14 @@ export class CheckoutService {
 
     // Send payment instructions email
     try {
-      // Build customer name from firstName/lastName or fallback to email
-      const customerName = order.user.firstName && order.user.lastName
-        ? `${order.user.firstName} ${order.user.lastName}`
-        : order.user.email.split('@')[0];
+      // Build customer name from order firstName/lastName or fallback to email
+      const customerName = order.firstName && order.lastName
+        ? `${order.firstName} ${order.lastName}`
+        : order.email.split('@')[0];
 
       const emailTemplate = this.emailTemplates.getPaymentInstructionsEmail({
         orderId: order.id,
-        customerEmail: order.user.email,
+        customerEmail: order.email,
         customerName,
         orderTotal: order.total.toString(),
         paymentToken: paymentLink.token,
@@ -253,8 +262,9 @@ export class CheckoutService {
         tax: order.tax.toString(),
       });
 
+      // Send to email from checkout form (allows different from account email)
       await this.notifications.sendEmail({
-        to: order.user.email,
+        to: order.email,
         subject: emailTemplate.subject,
         html: emailTemplate.html,
       });
@@ -327,8 +337,13 @@ export class CheckoutService {
   private formatOrder(order: any) {
     return {
       id: order.id,
+      orderNumber: order.orderNumber,
       status: order.status,
       accountType: order.accountType,
+      firstName: order.firstName,
+      lastName: order.lastName,
+      phone: order.phone,
+      email: order.email,
       items: order.items?.map((item: any) => ({
         id: item.id,
         productId: item.productId,

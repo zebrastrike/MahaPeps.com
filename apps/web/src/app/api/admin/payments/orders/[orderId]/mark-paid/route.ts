@@ -3,7 +3,10 @@ import { cookies } from "next/headers";
 
 const API_BASE_URL = process.env.SERVER_API_BASE_URL || "http://localhost:3001";
 
-export async function GET(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: { orderId: string } }
+) {
   try {
     // Get token from cookie or header
     const cookieStore = cookies();
@@ -18,21 +21,15 @@ export async function GET(request: Request) {
       );
     }
 
-    // Parse query params
-    const { searchParams } = new URL(request.url);
-    const limit = searchParams.get("limit");
-    const status = searchParams.get("status");
-    const queryString = new URLSearchParams();
-    if (limit) queryString.set("limit", limit);
-    if (status) queryString.set("status", status);
+    const body = await request.json().catch(() => ({}));
 
-    const response = await fetch(`${API_BASE_URL}/admin/orders${queryString.toString() ? `?${queryString}` : ""}`, {
-      method: "GET",
+    const response = await fetch(`${API_BASE_URL}/admin/payments/orders/${params.orderId}/mark-paid`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      cache: 'no-store',
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -43,7 +40,10 @@ export async function GET(request: Request) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error marking order as paid:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

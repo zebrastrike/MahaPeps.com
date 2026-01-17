@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LogIn, UserPlus, Home, ShoppingBag } from "lucide-react";
 
 interface Order {
   id: string;
@@ -22,16 +23,32 @@ export default function ClientOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // Check for token first
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsAuthenticated(false);
+      setLoading(false);
+      return;
+    }
+    setIsAuthenticated(true);
     fetchOrders();
   }, []);
 
   const fetchOrders = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch("/api/orders/me", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -39,7 +56,7 @@ export default function ClientOrdersPage() {
         const data = await response.json();
         setOrders(data);
       } else if (response.status === 401) {
-        setError("Please log in to view your orders");
+        setIsAuthenticated(false);
       } else {
         setError("Failed to load orders");
       }
@@ -81,10 +98,78 @@ export default function ClientOrdersPage() {
     );
   }
 
+  // Not authenticated - show login/signup prompt
+  if (isAuthenticated === false) {
+    return (
+      <div className="mx-auto max-w-lg">
+        <div className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+            <ShoppingBag className="h-8 w-8 text-slate-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900">View Your Orders</h2>
+          <p className="mt-2 text-slate-600">
+            Sign in to your account to view your order history and track shipments.
+          </p>
+
+          <div className="mt-6 space-y-3">
+            <Link href="/sign-in" className="block">
+              <Button className="w-full" size="lg">
+                <LogIn className="mr-2 h-4 w-4" />
+                Sign In
+              </Button>
+            </Link>
+            <Link href="/sign-up" className="block">
+              <Button variant="outline" className="w-full" size="lg">
+                <UserPlus className="mr-2 h-4 w-4" />
+                Create Account
+              </Button>
+            </Link>
+          </div>
+
+          <div className="mt-6 border-t border-slate-200 pt-6">
+            <p className="text-sm text-slate-500 mb-3">
+              Don't want to create an account?
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+              <Link href="/">
+                <Button variant="ghost" size="sm">
+                  <Home className="mr-2 h-4 w-4" />
+                  Go to Homepage
+                </Button>
+              </Link>
+              <Link href="/products">
+                <Button variant="ghost" size="sm">
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  Browse Products
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-8 text-center">
-        <div className="text-red-900">{error}</div>
+      <div className="mx-auto max-w-lg">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-8 text-center">
+          <div className="text-red-900 mb-4">{error}</div>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <Link href="/">
+              <Button variant="outline" size="sm">
+                <Home className="mr-2 h-4 w-4" />
+                Go to Homepage
+              </Button>
+            </Link>
+            <Link href="/products">
+              <Button variant="outline" size="sm">
+                <ShoppingBag className="mr-2 h-4 w-4" />
+                Browse Products
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -97,9 +182,15 @@ export default function ClientOrdersPage() {
         <p className="mt-2 text-slate-600">
           Start shopping for research peptides to place your first order
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/products">
             <Button>Browse Products</Button>
+          </Link>
+          <Link href="/">
+            <Button variant="outline">
+              <Home className="mr-2 h-4 w-4" />
+              Go to Homepage
+            </Button>
           </Link>
         </div>
       </div>
@@ -165,7 +256,7 @@ export default function ClientOrdersPage() {
 
               <div className="text-right">
                 <div className="text-2xl font-bold text-slate-900">
-                  ${order.total.toFixed(2)}
+                  ${Number(order.total || 0).toFixed(2)}
                 </div>
                 <div className="mt-2 text-xs text-slate-500">
                   {order.itemCount} {order.itemCount === 1 ? "item" : "items"}

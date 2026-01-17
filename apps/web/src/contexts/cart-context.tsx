@@ -38,15 +38,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch("/api/cart", {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache',
         },
+        cache: 'no-store',
       });
 
       if (response.ok) {
         const data = await response.json();
+        console.log("[CartContext] Cart data received:", data);
+        console.log("[CartContext] Setting itemCount to:", data.itemCount || 0);
         setItemCount(data.itemCount || 0);
         setSubtotal(data.subtotal || 0);
         setItems(data.items || []);
       } else {
+        console.error("[CartContext] Cart fetch failed:", response.status, response.statusText);
+        const errorText = await response.text();
+        console.error("[CartContext] Error body:", errorText);
         setItemCount(0);
         setSubtotal(0);
         setItems([]);

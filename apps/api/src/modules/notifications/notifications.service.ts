@@ -27,18 +27,26 @@ interface Order {
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
   private mailgunClient: any;
-  private readonly isProduction: boolean;
+  private readonly canSendEmails: boolean;
 
   constructor(private readonly emailTemplatesService: EmailTemplatesService) {
-    this.isProduction = process.env.NODE_ENV === 'production';
+    // Send emails if Mailgun is configured (regardless of environment)
+    const hasMailgunConfig = !!(
+      process.env.MAILGUN_API_KEY &&
+      process.env.MAILGUN_DOMAIN &&
+      process.env.MAILGUN_FROM_EMAIL
+    );
 
-    if (process.env.MAILGUN_API_KEY && this.isProduction) {
+    if (hasMailgunConfig) {
       const mailgun = new Mailgun(formData);
       this.mailgunClient = mailgun.client({
         username: 'api',
         key: process.env.MAILGUN_API_KEY,
       });
+      this.canSendEmails = true;
+      this.logger.log('Mailgun configured - emails will be sent');
     } else {
+      this.canSendEmails = false;
       this.logger.warn('Mailgun not configured - emails will be logged only');
     }
   }
@@ -52,7 +60,7 @@ export class NotificationsService {
     const subject = `Order Confirmation #${order.id} - Payment Instructions`;
 
     try {
-      if (this.isProduction && this.mailgunClient) {
+      if (this.canSendEmails && this.mailgunClient) {
         await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
           from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
           to: [order.user.email],
@@ -76,7 +84,7 @@ export class NotificationsService {
     const subject = `Payment Confirmed - Order #${order.id}`;
 
     try {
-      if (this.isProduction && this.mailgunClient) {
+      if (this.canSendEmails && this.mailgunClient) {
         await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
           from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
           to: [order.user.email],
@@ -106,7 +114,7 @@ export class NotificationsService {
     const subject = `Order Shipped - Order #${order.id}`;
 
     try {
-      if (this.isProduction && this.mailgunClient) {
+      if (this.canSendEmails && this.mailgunClient) {
         await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
           from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
           to: [order.user.email],
@@ -162,7 +170,7 @@ export class NotificationsService {
     `.trim();
 
     try {
-      if (this.isProduction && this.mailgunClient) {
+      if (this.canSendEmails && this.mailgunClient) {
         await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
           from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
           to: [params.to],
@@ -204,7 +212,7 @@ export class NotificationsService {
     html: string;
   }): Promise<void> {
     try {
-      if (this.isProduction && this.mailgunClient) {
+      if (this.canSendEmails && this.mailgunClient) {
         await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
           from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
           to: [params.to],

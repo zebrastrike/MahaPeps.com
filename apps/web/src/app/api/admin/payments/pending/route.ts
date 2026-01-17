@@ -18,18 +18,9 @@ export async function GET(request: Request) {
       );
     }
 
-    // Parse query params
-    const { searchParams } = new URL(request.url);
-    const limit = searchParams.get("limit");
-    const status = searchParams.get("status");
-    const queryString = new URLSearchParams();
-    if (limit) queryString.set("limit", limit);
-    if (status) queryString.set("status", status);
-
-    const response = await fetch(`${API_BASE_URL}/admin/orders${queryString.toString() ? `?${queryString}` : ""}`, {
+    const response = await fetch(`${API_BASE_URL}/admin/payments/pending`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       cache: 'no-store',
@@ -43,7 +34,10 @@ export async function GET(request: Request) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error fetching pending payments:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

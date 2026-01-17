@@ -14,6 +14,7 @@ export async function POST(request: Request) {
         ...(authHeader ? { Authorization: authHeader } : {}),
       },
       body: JSON.stringify(body),
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -22,7 +23,12 @@ export async function POST(request: Request) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    console.log("[API Route /api/cart/items] POST response:", { itemCount: data?.itemCount, itemsLength: data?.items?.length });
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    });
   } catch (error) {
     console.error("Error adding to cart:", error);
     return NextResponse.json(

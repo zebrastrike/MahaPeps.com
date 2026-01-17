@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ProductGrid } from "@/components/product/product-grid";
+import { useCart } from "@/contexts/cart-context";
 import { Beaker } from "lucide-react";
 
 interface ProductVariant {
@@ -33,6 +34,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { refreshCart } = useCart();
 
   useEffect(() => {
     fetchProducts();
@@ -97,6 +99,7 @@ export default function ProductsPage() {
       });
 
       if (response.ok) {
+        await refreshCart();
         alert("Added to cart!");
       } else if (response.status === 401) {
         alert("Please log in to add items to your cart");

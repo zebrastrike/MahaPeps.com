@@ -25,6 +25,8 @@ export class CartService {
    * Get or create draft order (cart) for user
    */
   async getCart(userId: string, user?: User) {
+    console.log('[CartService] getCart called for userId:', userId);
+
     let cart = await this.prisma.order.findFirst({
       where: {
         userId,
@@ -43,6 +45,8 @@ export class CartService {
       },
       orderBy: { updatedAt: 'desc' },
     });
+
+    console.log('[CartService] getCart found cart:', cart ? { id: cart.id, itemsCount: cart.items?.length } : 'none');
 
     if (!cart) {
       // Create new draft order
@@ -128,6 +132,7 @@ export class CartService {
 
     if (existingItem) {
       // Update quantity
+      console.log('[CartService] Updating existing item:', existingItem.id);
       const newQuantity = new Prisma.Decimal(dto.quantity);
       const lineTotal = price.mul(newQuantity);
 
@@ -141,9 +146,10 @@ export class CartService {
       });
     } else {
       // Add new item
+      console.log('[CartService] Creating new item for cart:', cart.id);
       const lineTotal = price.mul(dto.quantity);
 
-      await this.prisma.orderItem.create({
+      const newItem = await this.prisma.orderItem.create({
         data: {
           orderId: cart.id,
           productId: variant.productId,
@@ -158,6 +164,7 @@ export class CartService {
           },
         },
       });
+      console.log('[CartService] Created new item:', newItem.id, 'for order:', cart.id);
     }
 
     // Recalculate totals
@@ -348,7 +355,13 @@ export class CartService {
   }
 
   private formatCart(cart: any) {
-    return {
+    console.log('[CartService] formatCart called with cart:', {
+      id: cart.id,
+      itemsLength: cart.items?.length,
+      items: cart.items?.map((i: any) => ({ id: i.id, productId: i.productId })),
+    });
+
+    const formatted = {
       id: cart.id,
       itemCount: cart.items?.length || 0,
       items: cart.items?.map((item: any) => ({
@@ -365,5 +378,8 @@ export class CartService {
       shipping: parseFloat(cart.shipping.toString()),
       total: parseFloat(cart.total.toString()),
     };
+
+    console.log('[CartService] formatCart returning:', { id: formatted.id, itemCount: formatted.itemCount });
+    return formatted;
   }
 }
