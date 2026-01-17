@@ -208,6 +208,7 @@ echo "🌱 Seeding database..."
 npm run seed:admin
 npm run seed:retail
 npm run seed:images
+npm run seed:batches
 npm run seed:content || true
 
 # Build API
@@ -278,7 +279,7 @@ else
 fi
 
 echo "   Checking frontend..."
-if curl -f http://$SERVER_IP:3002 2>/dev/null | head -c 100 > /dev/null; then
+if curl -f http://$SERVER_IP:3000 2>/dev/null | head -c 100 > /dev/null; then
     echo "   ✅ Frontend is running"
 else
     echo "   ⚠️  Frontend not responding yet (may still be starting)"
@@ -296,9 +297,11 @@ echo "╚═══════════════════════�
 echo ""
 echo "🌐 Your site is now live at:"
 echo ""
-echo "   Frontend:  http://$SERVER_IP:3002"
+echo "   Frontend:  http://$SERVER_IP:3000"
 echo "   API:       http://$SERVER_IP:3001"
-echo "   Admin:     http://$SERVER_IP:3002/sign-in"
+echo "   Admin:     http://$SERVER_IP:3000/sign-in"
+echo ""
+echo "   (After Nginx/Cloudflare setup: https://mahapeps.com)"
 echo ""
 echo "🔑 Admin Login:"
 echo "   Email:     scott@mahapeps.com"
