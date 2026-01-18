@@ -28,6 +28,9 @@
       ],
       "@/contexts/*": [
         "contexts/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
       ]
     },
     "types": [
