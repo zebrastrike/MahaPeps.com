@@ -132,7 +132,7 @@ export default function OrderConfirmationPage() {
               Payment Instructions Sent
             </h2>
             <p className="mt-1 text-charcoal-300">
-              We've sent detailed payment instructions to <strong className="text-clinical-white">{order.email}</strong>.
+              We&apos;ve sent detailed payment instructions to <strong className="text-clinical-white">{order.email}</strong>.
               Please check your inbox (and spam folder) for next steps.
             </p>
             <p className="mt-2 text-sm text-charcoal-400">
@@ -238,7 +238,7 @@ export default function OrderConfirmationPage() {
 
           {/* What's Next */}
           <div className="rounded-lg border border-teal-500/30 bg-teal-900/20 p-6">
-            <h3 className="font-semibold text-clinical-white mb-3">What's Next?</h3>
+            <h3 className="font-semibold text-clinical-white mb-3">What&apos;s Next?</h3>
             <ol className="space-y-2 text-sm text-charcoal-300">
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-teal-500/20 text-xs font-bold text-teal-400">1</span>
@@ -250,7 +250,7 @@ export default function OrderConfirmationPage() {
               </li>
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-teal-500/20 text-xs font-bold text-teal-400">3</span>
-                <span>We'll verify and process your order within 24-48 hours</span>
+                <span>We&apos;ll verify and process your order within 24-48 hours</span>
               </li>
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-teal-500/20 text-xs font-bold text-teal-400">4</span>

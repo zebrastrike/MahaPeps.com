@@ -186,7 +186,7 @@ export default function ContactPage() {
                     <div>
                       <p className="text-sm font-medium text-green-300">Message sent successfully!</p>
                       <p className="mt-1 text-xs text-green-400">
-                        Thank you for contacting us. We'll get back to you soon.
+                        Thank you for contacting us. We&apos;ll get back to you soon.
                       </p>
                     </div>
                   </div>

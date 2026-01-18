@@ -204,7 +204,7 @@ export default function SignInPage() {
           {/* Create Account Link */}
           <div className="text-center">
             <p className="text-sm text-charcoal-300">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link
                 href="/create-account"
                 className="font-medium text-accent-400 hover:text-accent-300"

@@ -183,7 +183,7 @@ export default function FaqPage() {
           <div className="text-center">
             <MessageSquare className="mx-auto h-12 w-12 text-accent-400" />
             <h2 className="mt-4 text-2xl font-bold text-clinical-white">
-              Didn't Find Your Answer?
+              Didn&apos;t Find Your Answer?
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm text-charcoal-300">
               Our research support team is here to help with product specifications, bulk ordering,

@@ -341,7 +341,7 @@ export default function CheckoutPage() {
           <div className="text-sm text-charcoal-200">
             <p className="font-semibold text-clinical-white mb-1">How Payment Works</p>
             <p>
-              After checkout, you'll receive a secure payment invoice via email with instructions for Zelle, CashApp, or wire transfer.
+              After checkout, you&apos;ll receive a secure payment invoice via email with instructions for Zelle, CashApp, or wire transfer.
               Once payment is confirmed, order fulfillment begins immediately. <strong>Most orders ship the next business day.</strong>
             </p>
           </div>
@@ -681,7 +681,7 @@ export default function CheckoutPage() {
                     </div>
                     <p className="text-sm text-charcoal-200 mb-3">
                       MAHA Peptides guarantees your research materials arrive safely. If your order is lost,
-                      stolen, or damaged during transit, we'll replace it or provide a full refund—no questions asked.
+                      stolen, or damaged during transit, we&apos;ll replace it or provide a full refund—no questions asked.
                     </p>
                     <ul className="text-xs text-charcoal-300 space-y-1 mb-2">
                       <li>✓ Full replacement guarantee for lost packages</li>

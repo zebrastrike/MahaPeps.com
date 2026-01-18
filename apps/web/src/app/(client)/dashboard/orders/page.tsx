@@ -128,7 +128,7 @@ export default function ClientOrdersPage() {
 
           <div className="mt-6 border-t border-slate-200 pt-6">
             <p className="text-sm text-slate-500 mb-3">
-              Don't want to create an account?
+              Don&apos;t want to create an account?
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
               <Link href="/">

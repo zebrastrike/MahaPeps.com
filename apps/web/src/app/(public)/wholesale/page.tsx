@@ -201,7 +201,7 @@ ${formData.message}
               </h3>
               <p className="text-sm text-charcoal-300">
                 Large volume or specialized research needs? We offer custom pricing packages
-                tailored to your institution's specific requirements.
+                tailored to your institution&apos;s specific requirements.
               </p>
             </div>
 

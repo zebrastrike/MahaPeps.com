@@ -7,11 +7,11 @@ export default function TermsOfService() {
         <section>
           <h2 className="mb-3 text-2xl font-semibold text-accent-400">1. Acceptance of Terms</h2>
           <p className="mb-3">
-            By accessing or using MAHA Peptides ("Website," "Service," "we," "us," or "our"), you agree to be bound by these Terms of Service ("Terms").
+            By accessing or using MAHA Peptides (&quot;Website,&quot; &quot;Service,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;).
             If you do not agree to these Terms, you must immediately cease use of this Website.
           </p>
           <p>
-            These Terms constitute a legally binding agreement between you ("Customer," "Buyer," "you," or "your") and MAHA Peptides.
+            These Terms constitute a legally binding agreement between you (&quot;Customer,&quot; &quot;Buyer,&quot; &quot;you,&quot; or &quot;your&quot;) and MAHA Peptides.
             Your use of this Website confirms your acceptance of these Terms and all policies incorporated by reference.
           </p>
         </section>
@@ -95,7 +95,7 @@ export default function TermsOfService() {
             <li><strong>All purchases are final and non-refundable</strong></li>
             <li><strong>No returns or exchanges</strong> will be accepted for any reason, including but not limited to:
               <ul className="list-circle ml-6 mt-2 space-y-1">
-                <li>Change of mind or buyer's remorse</li>
+                <li>Change of mind or buyer&apos;s remorse</li>
                 <li>Ordering incorrect product or quantity</li>
                 <li>Failure to read product descriptions</li>
                 <li>Dissatisfaction with product performance</li>
@@ -135,7 +135,7 @@ export default function TermsOfService() {
             <li>We do NOT guarantee specific purity levels at time of delivery</li>
             <li>We do NOT guarantee fitness for any particular research purpose</li>
             <li>Buyer is responsible for conducting own quality verification</li>
-            <li>Products are sold "AS IS" without warranty of any kind</li>
+            <li>Products are sold &quot;AS IS&quot; without warranty of any kind</li>
           </ul>
         </section>
 
@@ -167,7 +167,7 @@ export default function TermsOfService() {
           <ul className="list-disc space-y-2 pl-6">
             <li>We ship only to verified addresses within the United States</li>
             <li>Shipping insurance is optional but recommended (non-refundable fee)</li>
-            <li>Risk of loss passes to buyer upon delivery or upon carrier's first delivery attempt</li>
+            <li>Risk of loss passes to buyer upon delivery or upon carrier&apos;s first delivery attempt</li>
             <li>We are NOT responsible for lost, stolen, or damaged packages unless shipping insurance was purchased</li>
             <li>Buyer is responsible for providing accurate shipping address</li>
             <li>We are NOT responsible for delays caused by carriers, weather, or customs</li>
@@ -200,7 +200,7 @@ export default function TermsOfService() {
 
           <p className="mb-3">You acknowledge and agree that:</p>
           <ul className="list-disc space-y-2 pl-6">
-            <li>MAHA Peptides' total liability for any claim shall not exceed the purchase price of the product(s) at issue</li>
+            <li>MAHA Peptides&apos; total liability for any claim shall not exceed the purchase price of the product(s) at issue</li>
             <li>We are NOT liable for any injury, illness, death, property damage, or other harm resulting from product use</li>
             <li>We are NOT liable for research failures, experimental outcomes, or wasted materials</li>
             <li>We are NOT liable for regulatory actions, legal consequences, or compliance failures</li>
@@ -213,7 +213,7 @@ export default function TermsOfService() {
           <h2 className="mb-3 text-2xl font-semibold text-accent-400">12. Indemnification</h2>
           <p className="mb-3">
             You agree to indemnify, defend, and hold harmless MAHA Peptides, its owners, officers, employees, agents, and affiliates from and against any and all claims,
-            damages, liabilities, costs, and expenses (including reasonable attorneys' fees) arising from:
+            damages, liabilities, costs, and expenses (including reasonable attorneys&apos; fees) arising from:
           </p>
           <ul className="list-disc space-y-2 pl-6">
             <li>Your use or misuse of products</li>

@@ -131,7 +131,7 @@ export default function ResearchUsePolicy() {
             <li>Product purity may degrade over time due to storage conditions, temperature, humidity, or light exposure</li>
             <li>We do NOT guarantee specific purity levels at time of delivery or use</li>
             <li>Buyer is responsible for conducting own quality verification and analysis</li>
-            <li>Products are sold "AS IS" for research purposes without warranty of fitness for any particular use</li>
+            <li>Products are sold &quot;AS IS&quot; for research purposes without warranty of fitness for any particular use</li>
           </ul>
         </section>
 
@@ -179,7 +179,7 @@ export default function ResearchUsePolicy() {
           <ul className="list-disc space-y-2 pl-6">
             <li><strong>DEA Regulations:</strong> Some peptides may be subject to DEA controlled substance analogue regulations. Ensure compliance.</li>
             <li><strong>State Regulations:</strong> Some states have additional restrictions on research chemicals. Know your state laws.</li>
-            <li><strong>Institutional Policies:</strong> Comply with your institution's chemical procurement and use policies</li>
+            <li><strong>Institutional Policies:</strong> Comply with your institution&apos;s chemical procurement and use policies</li>
             <li><strong>Import/Export Laws:</strong> International movement of research chemicals requires appropriate permits and declarations</li>
             <li><strong>Record Keeping:</strong> Maintain required documentation of chemical acquisition, use, and disposal</li>
           </ul>
@@ -278,7 +278,7 @@ export default function ResearchUsePolicy() {
             <li>OSHA Laboratory Safety Guidance: <a href="https://www.osha.gov/labs" target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 underline">www.osha.gov/labs</a></li>
             <li>National Institutes of Health (NIH) Chemical Safety Resources</li>
             <li>American Chemical Society (ACS) Safety Guidelines</li>
-            <li>Your institution's Environmental Health and Safety (EHS) department</li>
+            <li>Your institution&apos;s Environmental Health and Safety (EHS) department</li>
           </ul>
         </section>
 
