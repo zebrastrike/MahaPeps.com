@@ -283,7 +283,7 @@ export default function ModerationDashboard() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-semibold">Forbidden Term:</span>
                             <code className="px-2 py-0.5 bg-white rounded text-sm">
-                              "{v.term}"
+                              &quot;{v.term}&quot;
                             </code>
                             {v.category && (
                               <span className="text-xs">({v.category})</span>
@@ -302,7 +302,7 @@ export default function ModerationDashboard() {
                       {v.replacement && (
                         <div className="mt-2 p-2 bg-white rounded text-sm">
                           <span className="font-medium text-green-700">Suggested Fix:</span>{" "}
-                          <code className="text-green-600">"{v.replacement}"</code>
+                          <code className="text-green-600">&quot;{v.replacement}&quot;</code>
                         </div>
                       )}
                     </div>

@@ -148,7 +148,7 @@ export default function ShippingPolicy() {
             You will receive a tracking number via email once your order ships. Tracking is typically updated within 24 hours of shipment.
           </p>
           <ul className="list-disc space-y-2 pl-6">
-            <li>Track packages using carrier's website (USPS, FedEx, UPS)</li>
+            <li>Track packages using carrier&apos;s website (USPS, FedEx, UPS)</li>
             <li>Tracking updates are provided by the carrier, not MAHA Peptides</li>
             <li>We are not responsible for carrier tracking delays or inaccuracies</li>
             <li>Final delivery scan confirms delivery - we are not responsible after this point</li>
@@ -160,15 +160,15 @@ export default function ShippingPolicy() {
           <div className="rounded-lg border-2 border-red-500 bg-red-500/10 p-4 mb-4">
             <p className="font-bold text-red-200">CRITICAL: READ CAREFULLY</p>
             <p className="mt-2 text-red-100">
-              <strong>Risk of loss and title pass to you upon delivery to the shipping address OR upon the carrier's first delivery attempt.</strong>
+              <strong>Risk of loss and title pass to you upon delivery to the shipping address OR upon the carrier&apos;s first delivery attempt.</strong>
             </p>
           </div>
 
           <p className="mb-3">This means:</p>
           <ul className="list-disc space-y-2 pl-6">
-            <li>Once the carrier marks package as "delivered," you own it - even if stolen afterward</li>
+            <li>Once the carrier marks package as &quot;delivered,&quot; you own it - even if stolen afterward</li>
             <li>If you are not home and carrier leaves package, theft is YOUR responsibility (unless you purchased insurance)</li>
-            <li>If carrier attempts delivery and you're not available, you are responsible for arranging redelivery</li>
+            <li>If carrier attempts delivery and you&apos;re not available, you are responsible for arranging redelivery</li>
             <li>If you refuse delivery, you forfeit the order with no refund</li>
             <li>Packages held at carrier facility due to your inaction are your responsibility</li>
           </ul>
@@ -257,7 +257,7 @@ export default function ShippingPolicy() {
         <section>
           <h2 className="mb-3 text-2xl font-semibold text-accent-400">11. Packaging and Discretion</h2>
           <p className="mb-3">
-            All orders are packaged discreetly with no external markings indicating contents. Packages are labeled as "research materials" or similar generic description.
+            All orders are packaged discreetly with no external markings indicating contents. Packages are labeled as &quot;research materials&quot; or similar generic description.
           </p>
           <ul className="list-disc space-y-2 pl-6">
             <li>No product names or company branding on exterior packaging</li>

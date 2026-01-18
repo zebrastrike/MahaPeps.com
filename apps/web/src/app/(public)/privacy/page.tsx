@@ -9,7 +9,7 @@ export default function PrivacyPolicy() {
             <strong>Last Updated:</strong> January 12, 2026
           </p>
           <p className="mb-4">
-            MAHA Peptides ("we," "us," "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose,
+            MAHA Peptides (&quot;we,&quot; &quot;us,&quot; &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose,
             and safeguard your information when you visit our website and purchase our research products.
           </p>
           <p>
@@ -106,7 +106,7 @@ export default function PrivacyPolicy() {
           <div className="mt-4 rounded-lg border border-accent-500 bg-accent-500/10 p-4">
             <p className="font-semibold text-accent-200">You can opt-out anytime:</p>
             <ul className="mt-2 space-y-1 text-accent-100 text-sm">
-              <li>• Click "Unsubscribe" link in any marketing email</li>
+              <li>• Click &quot;Unsubscribe&quot; link in any marketing email</li>
               <li>• Email us at privacy@mahapeps.com</li>
               <li>• Update preferences in your account settings</li>
             </ul>
@@ -273,12 +273,12 @@ export default function PrivacyPolicy() {
           </ul>
 
           <p className="mt-3">
-            To submit a CCPA request, email privacy@mahapeps.com with "CCPA Request" in the subject line.
+            To submit a CCPA request, email privacy@mahapeps.com with &quot;CCPA Request&quot; in the subject line.
           </p>
         </section>
 
         <section>
-          <h2 className="mb-3 text-2xl font-semibold text-accent-400">10. Children's Privacy</h2>
+          <h2 className="mb-3 text-2xl font-semibold text-accent-400">10. Children&apos;s Privacy</h2>
           <div className="rounded-lg border-2 border-red-500 bg-red-500/10 p-4">
             <p className="font-bold text-red-200">Our website is NOT intended for individuals under 18 years of age.</p>
             <p className="mt-2 text-red-100">
@@ -318,7 +318,7 @@ export default function PrivacyPolicy() {
         <section>
           <h2 className="mb-3 text-2xl font-semibold text-accent-400">13. Changes to This Privacy Policy</h2>
           <p className="mb-3">
-            We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date.
+            We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated &quot;Last Updated&quot; date.
           </p>
           <p className="mb-3">
             Material changes will be communicated via:
@@ -341,7 +341,7 @@ export default function PrivacyPolicy() {
             <strong>Privacy Officer</strong><br />
             MAHA Peptides<br />
             Email: privacy@mahapeps.com<br />
-            Subject Line: "Privacy Inquiry"
+            Subject Line: &quot;Privacy Inquiry&quot;
           </p>
           <p className="mt-4 text-sm text-charcoal-400">
             We will respond to privacy inquiries within 30 days.

@@ -165,7 +165,7 @@ export function MarketStats() {
         {/* Supporting Text */}
         <div className="mt-12 text-center">
           <p className="mx-auto max-w-3xl text-sm text-charcoal-400 md:text-base">
-            MAHA Peptides supports America's research leadership with pharmaceutical-grade compounds,
+            MAHA Peptides supports America&apos;s research leadership with pharmaceutical-grade compounds,
             rigorous quality standards, and a commitment to scientific innovation. Every product meets
             stringent purity requirements verified through independent third-party testing.
           </p>

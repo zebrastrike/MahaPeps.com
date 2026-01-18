@@ -80,7 +80,7 @@ export default function ConfirmationPage() {
           <div>
             <h3 className="font-semibold text-amber-900">Payment Pending</h3>
             <p className="mt-1 text-sm text-amber-700">
-              We've sent payment instructions to your email. Please complete payment using one of
+              We&apos;ve sent payment instructions to your email. Please complete payment using one of
               the methods below within 48 hours.
             </p>
           </div>

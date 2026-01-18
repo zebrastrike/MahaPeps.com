@@ -180,7 +180,7 @@ export function ForbiddenTermScanner({
                   key={term}
                   className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800"
                 >
-                  "{term}"
+                  &quot;{term}&quot;
                 </code>
               ))}
             </div>
@@ -194,7 +194,7 @@ export function ForbiddenTermScanner({
           <li>Remove or replace all highlighted terms</li>
           <li>Use neutral, research-focused language only</li>
           <li>Focus on product specifications and analytical properties</li>
-          <li>Examples: "Research peptide for laboratory use" instead of "treats diabetes"</li>
+          <li>Examples: &quot;Research peptide for laboratory use&quot; instead of &quot;treats diabetes&quot;</li>
         </ul>
       </div>
     </div>

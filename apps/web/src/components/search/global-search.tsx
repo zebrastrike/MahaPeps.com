@@ -209,7 +209,7 @@ export function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
               <div className="p-8 text-center">
                 <Search className="mx-auto mb-3 h-8 w-8 text-charcoal-500" />
                 <p className="text-sm text-charcoal-400">
-                  No results found for "{query}"
+                  No results found for &quot;{query}&quot;
                 </p>
               </div>
             )}

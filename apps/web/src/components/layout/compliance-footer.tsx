@@ -156,7 +156,7 @@ export function ComplianceFooter() {
             <div>
               <h4 className="font-bold text-slate-900">INTERNATIONAL DISCLAIMER</h4>
               <p className="mt-1">
-                International customers are responsible for ensuring compliance with their country's import regulations.
+                International customers are responsible for ensuring compliance with their country&apos;s import regulations.
                 We do not guarantee deliverability to countries where peptides are controlled or prohibited substances.
               </p>
             </div>
