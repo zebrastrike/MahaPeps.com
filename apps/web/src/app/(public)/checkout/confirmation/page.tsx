@@ -1,12 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import Link from "next/link";
 
-export default function ConfirmationPage() {
+function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -229,5 +229,19 @@ export default function ConfirmationPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function ConfirmationPage() {
+  return (
+    <Suspense
+      fallback={(
+        <div className="mx-auto max-w-3xl px-4 py-12">
+          <div className="text-sm text-slate-600">Loading confirmation...</div>
+        </div>
+      )}
+    >
+      <ConfirmationContent />
+    </Suspense>
   );
 }
