@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function SignUpPage() {
+function SignUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
@@ -209,5 +209,19 @@ export default function SignUpPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense
+      fallback={(
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-charcoal-900 to-charcoal-800 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="text-sm text-charcoal-300">Loading sign up...</div>
+        </div>
+      )}
+    >
+      <SignUpContent />
+    </Suspense>
   );
 }
