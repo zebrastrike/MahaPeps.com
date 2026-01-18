@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import type { Route } from "next";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -52,8 +53,8 @@ function SignUpContent() {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Redirect to products page after successful registration
-      if (redirectTo) {
-        router.push(redirectTo);
+      if (redirectTo && redirectTo.startsWith("/")) {
+        router.push(redirectTo as Route);
       } else {
         router.push("/products");
       }
