@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, X, Beaker, BookOpen, HelpCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
+import type { Route } from "next";
 
 interface SearchResult {
   type: 'product' | 'blog' | 'faq';
@@ -219,7 +220,7 @@ export function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                 {results.map((result) => (
                   <Link
                     key={`${result.type}-${result.id}`}
-                    href={result.url}
+                    href={result.url as Route}
                     onClick={handleClose}
                     className="block p-4 transition-colors hover:bg-charcoal-700/50"
                   >
