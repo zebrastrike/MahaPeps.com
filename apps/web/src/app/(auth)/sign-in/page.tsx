@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useState } from 'react';
+import type { Route } from 'next';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -45,8 +46,8 @@ function SignInContent() {
       localStorage.setItem('user', JSON.stringify(data.user));
 
       // Redirect to intended destination or based on user role
-      if (redirectTo) {
-        router.push(redirectTo);
+      if (redirectTo && redirectTo.startsWith('/')) {
+        router.push(redirectTo as Route);
       } else {
         const role = data.user?.role;
         if (role === 'ADMIN') {
