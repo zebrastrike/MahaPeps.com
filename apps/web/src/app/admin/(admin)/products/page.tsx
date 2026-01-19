@@ -60,13 +60,13 @@ export default function AdminProductsPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const rows = useMemo(() => {
+  const rows = useMemo((): { product: Product; variant: ProductVariant | null }[] => {
     return products.flatMap((product) => {
       if (!product.variants || product.variants.length === 0) {
         // Show products without variants so they can be edited
-        return [{ product, variant: null }];
+        return [{ product, variant: null as ProductVariant | null }];
       }
-      return product.variants.map((variant) => ({ product, variant }));
+      return product.variants.map((variant) => ({ product, variant: variant as ProductVariant | null }));
     });
   }, [products]);
 
