@@ -63,7 +63,8 @@ export default function AdminProductsPage() {
   const rows = useMemo(() => {
     return products.flatMap((product) => {
       if (!product.variants || product.variants.length === 0) {
-        return [] as { product: typeof product; variant: any }[];
+        // Show products without variants so they can be edited
+        return [{ product, variant: null }];
       }
       return product.variants.map((variant) => ({ product, variant }));
     });
@@ -351,8 +352,8 @@ export default function AdminProductsPage() {
                   </td>
                 </tr>
               ) : (
-                rows.map(({ product, variant }) => (
-                  <tr key={variant ? variant.id : product.id} className="hover:bg-slate-50">
+                rows.map(({ product, variant }, index) => (
+                  <tr key={variant ? variant.id : `${product.id}-${index}`} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
                       {variant ? (
                         <input
@@ -362,7 +363,7 @@ export default function AdminProductsPage() {
                           className="h-4 w-4"
                         />
                       ) : (
-                        <span className="text-xs text-slate-400">-</span>
+                        <span className="text-xs text-amber-500">No variants</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
