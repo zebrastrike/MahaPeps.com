@@ -58,22 +58,23 @@ a {
 /* Admin dashboard theme overrides */
 .admin-shell {
   --admin-bg: #3A7F8C;
+  --admin-bg-card: #2d6670;
   --admin-text: #F8F9FA;
   --admin-text-muted: rgba(248, 249, 250, 0.8);
   --admin-border: rgba(248, 249, 250, 0.35);
-  background-color: var(--admin-bg);
-  color: var(--admin-text);
+  background-color: var(--admin-bg) !important;
+  color: var(--admin-text) !important;
 }
 
 .admin-shell header {
-  background-color: var(--admin-bg);
-  border-color: var(--admin-border);
+  background-color: var(--admin-bg) !important;
+  border-color: var(--admin-border) !important;
 }
 
 .admin-shell .bg-white,
 .admin-shell .bg-slate-50,
 .admin-shell .bg-gray-50 {
-  background-color: var(--admin-bg);
+  background-color: var(--admin-bg-card) !important;
 }
 
 .admin-shell .text-slate-900,
@@ -82,14 +83,16 @@ a {
 .admin-shell .text-gray-800,
 .admin-shell .text-slate-700,
 .admin-shell .text-gray-700 {
-  color: var(--admin-text);
+  color: var(--admin-text) !important;
 }
 
 .admin-shell .text-slate-600,
 .admin-shell .text-gray-600,
 .admin-shell .text-slate-500,
-.admin-shell .text-gray-500 {
-  color: var(--admin-text-muted);
+.admin-shell .text-gray-500,
+.admin-shell .text-slate-400,
+.admin-shell .text-gray-400 {
+  color: var(--admin-text-muted) !important;
 }
 
 .admin-shell .border-slate-200,
@@ -98,29 +101,49 @@ a {
 .admin-shell .border-gray-100,
 .admin-shell .border-slate-300,
 .admin-shell .border-gray-300 {
-  border-color: var(--admin-border);
+  border-color: var(--admin-border) !important;
 }
 
 .admin-shell input,
 .admin-shell select,
 .admin-shell textarea {
-  background-color: var(--admin-bg);
-  color: var(--admin-text);
-  border-color: var(--admin-border);
+  background-color: var(--admin-bg-card) !important;
+  color: var(--admin-text) !important;
+  border-color: var(--admin-border) !important;
 }
 
 .admin-shell input::placeholder,
 .admin-shell textarea::placeholder {
-  color: rgba(248, 249, 250, 0.7);
+  color: rgba(248, 249, 250, 0.6) !important;
 }
 
 .admin-shell select option {
-  background-color: var(--admin-bg);
-  color: var(--admin-text);
+  background-color: var(--admin-bg-card) !important;
+  color: var(--admin-text) !important;
+}
+
+.admin-shell table {
+  background-color: var(--admin-bg-card) !important;
+}
+
+.admin-shell thead {
+  background-color: var(--admin-bg) !important;
+}
+
+.admin-shell tbody tr {
+  background-color: var(--admin-bg-card) !important;
+}
+
+.admin-shell tbody tr:hover {
+  background-color: var(--admin-bg) !important;
+}
+
+.admin-shell .divide-slate-200 > * + * {
+  border-color: var(--admin-border) !important;
 }
 
 .admin-shell .hover\\:bg-slate-50:hover,
 .admin-shell .hover\\:bg-gray-50:hover,
 .admin-shell .hover\\:bg-slate-100:hover {
-  background-color: var(--admin-bg);
+  background-color: var(--admin-bg) !important;
 }
