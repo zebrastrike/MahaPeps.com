@@ -118,7 +118,7 @@ export function ProductGrid({
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -136,7 +136,7 @@ export function ProductGrid({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
                 >
                   <option value="name">Name (A-Z)</option>
                   <option value="price-low">Price (Low to High)</option>

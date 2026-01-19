@@ -3,6 +3,7 @@
 import { DisclaimerBar } from "@/components/layout/disclaimer-bar";
 import { Header } from "@/components/layout/header";
 import { Navigation, type NavigationItem } from "@/components/layout/navigation";
+import { cn } from "@/lib/utils";
 
 export type LayoutShellProps = {
   title: string;
@@ -10,6 +11,7 @@ export type LayoutShellProps = {
   navigationItems: NavigationItem[];
   navigationDescription?: string;
   children: ReactNode;
+  className?: string;
 };
 
 export function LayoutShell({
@@ -17,10 +19,11 @@ export function LayoutShell({
   subtitle,
   navigationItems,
   navigationDescription,
-  children
+  children,
+  className,
 }: LayoutShellProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-charcoal-900 text-clinical-white">
+    <div className={cn("flex min-h-screen flex-col bg-charcoal-900 text-clinical-white", className)}>
       <Header title={title} subtitle={subtitle} />
       <main className="flex-1">
         {children}

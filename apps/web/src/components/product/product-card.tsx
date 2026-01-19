@@ -197,7 +197,7 @@ export function ProductCard({
             <select
               value={selectedVariantId}
               onChange={(event) => setSelectedVariantId(event.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-200 px-2 py-2 text-sm bg-white text-gray-900 [&>option]:bg-accent-500 [&>option]:text-white"
+              className="mt-1 w-full rounded-md border border-blue-500 bg-blue-600 px-2 py-2 text-sm text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
             >
               {variants.map((variant) => (
                 <option key={variant.id} value={variant.id}>

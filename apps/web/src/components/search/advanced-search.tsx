@@ -125,7 +125,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
         <form onSubmit={handleSearch} className="flex gap-2">
           <div className="flex-1 relative">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-100" />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -135,19 +135,19 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                   if (suggestions.length > 0) setShowSuggestions(true);
                 }}
                 placeholder="Search by name, SKU, CAS number, or molecular formula..."
-                className="w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-blue-500 bg-blue-600 py-3 pl-10 pr-10 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               {query && (
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-blue-100 hover:bg-blue-500"
                 >
-                  <X className="w-4 h-4 text-gray-400" />
+                  <X className="w-4 h-4" />
                 </button>
               )}
               {loadingSuggestions && (
-                <Loader2 className="absolute right-10 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500 animate-spin" />
+                <Loader2 className="absolute right-10 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-blue-100" />
               )}
             </div>
 
@@ -217,7 +217,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
               <select
                 value={filters.category || ""}
                 onChange={(e) => updateFilter("category", e.target.value || undefined)}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
               >
                 <option value="">All Categories</option>
                 {filterOptions.categories.map((cat) => (
@@ -243,7 +243,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                   updateFilter("minPurity", e.target.value ? parseFloat(e.target.value) : undefined)
                 }
                 placeholder="e.g., 95"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
 
@@ -261,7 +261,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                   updateFilter("maxPurity", e.target.value ? parseFloat(e.target.value) : undefined)
                 }
                 placeholder="e.g., 100"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
 
@@ -280,7 +280,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                     e.target.value === "" ? undefined : e.target.value === "true"
                   )
                 }
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
               >
                 <option value="">Any</option>
                 <option value="true">COA Available</option>

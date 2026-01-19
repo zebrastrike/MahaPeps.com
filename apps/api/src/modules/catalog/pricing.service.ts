@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Prisma, CatalogType, PriceTier, User } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CatalogVisibilityService } from './catalog-visibility.service';
+import { getCatalogPriceOverrideCents } from './catalog-overrides';
 
 @Injectable()
 export class PricingService {
@@ -82,9 +83,17 @@ export class PricingService {
 
     // If no tier found, fall back to variant's priceCents (for retail products)
     if (!tier) {
-      if (variant.priceCents && variant.priceCents > 0) {
+      const overridePriceCents = getCatalogPriceOverrideCents({
+        productSlug: variant.product?.slug,
+        variantSku: variant.sku,
+        strengthValue: variant.strengthValue,
+        strengthUnit: variant.strengthUnit,
+      });
+      const effectivePriceCents = overridePriceCents ?? variant.priceCents;
+
+      if (effectivePriceCents && effectivePriceCents > 0) {
         return {
-          price: new Prisma.Decimal(variant.priceCents).dividedBy(100),
+          price: new Prisma.Decimal(effectivePriceCents).dividedBy(100),
           tier: null,
           catalogType,
         };

@@ -72,6 +72,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       title="Admin"
       subtitle="Platform operations and governance"
       navigationDescription="Admin navigation"
+      className="admin-shell"
       navigationItems={[
         { label: "Overview", href: "/admin" },
         { label: "Products", href: "/admin/products" },
