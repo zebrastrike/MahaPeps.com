@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { FileStorageService } from '../files/file-storage.service';
 import { CatalogVisibilityService } from './catalog-visibility.service';
 import { PurchasabilityService } from './purchasability.service';
+import { getCatalogPriceOverrideCents } from './catalog-overrides';
 import { User } from '@prisma/client';
 
 @Injectable()
@@ -111,12 +112,21 @@ export class CatalogService {
           );
         }
 
+        const strengthValue = this.toNumber(variant.strengthValue);
+        const overridePriceCents = getCatalogPriceOverrideCents({
+          productSlug: product.slug,
+          variantSku: variant.sku,
+          strengthValue,
+          strengthUnit: variant.strengthUnit,
+        });
+        const priceCents = overridePriceCents ?? variant.priceCents;
+
         return {
           id: variant.id,
-          strengthValue: this.toNumber(variant.strengthValue),
+          strengthValue,
           strengthUnit: variant.strengthUnit,
           sku: variant.sku,
-          priceCents: variant.priceCents,
+          priceCents,
           isActive: variant.isActive,
           hasCoa,
           purchasable: purchaseCheck.purchasable,
@@ -136,7 +146,19 @@ export class CatalogService {
 
     const purityPercent = purityValues.length ? Math.max(...purityValues) : null;
 
+    const overrideDefaultVariant = variants.find(
+      (variant) =>
+        variant.isActive &&
+        getCatalogPriceOverrideCents({
+          productSlug: product.slug,
+          variantSku: variant.sku,
+          strengthValue: variant.strengthValue,
+          strengthUnit: variant.strengthUnit,
+        }) !== null,
+    );
+
     const defaultVariant =
+      overrideDefaultVariant ||
       variants.find((variant) => variant.purchasable) ||
       variants.find((variant) => variant.isActive) ||
       variants[0];
