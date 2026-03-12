@@ -273,6 +273,50 @@ export class CheckoutService {
       console.error('Failed to send payment instructions email:', error);
     }
 
+    // Send admin notification email for new order
+    try {
+      const customerName = order.firstName && order.lastName
+        ? `${order.firstName} ${order.lastName}`
+        : order.email.split('@')[0];
+
+      const adminEmailTemplate = this.emailTemplates.getNewOrderNotificationEmail({
+        orderId: order.orderNumber || order.id,
+        customerName,
+        customerEmail: order.email,
+        orderTotal: parseFloat(order.total.toString()).toFixed(2),
+        subtotal: parseFloat(order.subtotal.toString()).toFixed(2),
+        shipping: parseFloat(order.shipping.toString()).toFixed(2),
+        tax: parseFloat(order.tax.toString()).toFixed(2),
+        insuranceFee: order.insuranceFee ? parseFloat(order.insuranceFee.toString()).toFixed(2) : undefined,
+        processingFee: order.processingFee ? parseFloat(order.processingFee.toString()).toFixed(2) : undefined,
+        processingType: (order.processingType as 'STANDARD' | 'EXPEDITED' | 'RUSH') || 'STANDARD',
+        shippingAddress: {
+          fullName: `${order.firstName || ''} ${order.lastName || ''}`.trim(),
+          addressLine1: order.shippingAddress?.line1 || '',
+          addressLine2: order.shippingAddress?.line2 || undefined,
+          city: order.shippingAddress?.city || '',
+          state: order.shippingAddress?.state || '',
+          postalCode: order.shippingAddress?.postalCode || '',
+          phone: order.phone || '',
+        },
+        items: order.items.map((item) => ({
+          productName: item.product?.name || 'Product',
+          quantity: parseFloat(item.quantity.toString()),
+          unitPrice: parseFloat(item.unitPrice.toString()).toFixed(2),
+          lineTotal: parseFloat(item.lineTotal.toString()).toFixed(2),
+        })),
+      });
+
+      const adminEmail = process.env.ADMIN_EMAIL || 'scott@mahapeps.com';
+      await this.notifications.sendEmail({
+        to: adminEmail,
+        subject: adminEmailTemplate.subject,
+        html: adminEmailTemplate.html,
+      });
+    } catch (error) {
+      console.error('Failed to send admin notification email:', error);
+    }
+
     return {
       order: this.formatOrder(order),
       paymentLink: {
