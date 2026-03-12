@@ -12,10 +12,10 @@ I've created **production-ready .env files** with all your **REAL** values:
 ### Real Values Included:
 ✅ **Admin Account**
 - Email: `scott@mahapeps.com`
-- Password: `Maddie1169!`
+- Password: `<CHANGE_ME_ADMIN_PASSWORD>`
 
 ✅ **Email (Mailgun) - WORKING**
-- API Key: `7872b65e5aa11ef85f779e027dcdf9aa-42b8ce75-5ff82429`
+- API Key: `<MAILGUN_API_KEY>`
 - Domain: `mg.mahapeps.com`
 
 ✅ **Payment Info**
@@ -214,7 +214,7 @@ NEXT_PUBLIC_API_BASE_URL="http://95.217.xxx.xxx:3001"
 3. **Test Admin Login:**
    - Go to: `http://YOUR_IP:3002/sign-in`
    - Email: `scott@mahapeps.com`
-   - Password: `Maddie1169!`
+   - Password: `<CHANGE_ME_ADMIN_PASSWORD>`
    - Should redirect to admin dashboard
 
 4. **Check API:**
@@ -320,13 +320,13 @@ All stored in the `.env.production` files:
 
 **Admin Login:**
 - Email: scott@mahapeps.com
-- Password: Maddie1169!
+- Password: <CHANGE_ME_ADMIN_PASSWORD>
 
 **Database:**
-- postgresql://mahapeps:mahapeps_prod_password@localhost:5432/mahapeps_prod
+- postgresql://mahapeps:<DB_PASSWORD>@localhost:5432/mahapeps_prod
 
 **Email (Mailgun):**
-- API Key: 7872b65e5aa11ef85f779e027dcdf9aa-42b8ce75-5ff82429
+- API Key: <MAILGUN_API_KEY>
 - Domain: mg.mahapeps.com
 
 **Payment Display:**

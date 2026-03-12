@@ -55,9 +55,9 @@ echo ""
 read -p "Admin Email (default: scott@mahapeps.com): " ADMIN_EMAIL
 ADMIN_EMAIL=${ADMIN_EMAIL:-scott@mahapeps.com}
 
-read -sp "Admin Password (default: Maddie1169!): " ADMIN_PASSWORD
+read -sp "Admin Password (default: <CHANGE_ME_ADMIN_PASSWORD>): " ADMIN_PASSWORD
 echo ""
-ADMIN_PASSWORD=${ADMIN_PASSWORD:-Maddie1169!}
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-<CHANGE_ME_ADMIN_PASSWORD>}
 
 read -p "Database Password (default: mahapeps_dev_password): " DB_PASSWORD
 DB_PASSWORD=${DB_PASSWORD:-mahapeps_dev_password}

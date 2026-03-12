@@ -55,7 +55,7 @@ ENCRYPTION_KEY="GENERATE_ANOTHER_64_CHAR_HEX_STRING_HERE"
 # ADMIN ACCOUNT (Your credentials)
 # ============================================
 ADMIN_EMAIL="scott@mahapeps.com"
-ADMIN_PASSWORD="Maddie1169!"  # Change this to something stronger!
+ADMIN_PASSWORD="<CHANGE_ME_ADMIN_PASSWORD>"  # Change this to something stronger!
 
 # ============================================
 # EMAIL / SMTP

@@ -253,7 +253,7 @@ Write-Host "   Admin:     http://${SERVER_IP}:3002/sign-in" -ForegroundColor Whi
 Write-Host ""
 Write-Host "🔑 Admin Login:" -ForegroundColor Cyan
 Write-Host "   Email:     scott@mahapeps.com" -ForegroundColor White
-Write-Host "   Password:  Maddie1169!" -ForegroundColor White
+Write-Host "   Password:  <CHANGE_ME_ADMIN_PASSWORD>" -ForegroundColor White
 Write-Host ""
 Write-Host "📊 Useful Commands:" -ForegroundColor Cyan
 Write-Host "   ssh $SSH_USER@$SERVER_IP" -ForegroundColor White

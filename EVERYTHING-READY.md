@@ -42,12 +42,12 @@ I've consolidated **ALL** your environment variables and created **production-re
 ### Admin Account ✅
 ```
 Email:    scott@mahapeps.com
-Password: Maddie1169!
+Password: <CHANGE_ME_ADMIN_PASSWORD>
 ```
 
 ### Email Service (Mailgun) - ACTIVE ✅
 ```
-API Key:  7872b65e5aa11ef85f779e027dcdf9aa-42b8ce75-5ff82429
+API Key:  <MAILGUN_API_KEY>
 Domain:   mg.mahapeps.com
 From:     noreply@mg.mahapeps.com
 ```
@@ -66,14 +66,14 @@ CashApp:  $MahaPeps
 
 ### Security Secrets - NEWLY GENERATED ✅
 ```
-JWT_SECRET:      c151d658ae2a3f398703616b6d9556cb027f6243ea732e610c48ba0fae51d226
-ENCRYPTION_KEY:  1311895676c67bcc8fdecc6972c637d358284beea9bb459c08db6afc47fa1cb3
+JWT_SECRET:      <GENERATE_RANDOM_64_HEX>
+ENCRYPTION_KEY:  <GENERATE_RANDOM_64_HEX>
 ```
 *(Secure 64-character random strings)*
 
 ### Database ✅
 ```
-Connection: postgresql://mahapeps:mahapeps_prod_password@localhost:5432/mahapeps_prod
+Connection: postgresql://mahapeps:<DB_PASSWORD>@localhost:5432/mahapeps_prod
 ```
 *(Works with your Docker setup)*
 
@@ -222,7 +222,7 @@ Products:  http://YOUR_IP:3002/products
 3. **Admin Login**:
    - Go to `/sign-in`
    - Email: `scott@mahapeps.com`
-   - Password: `Maddie1169!`
+   - Password: `<CHANGE_ME_ADMIN_PASSWORD>`
 4. **Place Test Order**: Full checkout flow works!
 
 ---
@@ -373,7 +373,7 @@ After deployment:
 **Your Admin Login:**
 - URL: `http://YOUR_IP:3002/sign-in`
 - Email: scott@mahapeps.com
-- Password: Maddie1169!
+- Password: <CHANGE_ME_ADMIN_PASSWORD>
 
 **Your GitHub:**
 - https://github.com/zebrastrike/MahaPeps.com
