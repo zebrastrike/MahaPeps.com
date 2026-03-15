@@ -21,9 +21,8 @@ function StatItem({ icon, value, suffix = '', label, delay = 0 }: StatItemProps)
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
           setHasAnimated(true);
-          // Parse the numeric value
           const numericValue = parseFloat(value.replace(/[^0-9.]/g, ''));
-          const duration = 2000; // 2 seconds
+          const duration = 2000;
           const steps = 60;
           const increment = numericValue / steps;
           let current = 0;
@@ -44,54 +43,42 @@ function StatItem({ icon, value, suffix = '', label, delay = 0 }: StatItemProps)
       { threshold: 0.3 }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
+    if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [value, hasAnimated]);
 
-  // Format the displayed number
   const formatValue = (num: number): string => {
-    if (value.includes('Billion')) {
-      return num.toFixed(1);
-    } else if (value.includes('+')) {
-      return Math.floor(num).toLocaleString();
-    } else if (value.includes('%')) {
-      return num.toFixed(1);
-    } else if (value.includes('-')) {
-      return Math.floor(num).toString();
-    }
+    if (value.includes('Billion')) return num.toFixed(1);
+    if (value.includes('+'))       return Math.floor(num).toLocaleString();
+    if (value.includes('%'))       return num.toFixed(1);
+    if (value.includes('-'))       return Math.floor(num).toString();
     return Math.floor(num).toString();
   };
 
   return (
     <div
       ref={ref}
-      className="group relative overflow-hidden rounded-2xl border border-charcoal-700/40 bg-gradient-to-br from-charcoal-800/85 to-charcoal-900/85 p-6 backdrop-blur-sm shadow-glass transition-all duration-300 hover:border-accent-500/30 hover:shadow-dark"
+      className="group relative overflow-hidden border border-gold-500/10 bg-navy-800/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-gold-500/25 hover:bg-navy-700/60"
       style={{ animationDelay: `${delay}ms` }}
     >
-      {/* Background glow effect */}
-      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-accent-500/10 blur-2xl transition-all duration-300 group-hover:bg-accent-500/20" />
+      {/* Gold glow on hover */}
+      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gold-500/5 blur-2xl transition-all duration-300 group-hover:bg-gold-500/15" />
 
       <div className="relative">
-        {/* Icon */}
-        <div className="mb-4 inline-flex rounded-xl bg-accent-500/10 p-3 text-accent-400 transition-all duration-300 group-hover:bg-accent-500/15 group-hover:text-accent-300">
+        <div className="mb-4 inline-flex p-2 text-gold-500/50 transition-all duration-300 group-hover:text-gold-400">
           {icon}
         </div>
 
-        {/* Value */}
         <div className="mb-2">
-          <span className="text-3xl font-bold text-clinical-white md:text-4xl">
+          <span className="font-editorial text-3xl text-warm-white md:text-4xl">
             {hasAnimated ? formatValue(count) : '0'}
           </span>
-          <span className="ml-1 text-2xl font-bold text-accent-400 md:text-3xl">
+          <span className="font-editorial ml-1 text-2xl text-gold-400 md:text-3xl">
             {suffix}
           </span>
         </div>
 
-        {/* Label */}
-        <p className="text-sm font-medium text-charcoal-300 md:text-base">{label}</p>
+        <p className="font-label text-[0.58rem] tracking-widest text-warm-white/40">{label}</p>
       </div>
     </div>
   );
@@ -99,72 +86,28 @@ function StatItem({ icon, value, suffix = '', label, delay = 0 }: StatItemProps)
 
 export function MarketStats() {
   return (
-    <section className="border-y border-charcoal-700/40 bg-gradient-to-b from-charcoal-800/95 to-charcoal-900 py-16 lg:py-24">
+    <section className="border-y border-gold-500/10 bg-gradient-to-b from-navy-800/80 to-navy-900 py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-clinical-white md:text-4xl">
+          <p className="font-label mb-4 text-gold-500/55 tracking-[0.18em]">By the Numbers</p>
+          <h2 className="font-editorial text-4xl text-warm-white md:text-5xl">
             The Peptide Research Revolution
           </h2>
-          <p className="mt-4 text-lg text-charcoal-300 md:text-xl">
-            Leading the advancement of peptide science and human health research
-          </p>
+          <hr className="divider-gold mx-auto mt-6 w-16" />
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <StatItem
-            icon={<ChartBar className="h-6 w-6" />}
-            value="5.2"
-            suffix=" Billion"
-            label="Global Peptide Market 2024"
-            delay={0}
-          />
-
-          <StatItem
-            icon={<TrendingUp className="h-6 w-6" />}
-            value="14.2"
-            suffix="% CAGR"
-            label="Annual Market Growth Rate"
-            delay={100}
-          />
-
-          <StatItem
-            icon={<FlaskConical className="h-6 w-6" />}
-            value="2000"
-            suffix="+"
-            label="Active Clinical Trials Worldwide"
-            delay={200}
-          />
-
-          <StatItem
-            icon={<Award className="h-6 w-6" />}
-            value="140"
-            suffix="+"
-            label="FDA-Approved Peptide Drugs"
-            delay={300}
-          />
-
-          <StatItem
-            icon={<Target className="h-6 w-6" />}
-            value="99.5"
-            suffix="%+"
-            label="Average Purity Guarantee"
-            delay={400}
-          />
-
-          <StatItem
-            icon={<Truck className="h-6 w-6" />}
-            value="48"
-            suffix="-Hour"
-            label="Domestic Shipping Time"
-            delay={500}
-          />
+        <div className="grid gap-px border border-gold-500/10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <StatItem icon={<ChartBar className="h-5 w-5" />}     value="5.2"  suffix=" Billion" label="Global Peptide Market 2024"    delay={0}   />
+          <StatItem icon={<TrendingUp className="h-5 w-5" />}   value="14.2" suffix="% CAGR"   label="Annual Market Growth Rate"     delay={100} />
+          <StatItem icon={<FlaskConical className="h-5 w-5" />} value="2000" suffix="+"         label="Active Clinical Trials"        delay={200} />
+          <StatItem icon={<Award className="h-5 w-5" />}        value="140"  suffix="+"         label="FDA-Approved Peptide Drugs"    delay={300} />
+          <StatItem icon={<Target className="h-5 w-5" />}       value="99.5" suffix="%+"        label="Average Purity Guarantee"      delay={400} />
+          <StatItem icon={<Truck className="h-5 w-5" />}        value="48"   suffix="-Hour"     label="Domestic Shipping Time"        delay={500} />
         </div>
 
-        {/* Supporting Text */}
-        <div className="mt-12 text-center">
-          <p className="mx-auto max-w-3xl text-sm text-charcoal-400 md:text-base">
+        <div className="mt-10 text-center">
+          <p className="mx-auto max-w-3xl text-xs font-light leading-relaxed text-warm-white/30 md:text-sm">
             MAHA Peptides supports America&apos;s research leadership with pharmaceutical-grade compounds,
             rigorous quality standards, and a commitment to scientific innovation. Every product meets
             stringent purity requirements verified through independent third-party testing.
