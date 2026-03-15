@@ -108,14 +108,14 @@ export function ProductCard({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group relative bg-white border rounded-lg overflow-hidden transition-all duration-300 ${
-        isHovered ? "shadow-xl border-blue-300 -translate-y-1" : "shadow-sm border-gray-200"
+      className={`group relative overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${
+        isHovered ? "border-accent-200 shadow-lg -translate-y-0.5" : "border-gray-200 shadow-sm"
       } ${!isActive ? "opacity-60" : ""}`}
     >
       {/* Wishlist Button */}
       <button
         onClick={handleToggleWishlist}
-        className="absolute top-3 right-3 z-10 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
+        className="absolute right-3 top-3 z-10 rounded-full border border-slate-200 bg-white/95 p-2 shadow-sm transition-colors hover:bg-red-50"
       >
         <Heart
           className={`w-5 h-5 ${isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600"}`}
@@ -124,33 +124,33 @@ export function ProductCard({
 
       {/* Product Image */}
       <Link href={`/products/${slug || id}`} className="block">
-        <div className="relative aspect-square bg-gray-100 overflow-hidden">
+        <div className="relative aspect-square overflow-hidden bg-slate-50">
           <img
             src={displayImage}
             alt={name}
             onError={() => setImageError(true)}
             className={`w-full h-full object-contain transition-transform duration-300 ${
-              isHovered ? "scale-110" : "scale-100"
+              isHovered ? "scale-105" : "scale-100"
             }`}
           />
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {purityPercent && (
-              <div className="px-3 py-1 bg-blue-600 text-white text-sm font-bold rounded-full shadow-lg">
+              <div className="rounded-full bg-accent-600 px-3 py-1 text-sm font-semibold text-white shadow-sm">
                 {purityPercent.toFixed(2)}% Purity
               </div>
             )}
 
             {variantHasCoa && (
-              <div className="px-3 py-1 bg-green-600 text-white text-sm font-semibold rounded-full shadow-lg flex items-center gap-1">
+              <div className="flex items-center gap-1 rounded-full bg-clinical-success px-3 py-1 text-sm font-semibold text-white shadow-sm">
                 <FileText className="w-3 h-3" />
                 COA
               </div>
             )}
 
             {!isActive && (
-              <div className="px-3 py-1 bg-gray-600 text-white text-sm font-semibold rounded-full shadow-lg">
+              <div className="rounded-full bg-gray-600 px-3 py-1 text-sm font-semibold text-white shadow-sm">
                 Inactive
               </div>
             )}
@@ -158,12 +158,12 @@ export function ProductCard({
 
           {/* Quick View Overlay */}
           {isHovered && (
-            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center bg-charcoal-900/20">
               <div className="flex gap-2">
                 {variantHasCoa && onViewCoa && (
                   <button
                     onClick={handleViewCoa}
-                    className="px-4 py-2 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-2 shadow-lg"
+                    className="flex items-center gap-2 rounded-full bg-white px-4 py-2 font-semibold text-accent-700 shadow-sm transition-colors hover:bg-accent-50"
                   >
                     <FileText className="w-4 h-4" />
                     View COA
@@ -180,7 +180,7 @@ export function ProductCard({
         <Link href={`/products/${slug || id}`} className="block">
           <div className="mb-2">
             <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">{category}</div>
-            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 mb-1 group-hover:text-blue-600 transition-colors">
+            <h3 className="mb-1 line-clamp-2 text-lg font-semibold text-gray-900 transition-colors group-hover:text-accent-700">
               {name}
             </h3>
             <p className="text-xs text-gray-600 mb-2">SKU: {variantSku}</p>
@@ -197,7 +197,7 @@ export function ProductCard({
             <select
               value={selectedVariantId}
               onChange={(event) => setSelectedVariantId(event.target.value)}
-              className="mt-1 w-full rounded-md border border-blue-500 bg-blue-600 px-2 py-2 text-sm text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
+              className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent-400 [&>option]:bg-white [&>option]:text-slate-800"
             >
               {variants.map((variant) => (
                 <option key={variant.id} value={variant.id}>
@@ -225,7 +225,7 @@ export function ProductCard({
 
           {/* Info tooltip */}
           <div className="relative group/info">
-            <Info className="w-5 h-5 text-gray-400 hover:text-blue-600 cursor-help" />
+            <Info className="w-5 h-5 cursor-help text-gray-400 hover:text-accent-700" />
             <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none">
               Research use only. Not for human consumption.
             </div>
@@ -233,7 +233,7 @@ export function ProductCard({
         </div>
 
         {/* Research Compliance Badge */}
-        <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+        <div className="mb-3 rounded-lg border border-yellow-200 bg-yellow-50 p-2 text-xs text-yellow-800">
           <strong>Research Use Only</strong> - Not for human consumption
         </div>
       </div>
@@ -243,9 +243,9 @@ export function ProductCard({
         <button
           onClick={handleAddToCart}
           disabled={!canPurchase}
-          className={`flex-1 px-4 py-2.5 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
+          className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition-colors ${
             canPurchase
-              ? "bg-blue-600 text-white hover:bg-blue-700"
+              ? "bg-accent-600 text-white hover:bg-accent-700"
               : "bg-gray-200 text-gray-500 cursor-not-allowed"
           }`}
         >
@@ -255,7 +255,7 @@ export function ProductCard({
 
         <Link
           href={`/products/${slug || id}`}
-          className="px-4 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          className="rounded-xl border border-gray-300 px-4 py-2.5 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
         >
           Details
         </Link>

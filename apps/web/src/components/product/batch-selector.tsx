@@ -73,7 +73,7 @@ export function BatchSelector({
 
   if (loading) {
     return (
-      <div className="border rounded-lg p-4 animate-pulse">
+      <div className="animate-pulse rounded-xl border border-slate-200 p-4">
         <div className="h-6 bg-gray-200 rounded w-24 mb-2"></div>
         <div className="h-10 bg-gray-200 rounded"></div>
       </div>
@@ -82,7 +82,7 @@ export function BatchSelector({
 
   if (batches.length === 0) {
     return (
-      <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-4">
+      <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
         <div className="flex items-center gap-2 text-yellow-700">
           <AlertTriangle className="w-5 h-5" />
           <p className="text-sm font-medium">No batches available</p>
@@ -99,14 +99,14 @@ export function BatchSelector({
         {/* Selected Batch Display */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-4 py-3 border rounded-lg bg-white hover:bg-gray-50 transition-colors text-left flex items-center justify-between"
+          className="flex w-full items-center justify-between rounded-xl border border-slate-300 bg-white px-4 py-3 text-left transition-colors hover:bg-slate-50"
         >
           {selectedBatch ? (
             <div className="flex items-center gap-3 flex-1">
               <div className="flex-1">
                 <p className="font-semibold text-gray-900">{selectedBatch.batchCode}</p>
                 <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
-                  <span className="font-medium text-blue-600">
+                  <span className="font-medium text-accent-700">
                     {parseFloat(selectedBatch.purityPercent).toFixed(2)}% Purity
                   </span>
                   <span>-</span>
@@ -120,7 +120,7 @@ export function BatchSelector({
                     e.stopPropagation();
                     if (onViewCoa) onViewCoa(selectedBatch.id);
                   }}
-                  className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm hover:bg-blue-200 transition-colors"
+                  className="flex items-center gap-1 rounded-full bg-accent-100 px-3 py-1 text-sm text-accent-700 transition-colors hover:bg-accent-200"
                 >
                   <FileText className="w-4 h-4" />
                   View COA
@@ -159,14 +159,14 @@ export function BatchSelector({
                   disabled={!batch.isActive}
                   className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b last:border-b-0 ${
                     !batch.isActive ? "opacity-50 cursor-not-allowed" : ""
-                  } ${batch.id === selectedBatchId ? "bg-blue-50" : ""}`}
+                  } ${batch.id === selectedBatchId ? "bg-accent-50" : ""}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-semibold text-gray-900">{batch.batchCode}</p>
                         {batch.id === selectedBatchId && (
-                          <Check className="w-4 h-4 text-blue-600" />
+                          <Check className="w-4 h-4 text-accent-700" />
                         )}
                         {!batch.isActive && (
                           <span className="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded">
@@ -176,7 +176,7 @@ export function BatchSelector({
                       </div>
 
                       <div className="flex items-center gap-3 text-sm text-gray-600">
-                        <span className="font-medium text-blue-600">
+                        <span className="font-medium text-accent-700">
                           {parseFloat(batch.purityPercent).toFixed(2)}%
                         </span>
                         <span>-</span>
@@ -208,7 +208,7 @@ export function BatchSelector({
 
       {/* Batch Info Card */}
       {selectedBatch && (
-        <div className="border rounded-lg p-3 bg-gray-50 text-sm">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <p className="text-gray-600 text-xs mb-0.5">Manufactured</p>

@@ -207,7 +207,7 @@ export default function ProductDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-b-2 border-accent-600"></div>
           <p className="text-gray-600">Loading product details...</p>
         </div>
       </div>
@@ -229,11 +229,11 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="text-sm text-gray-600 mb-6">
-          <a href="/products" className="hover:text-blue-600">
+          <a href="/products" className="hover:text-accent-700">
             Products
           </a>
           <span className="mx-2">/</span>
@@ -244,8 +244,8 @@ export default function ProductDetailPage() {
           {/* Left Column - Product Image & Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Product Image */}
-            <div className="bg-white border rounded-lg p-8">
-              <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="mb-4 flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-100">
                 {product.imageUrl ? (
                   <img
                     src={product.imageUrl}
@@ -262,17 +262,17 @@ export default function ProductDetailPage() {
 
               {/* Quick Info Pills */}
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full">
+                <span className="rounded-full bg-accent-100 px-3 py-1 text-sm font-semibold text-accent-700">
                   {product.category.replace(/_/g, " ")}
                 </span>
                 {product.isActive && (
-                  <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full flex items-center gap-1">
+                  <span className="flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
                     <CheckCircle className="w-3 h-3" />
                     In Stock
                   </span>
                 )}
                 {selectedBatch?.hasCoa && (
-                  <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full flex items-center gap-1">
+                  <span className="flex items-center gap-1 rounded-full bg-accent-100 px-3 py-1 text-sm font-semibold text-accent-700">
                     <FileText className="w-3 h-3" />
                     COA Available
                   </span>
@@ -281,7 +281,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Product Description */}
-            <div className="bg-white border rounded-lg p-6">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Product Description</h2>
               <p className="text-gray-700 leading-relaxed mb-4">{product.description}</p>
 
@@ -320,7 +320,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Compliance Notice */}
-            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
+            <div className="rounded-2xl border border-yellow-200 bg-yellow-50 p-6">
               <div className="flex items-start gap-3">
                 <Shield className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
                 <div>
@@ -339,7 +339,7 @@ export default function ProductDetailPage() {
           {/* Right Column - Purchase Section */}
           <div className="space-y-6">
             {/* Main Purchase Card */}
-            <div className="bg-white border rounded-lg p-6 sticky top-4">
+            <div className="sticky top-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
               <p className="text-sm text-gray-600 mb-4">
                 SKU: {selectedVariant?.sku || product.sku}
@@ -354,7 +354,7 @@ export default function ProductDetailPage() {
                   <select
                     value={selectedVariantId || ""}
                     onChange={(event) => setSelectedVariantId(event.target.value)}
-                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-blue-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent-400"
                   >
                     {product.variants.map((variant) => (
                       <option key={variant.id} value={variant.id}>
@@ -394,16 +394,16 @@ export default function ProductDetailPage() {
                   min="1"
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-blue-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent-400"
                 />
               </div>
 
               {/* Purity Display */}
               {selectedBatch && (
-                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="mb-6 rounded-xl border border-accent-200 bg-accent-50 p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Selected Batch Purity</span>
-                    <span className="text-2xl font-bold text-blue-600">
+                    <span className="text-2xl font-bold text-accent-700">
                       {parseFloat(selectedBatch.purityPercent).toFixed(2)}%
                     </span>
                   </div>
@@ -414,7 +414,7 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleAddToCart}
                 disabled={!canPurchase}
-                className="w-full px-6 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 mb-3"
+                className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-accent-600 px-6 py-4 font-bold text-white transition-colors hover:bg-accent-700 disabled:cursor-not-allowed disabled:bg-gray-300"
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Research Cart
@@ -428,7 +428,7 @@ export default function ProductDetailPage() {
                   </p>
                   <button
                     onClick={handleNotify}
-                    className="mt-3 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                    className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
                   >
                     Notify When Available
                   </button>
@@ -439,7 +439,7 @@ export default function ProductDetailPage() {
               )}
 
               {/* Wishlist Button */}
-              <button className="w-full px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+              <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50">
                 <Heart className="w-5 h-5" />
                 Add to Wishlist
               </button>
@@ -448,7 +448,7 @@ export default function ProductDetailPage() {
               {selectedBatch?.hasCoa && (
                 <button
                   onClick={handleViewCoa}
-                  className="w-full mt-3 px-6 py-3 bg-green-50 border border-green-300 text-green-700 font-semibold rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-green-300 bg-green-50 px-6 py-3 font-semibold text-green-700 transition-colors hover:bg-green-100"
                 >
                   <FileText className="w-5 h-5" />
                   View Certificate of Analysis
@@ -457,12 +457,12 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Info Card */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+            <div className="rounded-2xl border border-accent-200 bg-accent-50 p-4 text-sm">
               <div className="flex items-start gap-2">
-                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div className="text-blue-900">
+                <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent-700" />
+                <div className="text-accent-900">
                   <p className="font-semibold mb-1">Need Help?</p>
-                  <p className="text-blue-700">
+                  <p className="text-accent-700">
                     Contact our research support team for product specifications,
                     bulk ordering, or technical questions.
                   </p>

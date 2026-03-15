@@ -16,7 +16,7 @@ export default function SolutionsPage() {
                   alt="MAHA Peptides"
                   width={200}
                   height={70}
-                  className="h-16 w-auto [filter:drop-shadow(0_0_8px_rgba(220,38,38,0.6))_drop-shadow(0_0_16px_rgba(255,255,255,0.4))]"
+                  className="h-16 w-auto"
                   priority
                 />
               </Link>

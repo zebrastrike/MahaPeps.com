@@ -68,7 +68,7 @@ function StatItem({ icon, value, suffix = '', label, delay = 0 }: StatItemProps)
   return (
     <div
       ref={ref}
-      className="group relative overflow-hidden rounded-xl border border-charcoal-700/50 bg-gradient-to-br from-charcoal-800/90 to-charcoal-900/90 p-6 backdrop-blur-sm shadow-glass transition-all duration-300 hover:border-accent-500/50 hover:shadow-accent-glow"
+      className="group relative overflow-hidden rounded-2xl border border-charcoal-700/40 bg-gradient-to-br from-charcoal-800/85 to-charcoal-900/85 p-6 backdrop-blur-sm shadow-glass transition-all duration-300 hover:border-accent-500/30 hover:shadow-dark"
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Background glow effect */}
@@ -76,7 +76,7 @@ function StatItem({ icon, value, suffix = '', label, delay = 0 }: StatItemProps)
 
       <div className="relative">
         {/* Icon */}
-        <div className="mb-4 inline-flex rounded-lg bg-accent-500/10 p-3 text-accent-400 transition-all duration-300 group-hover:bg-accent-500/20 group-hover:text-accent-300">
+        <div className="mb-4 inline-flex rounded-xl bg-accent-500/10 p-3 text-accent-400 transition-all duration-300 group-hover:bg-accent-500/15 group-hover:text-accent-300">
           {icon}
         </div>
 
@@ -99,7 +99,7 @@ function StatItem({ icon, value, suffix = '', label, delay = 0 }: StatItemProps)
 
 export function MarketStats() {
   return (
-    <section className="border-y border-charcoal-700/50 bg-gradient-to-b from-charcoal-800 to-charcoal-900 py-16 lg:py-24">
+    <section className="border-y border-charcoal-700/40 bg-gradient-to-b from-charcoal-800/95 to-charcoal-900 py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mb-12 text-center">

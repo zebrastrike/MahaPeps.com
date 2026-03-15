@@ -146,10 +146,10 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
   return (
     <div className="space-y-6">
       {/* Upload Section */}
-      <div className="bg-white border rounded-lg p-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Upload className="w-6 h-6 text-blue-600" />
+            <Upload className="h-6 w-6 text-accent-700" />
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Bulk Order Upload</h3>
               <p className="text-sm text-gray-600">Upload a CSV file with SKU and quantity</p>
@@ -158,7 +158,7 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
 
           <button
             onClick={handleDownloadTemplate}
-            className="px-4 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2 text-sm font-medium"
+            className="flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
           >
             <Download className="w-4 h-4" />
             Download Template
@@ -166,7 +166,7 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
         </div>
 
         {!file ? (
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-500 transition-colors">
+          <div className="rounded-xl border-2 border-dashed border-gray-300 p-12 text-center transition-colors hover:border-accent-500">
             <input
               type="file"
               accept=".csv"
@@ -185,10 +185,10 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
             </label>
           </div>
         ) : (
-          <div className="bg-gray-50 border rounded-lg p-4">
+          <div className="rounded-xl border border-slate-200 bg-gray-50 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-blue-600" />
+                <FileText className="h-5 w-5 text-accent-700" />
                 <div>
                   <p className="font-medium text-gray-900">{file.name}</p>
                   <p className="text-sm text-gray-600">
@@ -199,7 +199,7 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
 
               <button
                 onClick={handleReset}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
+                className="rounded p-2 transition-colors hover:bg-gray-200"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
@@ -210,7 +210,7 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
 
       {/* Preview Section */}
       {showPreview && items.length > 0 && (
-        <div className="bg-white border rounded-lg p-6">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Preview</h3>
 
           {/* Summary Stats */}
@@ -233,9 +233,9 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
               </div>
             )}
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="rounded-lg border border-accent-200 bg-accent-50 p-4">
               <div className="text-sm text-gray-600 mb-1">Estimated Total</div>
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-accent-700">
                 ${totalEstimate.toFixed(2)}
               </div>
             </div>
@@ -309,13 +309,13 @@ export function BulkOrderUpload({ onOrderSubmit }: BulkOrderUploadProps) {
             <button
               onClick={handleSubmit}
               disabled={validItemCount === 0}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="flex-1 rounded-full bg-accent-600 px-6 py-3 font-semibold text-white hover:bg-accent-700 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               Submit Bulk Order ({validItemCount} items)
             </button>
             <button
               onClick={handleReset}
-              className="px-6 py-3 border rounded-lg hover:bg-gray-50 font-semibold"
+              className="rounded-full border border-slate-300 px-6 py-3 font-semibold hover:bg-gray-50"
             >
               Cancel
             </button>

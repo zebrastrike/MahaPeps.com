@@ -60,7 +60,7 @@ export function AgeGate() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal-900/95 backdrop-blur-sm p-4 sm:p-6 overflow-y-auto">
-      <div className="w-full max-w-2xl rounded-xl border-2 border-red-500 bg-charcoal-800 p-4 sm:p-8 shadow-2xl my-4 sm:my-8">
+      <div className="my-4 w-full max-w-2xl rounded-2xl border border-red-500/70 bg-charcoal-800 p-4 shadow-dark-lg sm:my-8 sm:p-8">
         {/* Logo */}
         <div className="mb-6 text-center">
           <Image
@@ -68,7 +68,7 @@ export function AgeGate() {
             alt="MAHA Peptides"
             width={180}
             height={60}
-            className="mx-auto h-12 w-auto sm:h-14 [filter:drop-shadow(0_0_8px_rgba(220,38,38,0.6))_drop-shadow(0_0_16px_rgba(255,255,255,0.4))]"
+            className="mx-auto h-12 w-auto sm:h-14"
             priority
           />
         </div>
@@ -81,7 +81,7 @@ export function AgeGate() {
         </div>
 
         {/* Critical Warning */}
-        <div className="mb-6 rounded-lg border-2 border-red-500 bg-red-500/10 p-3 sm:p-4">
+        <div className="mb-6 rounded-xl border border-red-500/60 bg-red-500/10 p-3 sm:p-4">
           <p className="text-center font-bold text-red-200 mb-2 text-xs sm:text-sm">RESEARCH CHEMICALS - NOT FOR HUMAN CONSUMPTION</p>
           <p className="text-center text-xs text-red-100 sm:text-sm">
             This website contains research chemicals and peptides intended <strong>SOLELY FOR LABORATORY RESEARCH AND ANALYTICAL USE</strong>.
@@ -92,7 +92,7 @@ export function AgeGate() {
         {/* Required Acceptances */}
         <div className="space-y-3 sm:space-y-4 mb-6">
           {/* Age Confirmation */}
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border-2 border-charcoal-600 bg-charcoal-900/50 p-3 sm:p-4 hover:border-accent-500 transition-colors">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-charcoal-600 bg-charcoal-900/50 p-3 transition-colors hover:border-accent-500 sm:p-4">
             <input
               type="checkbox"
               checked={ageConfirmed}
@@ -106,7 +106,7 @@ export function AgeGate() {
           </label>
 
           {/* Terms of Service */}
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border-2 border-charcoal-600 bg-charcoal-900/50 p-3 sm:p-4 hover:border-accent-500 transition-colors">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-charcoal-600 bg-charcoal-900/50 p-3 transition-colors hover:border-accent-500 sm:p-4">
             <input
               type="checkbox"
               checked={termsAccepted}
@@ -126,7 +126,7 @@ export function AgeGate() {
           </label>
 
           {/* Research Use Policy */}
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border-2 border-charcoal-600 bg-charcoal-900/50 p-3 sm:p-4 hover:border-accent-500 transition-colors">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-charcoal-600 bg-charcoal-900/50 p-3 transition-colors hover:border-accent-500 sm:p-4">
             <input
               type="checkbox"
               checked={researchUseAccepted}
@@ -148,7 +148,7 @@ export function AgeGate() {
         </div>
 
         {/* Additional Acknowledgments */}
-        <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+        <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
           <p className="font-semibold text-amber-200 mb-2 text-xs sm:text-sm">By checking all boxes above, I acknowledge:</p>
           <ul className="text-xs text-amber-100 space-y-1 sm:text-sm">
             <li>• I possess adequate training and facilities to handle research chemicals safely</li>
@@ -163,14 +163,14 @@ export function AgeGate() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={handleExit}
-            className="w-full rounded-lg border-2 border-charcoal-600 bg-charcoal-900 px-6 py-3 text-sm font-semibold text-charcoal-300 transition-colors hover:border-red-500 hover:bg-red-900/20 hover:text-red-400 sm:flex-1 sm:text-base"
+            className="w-full rounded-full border border-charcoal-600 bg-charcoal-900 px-6 py-3 text-sm font-semibold text-charcoal-300 transition-colors hover:border-red-500 hover:bg-red-900/20 hover:text-red-400 sm:flex-1 sm:text-base"
           >
             I Do Not Accept - Exit
           </button>
           <button
             onClick={handleEnter}
             disabled={!allAccepted}
-            className="w-full rounded-lg bg-accent-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-accent-500 sm:flex-1 sm:text-base"
+            className="w-full rounded-full bg-accent-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-accent-500 sm:flex-1 sm:text-base"
           >
             I Accept All Terms - Enter Site
           </button>

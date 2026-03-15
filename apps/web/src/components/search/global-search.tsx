@@ -174,7 +174,7 @@ export function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
 
       {/* Search Modal */}
       <div className="fixed inset-x-4 top-20 z-50 mx-auto max-w-3xl md:inset-x-auto">
-        <div className="rounded-xl border border-charcoal-700/50 bg-charcoal-800 shadow-2xl">
+        <div className="rounded-2xl border border-charcoal-700/50 bg-charcoal-800 shadow-dark-lg">
           {/* Search Input */}
           <div className="flex items-center gap-3 border-b border-charcoal-700/50 p-4">
             <Search className="h-5 w-5 text-charcoal-400" />

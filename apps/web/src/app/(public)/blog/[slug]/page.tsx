@@ -125,7 +125,7 @@ export default function BlogPostPage() {
                 alt="MAHA Peptides"
                 width={150}
                 height={50}
-                className="h-12 w-auto [filter:drop-shadow(0_0_8px_rgba(220,38,38,0.6))_drop-shadow(0_0_16px_rgba(255,255,255,0.4))]"
+                className="h-12 w-auto"
               />
             </Link>
           </div>
