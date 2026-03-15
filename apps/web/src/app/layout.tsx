@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }}
         />
       </head>
-      <body className="min-h-screen bg-charcoal-900 text-clinical-white antialiased">
+      <body className="min-h-screen bg-navy-900 text-warm-white antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

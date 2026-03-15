@@ -2,17 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --background: #0E0F12;
-  --foreground: #F8F9FA;
+  --background: #0A0C14;
+  --foreground: #F2EDE6;
+  --gold: #B8965A;
+  --gold-light: #D4B483;
+  --red-deep: #8B1A1A;
+  --red-bright: #C0392B;
+  --surface: #0F1420;
+  --surface-2: #161C2E;
+  --border-gold: rgba(184, 150, 90, 0.2);
+  --border-navy: rgba(255, 255, 255, 0.06);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: theme("fontFamily.sans");
+  font-weight: 300;
 }
 
 a {
@@ -28,40 +37,95 @@ a {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Cormorant Garamond display headlines */
+  .font-editorial {
+    font-family: theme("fontFamily.display");
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+
+  /* Futura PT ALL CAPS label treatment */
+  .font-label {
+    font-family: theme("fontFamily.label");
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+  }
+
+  /* Gold thin rule divider */
+  .divider-gold {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.4;
+  }
+
+  /* Thin red accent rule */
+  .divider-red {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--red-deep), transparent);
+    opacity: 0.5;
+  }
+
+  /* "Made in America" stamp badge */
+  .badge-american {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: theme("fontFamily.label");
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.6rem;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 0.2rem 0.55rem;
+    background: rgba(184, 150, 90, 0.08);
+  }
+
+  /* Star texture overlay — 6% opacity americana bg element */
+  .star-texture {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpolygon points='30,5 34,20 48,20 37,29 41,44 30,35 19,44 23,29 12,20 26,20' fill='%23B8965A' opacity='0.06'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 60px 60px;
+  }
 }
 
-
+/* Hero ambient glow — gold/navy */
 @keyframes heroGlow {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.35;
+    opacity: 0.3;
   }
   50% {
     transform: translate3d(-2%, -1%, 0) scale(1.05);
-    opacity: 0.55;
+    opacity: 0.5;
   }
   100% {
     transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.35;
+    opacity: 0.3;
   }
 }
 
 .hero-ambient {
   background:
-    radial-gradient(60% 60% at 20% 30%, rgba(58, 127, 140, 0.35), transparent 60%),
-    radial-gradient(50% 50% at 80% 20%, rgba(255, 147, 92, 0.25), transparent 60%),
-    linear-gradient(120deg, rgba(18, 27, 38, 0.6), rgba(8, 12, 18, 0.4));
-  animation: heroGlow 18s ease-in-out infinite;
+    radial-gradient(60% 60% at 20% 30%, rgba(184, 150, 90, 0.2), transparent 60%),
+    radial-gradient(50% 50% at 80% 20%, rgba(139, 26, 26, 0.15), transparent 60%),
+    linear-gradient(120deg, rgba(10, 12, 20, 0.7), rgba(15, 20, 32, 0.5));
+  animation: heroGlow 20s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* Admin dashboard theme overrides */
+/* Admin dashboard theme overrides — keep teal for admin context */
 .admin-shell {
-  --admin-bg: #3A7F8C;
-  --admin-bg-card: #2d6670;
-  --admin-text: #F8F9FA;
-  --admin-text-muted: rgba(248, 249, 250, 0.8);
-  --admin-border: rgba(248, 249, 250, 0.35);
+  --admin-bg: #1a2e35;
+  --admin-bg-card: #152428;
+  --admin-text: #F2EDE6;
+  --admin-text-muted: rgba(242, 237, 230, 0.75);
+  --admin-border: rgba(242, 237, 230, 0.2);
   background-color: var(--admin-bg) !important;
   color: var(--admin-text) !important;
 }
@@ -114,7 +178,7 @@ a {
 
 .admin-shell input::placeholder,
 .admin-shell textarea::placeholder {
-  color: rgba(248, 249, 250, 0.6) !important;
+  color: rgba(242, 237, 230, 0.5) !important;
 }
 
 .admin-shell select option {
@@ -142,8 +206,8 @@ a {
   border-color: var(--admin-border) !important;
 }
 
-.admin-shell .hover\\:bg-slate-50:hover,
-.admin-shell .hover\\:bg-gray-50:hover,
-.admin-shell .hover\\:bg-slate-100:hover {
+.admin-shell .hover\:bg-slate-50:hover,
+.admin-shell .hover\:bg-gray-50:hover,
+.admin-shell .hover\:bg-slate-100:hover {
   background-color: var(--admin-bg) !important;
 }
