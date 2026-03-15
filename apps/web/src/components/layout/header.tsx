@@ -18,7 +18,7 @@ export function Header({ title, subtitle }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const { itemCount } = useCart();
 
-  return (<header className="sticky top-0 z-50 border-b border-charcoal-700/50 bg-charcoal-900/95 backdrop-blur-sm">
+  return (<header className="sticky top-0 z-50 border-b border-charcoal-700/40 bg-charcoal-900/90 backdrop-blur-md">
       {searchOpen && <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
@@ -30,7 +30,7 @@ export function Header({ title, subtitle }: HeaderProps) {
                   alt="MAHA Peptides"
                   width={180}
                   height={65}
-                  className="h-16 w-auto [filter:drop-shadow(0_0_8px_rgba(220,38,38,0.6))_drop-shadow(0_0_16px_rgba(255,255,255,0.4))]"
+                  className="h-16 w-auto"
                   priority
                 />
               </Link>
@@ -68,21 +68,21 @@ export function Header({ title, subtitle }: HeaderProps) {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSearchOpen(true)}
-                className="hidden md:flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors"
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-transparent text-charcoal-300 transition-colors hover:border-charcoal-600/60 hover:bg-charcoal-800/60 hover:text-clinical-white md:flex"
                 aria-label="Search"
               >
                 <Search className="h-5 w-5" />
               </button>
               <Link
                 href="/sign-in"
-                className="hidden md:flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors"
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-transparent text-charcoal-300 transition-colors hover:border-charcoal-600/60 hover:bg-charcoal-800/60 hover:text-clinical-white md:flex"
                 aria-label="Account"
               >
                 <User className="h-5 w-5" />
               </Link>
               <Link
                 href="/checkout"
-                className="hidden md:flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors relative"
+                className="relative hidden h-10 w-10 items-center justify-center rounded-full border border-transparent text-charcoal-300 transition-colors hover:border-charcoal-600/60 hover:bg-charcoal-800/60 hover:text-clinical-white md:flex"
                 aria-label="Cart"
               >
                 <ShoppingCart className="h-5 w-5" />
@@ -94,14 +94,14 @@ export function Header({ title, subtitle }: HeaderProps) {
               </Link>
               <Button
                 asChild
-                className="hidden md:inline-flex bg-accent-500 text-white hover:bg-accent-600 font-medium px-6"
+                className="hidden rounded-full bg-accent-500 px-6 font-medium text-white shadow-dark transition-all hover:bg-accent-600 hover:shadow-dark-lg md:inline-flex"
               >
                 <Link href="/products">Browse Catalog</Link>
               </Button>
 
               {/* Mobile Menu Button */}
               <button
-                className="md:hidden flex items-center justify-center h-10 w-10 rounded-md text-charcoal-300 hover:bg-charcoal-800 hover:text-clinical-white transition-colors"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-transparent text-charcoal-300 transition-colors hover:border-charcoal-600/60 hover:bg-charcoal-800/60 hover:text-clinical-white md:hidden"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Toggle menu"
               >
@@ -112,41 +112,41 @@ export function Header({ title, subtitle }: HeaderProps) {
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 space-y-2 border-t border-charcoal-700/50">
+            <div className="space-y-2 border-t border-charcoal-700/50 py-4 md:hidden">
               <button
                 onClick={() => {
                   setSearchOpen(true);
                   setMobileMenuOpen(false);
                 }}
-                className="flex w-full items-center gap-2 px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                className="flex w-full items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-clinical-white transition-colors hover:bg-charcoal-800/70"
               >
                 <Search className="h-4 w-4" />
                 Search
               </button>
               <Link
                 href="/products"
-                className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                className="block rounded-xl px-4 py-2 text-sm font-medium text-clinical-white transition-colors hover:bg-charcoal-800/70"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Products
               </Link>
               <Link
                 href="/solutions"
-                className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                className="block rounded-xl px-4 py-2 text-sm font-medium text-clinical-white transition-colors hover:bg-charcoal-800/70"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Solutions
               </Link>
               <Link
                 href="/wholesale"
-                className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                className="block rounded-xl px-4 py-2 text-sm font-medium text-clinical-white transition-colors hover:bg-charcoal-800/70"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Wholesale
               </Link>
               <Link
                 href="/contact"
-                className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                className="block rounded-xl px-4 py-2 text-sm font-medium text-clinical-white transition-colors hover:bg-charcoal-800/70"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Contact
@@ -154,7 +154,7 @@ export function Header({ title, subtitle }: HeaderProps) {
               <div className="pt-2 space-y-2">
                 <Link
                   href="/checkout"
-                  className="flex items-center justify-between px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                  className="flex items-center justify-between rounded-xl px-4 py-2 text-sm font-medium text-clinical-white transition-colors hover:bg-charcoal-800/70"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <span>Cart</span>
@@ -166,14 +166,14 @@ export function Header({ title, subtitle }: HeaderProps) {
                 </Link>
                 <Link
                   href="/sign-in"
-                  className="block px-4 py-2 text-sm font-medium text-clinical-white hover:bg-charcoal-800 rounded-md transition-colors"
+                  className="block rounded-xl px-4 py-2 text-sm font-medium text-clinical-white transition-colors hover:bg-charcoal-800/70"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/products"
-                  className="block px-4 py-2 text-sm font-medium bg-accent-500 text-white hover:bg-accent-600 rounded-md transition-colors text-center"
+                  className="block rounded-full bg-accent-500 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-accent-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Browse Catalog

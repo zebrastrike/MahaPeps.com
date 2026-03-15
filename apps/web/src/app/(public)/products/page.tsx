@@ -119,7 +119,7 @@ export default function ProductsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-b-2 border-accent-600"></div>
           <p className="text-gray-600">Loading research materials...</p>
         </div>
       </div>
@@ -127,22 +127,22 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <div className="bg-gradient-to-r from-accent-600 to-accent-700 text-white">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-center gap-4 mb-4">
             <Beaker className="w-12 h-12" />
             <div>
               <h1 className="text-4xl font-bold mb-2">Research Materials Catalog</h1>
-              <p className="text-blue-100 text-lg">
+              <p className="text-accent-100 text-lg">
                 Premium peptides and analytical reference materials for laboratory research
               </p>
             </div>
           </div>
 
           {/* Compliance Banner */}
-          <div className="mt-6 p-4 bg-yellow-500/20 border border-yellow-400/30 rounded-lg">
+          <div className="mt-6 rounded-xl border border-yellow-400/30 bg-yellow-500/20 p-4">
             <p className="text-sm font-semibold">
               RESEARCH USE ONLY - All products are intended for laboratory research applications only.
               Not for human consumption or therapeutic use.

@@ -119,13 +119,13 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
     Object.values(filters).filter((v) => v !== undefined && v !== "").length > 0;
 
   return (
-    <div className="bg-white border rounded-lg shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* Search Bar */}
       <div className="p-4">
         <form onSubmit={handleSearch} className="flex gap-2">
           <div className="flex-1 relative">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-100" />
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -135,19 +135,19 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                   if (suggestions.length > 0) setShowSuggestions(true);
                 }}
                 placeholder="Search by name, SKU, CAS number, or molecular formula..."
-                className="w-full rounded-lg border border-blue-500 bg-blue-600 py-3 pl-10 pr-10 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-10 pr-10 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-400"
               />
               {query && (
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-blue-100 hover:bg-blue-500"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-slate-500 hover:bg-slate-100"
                 >
                   <X className="w-4 h-4" />
                 </button>
               )}
               {loadingSuggestions && (
-                <Loader2 className="absolute right-10 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-blue-100" />
+                <Loader2 className="absolute right-10 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-accent-500" />
               )}
             </div>
 
@@ -158,7 +158,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowSuggestions(false)}
                 />
-                <div className="absolute z-20 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-80 overflow-auto">
+                <div className="absolute z-20 mt-1 max-h-80 w-full overflow-auto rounded-xl border border-slate-200 bg-white shadow-lg">
                   {suggestions.map((suggestion) => (
                     <button
                       key={suggestion.id}
@@ -179,7 +179,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
 
           <button
             type="submit"
-            className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="flex items-center gap-2 rounded-full bg-accent-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-accent-700"
           >
             <Search className="w-5 h-5" />
             Search
@@ -188,16 +188,16 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-4 py-3 border rounded-lg font-semibold transition-colors flex items-center gap-2 ${
+            className={`flex items-center gap-2 rounded-xl border px-4 py-3 font-semibold transition-colors ${
               showFilters || hasActiveFilters
-                ? "bg-blue-50 border-blue-300 text-blue-700"
+                ? "border-accent-300 bg-accent-50 text-accent-700"
                 : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
             }`}
           >
             <SlidersHorizontal className="w-5 h-5" />
             Filters
             {hasActiveFilters && (
-              <span className="px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
+              <span className="rounded-full bg-accent-600 px-2 py-0.5 text-xs text-white">
                 {Object.values(filters).filter((v) => v !== undefined && v !== "").length}
               </span>
             )}
@@ -207,7 +207,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
 
       {/* Advanced Filters */}
       {showFilters && filterOptions && (
-        <div className="px-4 pb-4 border-t bg-gray-50">
+        <div className="border-t bg-slate-50 px-4 pb-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
             {/* Category */}
             <div>
@@ -217,7 +217,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
               <select
                 value={filters.category || ""}
                 onChange={(e) => updateFilter("category", e.target.value || undefined)}
-                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent-400 [&>option]:bg-white [&>option]:text-slate-800"
               >
                 <option value="">All Categories</option>
                 {filterOptions.categories.map((cat) => (
@@ -243,7 +243,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                   updateFilter("minPurity", e.target.value ? parseFloat(e.target.value) : undefined)
                 }
                 placeholder="e.g., 95"
-                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-400"
               />
             </div>
 
@@ -261,7 +261,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                   updateFilter("maxPurity", e.target.value ? parseFloat(e.target.value) : undefined)
                 }
                 placeholder="e.g., 100"
-                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-400"
               />
             </div>
 
@@ -280,7 +280,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
                     e.target.value === "" ? undefined : e.target.value === "true"
                   )
                 }
-                className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent-400 [&>option]:bg-white [&>option]:text-slate-800"
               >
                 <option value="">Any</option>
                 <option value="true">COA Available</option>
@@ -294,7 +294,7 @@ export function AdvancedSearch({ onSearch, onClear }: AdvancedSearchProps) {
             <div className="mt-4 flex justify-end">
               <button
                 onClick={() => setFilters({})}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm font-medium text-accent-600 hover:text-accent-700"
               >
                 Clear All Filters
               </button>

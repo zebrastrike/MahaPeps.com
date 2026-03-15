@@ -106,7 +106,7 @@ export function ProductGrid({
     <div className="space-y-6">
       {/* Toolbar */}
       {showFilters && (
-        <div className="bg-white border rounded-lg p-4">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             {/* Left Side - Filters */}
             <div className="flex flex-col sm:flex-row gap-3 flex-1">
@@ -118,7 +118,7 @@ export function ProductGrid({
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent-400 [&>option]:bg-white [&>option]:text-slate-800"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -136,7 +136,7 @@ export function ProductGrid({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="w-full rounded-lg border border-blue-500 bg-blue-600 px-3 py-2 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 [&>option]:bg-blue-600 [&>option]:text-white"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-accent-400 [&>option]:bg-white [&>option]:text-slate-800"
                 >
                   <option value="name">Name (A-Z)</option>
                   <option value="price-low">Price (Low to High)</option>
@@ -147,12 +147,12 @@ export function ProductGrid({
 
               {/* COA Filter */}
               <div className="flex items-end">
-                <label className="flex items-center gap-2 cursor-pointer px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors">
+                <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 transition-colors hover:bg-slate-50">
                   <input
                     type="checkbox"
                     checked={showOnlyWithCoa}
                     onChange={(e) => setShowOnlyWithCoa(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    className="h-4 w-4 rounded text-accent-600 focus:ring-2 focus:ring-accent-500"
                   />
                   <span className="text-sm font-medium text-gray-700">COA Available</span>
                 </label>
@@ -163,9 +163,9 @@ export function ProductGrid({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg transition-colors ${
+                className={`rounded-xl p-2 transition-colors ${
                   viewMode === "grid"
-                    ? "bg-blue-100 text-blue-600"
+                    ? "bg-accent-100 text-accent-700"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
               >
@@ -173,9 +173,9 @@ export function ProductGrid({
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg transition-colors ${
+                className={`rounded-xl p-2 transition-colors ${
                   viewMode === "list"
-                    ? "bg-blue-100 text-blue-600"
+                    ? "bg-accent-100 text-accent-700"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
               >
@@ -196,7 +196,7 @@ export function ProductGrid({
                   setFilterCategory("all");
                   setShowOnlyWithCoa(false);
                 }}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="font-medium text-accent-600 hover:text-accent-700"
               >
                 Clear Filters
               </button>
@@ -207,7 +207,7 @@ export function ProductGrid({
 
       {/* Product Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="bg-gray-50 border border-dashed rounded-lg p-12 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
           <SlidersHorizontal className="w-16 h-16 mx-auto mb-4 text-gray-300" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
           <p className="text-gray-600 mb-4">
@@ -218,7 +218,7 @@ export function ProductGrid({
               setFilterCategory("all");
               setShowOnlyWithCoa(false);
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="rounded-full bg-accent-500 px-5 py-2 text-white transition-colors hover:bg-accent-600"
           >
             Clear All Filters
           </button>

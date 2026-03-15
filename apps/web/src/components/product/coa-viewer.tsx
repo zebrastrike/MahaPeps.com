@@ -61,11 +61,11 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative w-full max-w-4xl h-[90vh] bg-white rounded-lg shadow-xl overflow-hidden">
+      <div className="relative h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-lg">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+        <div className="flex items-center justify-between border-b bg-gray-50 p-4">
           <div className="flex items-center gap-3">
-            <FileText className="w-5 h-5 text-blue-600" />
+            <FileText className="h-5 w-5 text-accent-700" />
             <div>
               <h2 className="text-lg font-semibold">Certificate of Analysis</h2>
               {coaData && (
@@ -86,7 +86,7 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
           {loading && (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-accent-600"></div>
                 <p className="text-gray-600">Loading COA...</p>
               </div>
             </div>
@@ -105,10 +105,10 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
           {coaData && !loading && !error && (
             <div className="p-4 space-y-4">
               {/* COA Metadata */}
-              <div className="grid grid-cols-3 gap-4 p-4 bg-blue-50 rounded-lg">
+              <div className="grid grid-cols-3 gap-4 rounded-xl bg-accent-50 p-4">
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Purity</p>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-2xl font-bold text-accent-700">
                     {parseFloat(coaData.purityPercent).toFixed(2)}%
                   </p>
                 </div>
@@ -129,7 +129,7 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
               </div>
 
               {/* PDF Viewer */}
-              <div className="border rounded-lg overflow-hidden">
+              <div className="overflow-hidden rounded-xl border border-slate-200">
                 <iframe
                   src={coaData.downloadUrl}
                   className="w-full h-[600px]"
@@ -160,7 +160,7 @@ export function CoaViewer({ batchId, isOpen, onClose }: CoaViewerProps) {
             </p>
             <button
               onClick={handleDownload}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 rounded-full bg-accent-600 px-4 py-2 text-white transition-colors hover:bg-accent-700"
             >
               <Download className="w-4 h-4" />
               Download PDF
