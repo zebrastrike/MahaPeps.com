@@ -37,6 +37,13 @@ const ONLY_NAME   = ONLY_IDX !== -1 ? args[ONLY_IDX + 1]?.toLowerCase() : null;
 // prompt_hint is extra context DALL-E uses for a better image.
 const PRODUCTS = [
   { name: 'AOD-9604',             slug: 'aod-9604',          hint: 'modified growth hormone fragment, weight loss peptide, sleek silver vial' },
+  { name: 'Oxytocin',             slug: 'oxytocin',          hint: 'bonding neuropeptide hormone, warm amber vial, social behavior research' },
+  { name: 'PT-141',               slug: 'pt-141',            hint: 'melanocortin receptor agonist, deep violet vial, CNS pathway research' },
+  { name: 'SS-31 (Elamipretide)', slug: 'ss-31',             hint: 'mitochondrial peptide, cellular energy, blue-green crystalline vial' },
+  { name: 'Semaglutide',          slug: 'semaglutide',       hint: 'GLP-1 receptor agonist, metabolic research, clean clinical vial, white' },
+  { name: 'Thymosin Alpha-1',     slug: 'thymosin-alpha-1',  hint: 'immune modulating thymic peptide, pale gold vial, T-cell research' },
+  { name: 'hCG',                  slug: 'hcg',               hint: 'human chorionic gonadotropin, reproductive research, clear glass vial' },
+  { name: 'Tirzepatide',          slug: 'tirzepatide',       hint: 'dual GIP GLP-1 agonist, metabolic research, modern pharmaceutical vial' },
   { name: 'BPC-157',              slug: 'bpc-157',           hint: 'body protection compound, healing peptide, deep blue crystalline vial' },
   { name: 'TB-500',               slug: 'tb-500',            hint: 'thymosin beta-4, tissue repair, gold-toned molecule, cellular regeneration' },
   { name: 'BPC-157 + TB-500',     slug: 'bpc-157-tb-500',   hint: 'dual peptide stack, healing synergy, blue and gold crystals together' },
