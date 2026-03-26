@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import formData from 'form-data';
-import Mailgun from 'mailgun.js';
+import * as nodemailer from 'nodemailer';
 import { EmailTemplatesService } from './email-templates.service';
 
 interface Order {
@@ -26,28 +25,31 @@ interface Order {
 @Injectable()
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
-  private mailgunClient: any;
+  private transporter: nodemailer.Transporter;
   private readonly canSendEmails: boolean;
 
   constructor(private readonly emailTemplatesService: EmailTemplatesService) {
-    // Send emails if Mailgun is configured (regardless of environment)
-    const hasMailgunConfig = !!(
-      process.env.MAILGUN_API_KEY &&
-      process.env.MAILGUN_DOMAIN &&
-      process.env.MAILGUN_FROM_EMAIL
+    const hasSmtpConfig = !!(
+      process.env.SMTP_HOST &&
+      process.env.SMTP_USER &&
+      process.env.SMTP_PASS
     );
 
-    if (hasMailgunConfig) {
-      const mailgun = new Mailgun(formData);
-      this.mailgunClient = mailgun.client({
-        username: 'api',
-        key: process.env.MAILGUN_API_KEY,
+    if (hasSmtpConfig) {
+      this.transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587', 10),
+        secure: process.env.SMTP_SECURE === 'true',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
       });
       this.canSendEmails = true;
-      this.logger.log('Mailgun configured - emails will be sent');
+      this.logger.log('SMTP configured - emails will be sent');
     } else {
       this.canSendEmails = false;
-      this.logger.warn('Mailgun not configured - emails will be logged only');
+      this.logger.warn('SMTP not configured - emails will be logged only');
     }
   }
 
@@ -60,10 +62,10 @@ export class NotificationsService {
     const subject = `Order Confirmation #${order.id} - Payment Instructions`;
 
     try {
-      if (this.canSendEmails && this.mailgunClient) {
-        await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
-          from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
-          to: [order.user.email],
+      if (this.canSendEmails && this.transporter) {
+        await this.transporter.sendMail({
+          from: `${process.env.SMTP_FROM_NAME || 'MAHA Peptides'} <${process.env.SMTP_USER}>`,
+          to: order.user.email,
           subject,
           html: template,
         });
@@ -84,10 +86,10 @@ export class NotificationsService {
     const subject = `Payment Confirmed - Order #${order.id}`;
 
     try {
-      if (this.canSendEmails && this.mailgunClient) {
-        await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
-          from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
-          to: [order.user.email],
+      if (this.canSendEmails && this.transporter) {
+        await this.transporter.sendMail({
+          from: `${process.env.SMTP_FROM_NAME || 'MAHA Peptides'} <${process.env.SMTP_USER}>`,
+          to: order.user.email,
           subject,
           html: template,
         });
@@ -114,10 +116,10 @@ export class NotificationsService {
     const subject = `Order Shipped - Order #${order.id}`;
 
     try {
-      if (this.canSendEmails && this.mailgunClient) {
-        await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
-          from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
-          to: [order.user.email],
+      if (this.canSendEmails && this.transporter) {
+        await this.transporter.sendMail({
+          from: `${process.env.SMTP_FROM_NAME || 'MAHA Peptides'} <${process.env.SMTP_USER}>`,
+          to: order.user.email,
           subject,
           html: template,
         });
@@ -170,10 +172,10 @@ export class NotificationsService {
     `.trim();
 
     try {
-      if (this.canSendEmails && this.mailgunClient) {
-        await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
-          from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
-          to: [params.to],
+      if (this.canSendEmails && this.transporter) {
+        await this.transporter.sendMail({
+          from: `${process.env.SMTP_FROM_NAME || 'MAHA Peptides'} <${process.env.SMTP_USER}>`,
+          to: params.to,
           subject,
           html,
         });
@@ -212,10 +214,10 @@ export class NotificationsService {
     html: string;
   }): Promise<void> {
     try {
-      if (this.canSendEmails && this.mailgunClient) {
-        await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN!, {
-          from: `${process.env.MAILGUN_FROM_NAME} <${process.env.MAILGUN_FROM_EMAIL}>`,
-          to: [params.to],
+      if (this.canSendEmails && this.transporter) {
+        await this.transporter.sendMail({
+          from: `${process.env.SMTP_FROM_NAME || 'MAHA Peptides'} <${process.env.SMTP_USER}>`,
+          to: params.to,
           subject: params.subject,
           html: params.html,
         });
@@ -336,7 +338,7 @@ export class NotificationsService {
         Products are not intended for human or veterinary consumption.
       </p>
       <p style="margin-top: 15px;">
-        Questions? Contact us at ${process.env.MAILGUN_FROM_EMAIL}
+        Questions? Contact us at ${process.env.SMTP_USER || 'orders@mahapeps.com'}
       </p>
     </div>
   </div>
