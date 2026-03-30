@@ -69,7 +69,7 @@ export function ProductCard({
   const [imageError, setImageError]   = useState(false);
 
   const selectedVariant = variants.find((v) => v.id === selectedVariantId) || variants[0];
-  const displayImage    = imageError || !imageUrl ? "/products/placeholder.png" : imageUrl;
+  const displayImage    = "/products/maha-branded.jpg";
   const variantHasCoa   = selectedVariant?.hasCoa ?? hasCoa;
   const variantSku      = selectedVariant?.sku || sku;
   const priceLabel      = formatPrice(selectedVariant?.priceCents ?? priceCents);

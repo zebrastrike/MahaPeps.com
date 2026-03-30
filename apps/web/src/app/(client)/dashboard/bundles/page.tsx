@@ -7,8 +7,7 @@ export default function BundlesPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to products - bundles feature not needed for B2C
-    router.push("/products");
+    router.push("/stacks");
   }, [router]);
 
   return (

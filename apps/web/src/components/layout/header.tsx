@@ -41,6 +41,7 @@ export function Header({ title, subtitle }: HeaderProps) {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {[
+              { href: "/stacks",    label: "Stacks"    },
               { href: "/products",  label: "Products"  },
               { href: "/solutions", label: "Solutions" },
               { href: "/wholesale", label: "Wholesale" },
@@ -114,6 +115,7 @@ export function Header({ title, subtitle }: HeaderProps) {
               Search
             </button>
             {[
+              { href: "/stacks",    label: "Stacks"    },
               { href: "/products",  label: "Products"  },
               { href: "/solutions", label: "Solutions" },
               { href: "/wholesale", label: "Wholesale" },

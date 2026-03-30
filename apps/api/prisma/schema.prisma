@@ -232,6 +232,7 @@ model Product {
   priceListItems   PriceListItem[]
   orderItems       OrderItem[]
   inventory        Inventory[]
+  stackItems       StackItem[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
@@ -627,6 +628,46 @@ model Shipment {
 
   @@index([orderId])
   @@index([trackingNumber])
+}
+
+// ✅ STACKS - Curated multi-product bundles
+
+model Stack {
+  id              String      @id @default(uuid())
+  name            String      // e.g., "The Warrior"
+  slug            String      @unique
+  tagline         String?     // Short one-liner
+  description     String?     @db.Text
+  focus           String?     // Category label, e.g., "Recovery & Healing"
+  imageUrl        String?
+  priceCents      Int         // Bundle price in cents
+  savingsPercent  Int         @default(10)
+  isActive        Boolean     @default(true)
+  isPopular       Boolean     @default(false)
+  displayOrder    Int         @default(0)
+  items           StackItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([isActive])
+  @@index([isPopular])
+  @@index([displayOrder])
+}
+
+model StackItem {
+  id        String   @id @default(uuid())
+  stackId   String
+  stack     Stack    @relation(fields: [stackId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  role      String?  // What this product contributes to the stack
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([stackId, productId])
+  @@index([stackId])
+  @@index([productId])
 }
 
 // ✅ SETTINGS - Store payment instructions and site config

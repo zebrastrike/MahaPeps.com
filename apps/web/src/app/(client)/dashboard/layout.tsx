@@ -11,7 +11,7 @@ export default function ClientDashboardLayout({ children }: { children: ReactNod
       navigationItems={[
         { label: "Overview", href: "/dashboard" },
         { label: "Orders", href: "/dashboard/orders" },
-        { label: "Research Bundles", href: "/dashboard/bundles" },
+        { label: "Research Stacks", href: "/stacks" },
         { label: "Messages", href: "/dashboard/messages" }
       ]}
     >

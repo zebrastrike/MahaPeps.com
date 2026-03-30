@@ -19,6 +19,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { ContactModule } from './modules/contact/contact.module';
 import { FaqModule } from './modules/faq/faq.module';
 import { BlogModule } from './modules/blog/blog.module';
+import { StacksModule } from './modules/stacks/stacks.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { BlogModule } from './modules/blog/blog.module';
     ContactModule,
     FaqModule,
     BlogModule,
+    StacksModule,
   ],
   providers: [
     {

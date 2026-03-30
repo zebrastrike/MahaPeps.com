@@ -76,6 +76,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       navigationItems={[
         { label: "Overview", href: "/admin" },
         { label: "Products", href: "/admin/products" },
+        { label: "Stacks", href: "/admin/stacks" },
         { label: "Orders", href: "/admin/orders" },
         { label: "Payments", href: "/admin/payments" },
         { label: "KYC", href: "/admin/kyc" },

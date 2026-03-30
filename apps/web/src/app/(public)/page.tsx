@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroVideo } from "@/components/hero/hero-video";
 import { MarketStats } from "@/components/home/market-stats";
-import { Beaker, Shield, FileText, MapPin } from "lucide-react";
+import { STACKS, formatStackPrice } from "@/data/stacks";
+import { Beaker, Shield, FileText, MapPin, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -59,10 +60,10 @@ export default function HomePage() {
             {/* CTA Buttons */}
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/products"
+                href="/stacks"
                 className="inline-flex items-center gap-3 border border-gold-500 bg-gold-500/10 px-10 py-3.5 font-label text-[0.65rem] tracking-[0.15em] text-gold-300 transition-all hover:bg-gold-500/20 hover:text-gold-200 hover:shadow-gold"
               >
-                Browse Catalog
+                Shop Stacks
               </Link>
               <Link
                 href="/contact"
@@ -88,6 +89,77 @@ export default function HomePage() {
               ))}
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Stacks */}
+      <section className="bg-navy-800/40 py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-14 text-center">
+            <p className="font-label mb-4 text-gold-500/60 tracking-[0.18em]">Curated Protocols</p>
+            <h2 className="font-editorial text-4xl text-warm-white md:text-5xl">
+              Research <span className="text-gold-400 italic">Stacks</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm font-light text-warm-white/45">
+              Peptides paired for synergy. Each stack targets complementary pathways — save 10% vs buying individually.
+            </p>
+            <hr className="divider-gold mx-auto mt-6 w-16" />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {STACKS.filter((s) => s.popular).map((stack) => (
+              <Link
+                key={stack.id}
+                href={`/stacks/${stack.slug}`}
+                className="group overflow-hidden border border-gold-500/10 bg-navy-800 transition-all duration-300 hover:border-gold-500/40 hover:shadow-gold hover:-translate-y-0.5"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden bg-navy-900/60">
+                  <img
+                    src="/products/maha-branded.jpg"
+                    alt={stack.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-900/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 left-4">
+                    <span className="font-label text-[0.55rem] tracking-widest text-gold-400/80 bg-navy-900/60 px-2 py-1">
+                      {stack.focus}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-editorial text-2xl text-warm-white group-hover:text-gold-300 transition-colors">
+                    {stack.name}
+                  </h3>
+                  <p className="mt-1 text-xs text-warm-white/40">{stack.tagline}</p>
+                  <div className="mt-3 space-y-1">
+                    {stack.products.map((p) => (
+                      <div key={p.slug} className="flex items-center gap-2">
+                        <Beaker className="h-2.5 w-2.5 text-gold-500/40" />
+                        <span className="text-xs text-warm-white/50">{p.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex items-end justify-between">
+                    <span className="font-editorial text-xl text-gold-400">
+                      {formatStackPrice(stack.priceCents)}
+                    </span>
+                    <span className="flex items-center gap-1 font-label text-[0.55rem] tracking-widest text-gold-400/50 group-hover:text-gold-300">
+                      View <ArrowRight className="h-2.5 w-2.5" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <Link
+              href="/stacks"
+              className="inline-flex items-center gap-2 border border-gold-500/40 px-8 py-3 font-label text-[0.65rem] tracking-widest text-gold-400 transition-all hover:bg-gold-500/10 hover:text-gold-300"
+            >
+              View All 10 Stacks <ArrowRight className="h-3 w-3" />
+            </Link>
           </div>
         </div>
       </section>

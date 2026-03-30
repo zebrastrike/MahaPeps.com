@@ -246,18 +246,11 @@ export default function ProductDetailPage() {
             {/* Product Image */}
             <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
               <div className="mb-4 flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-100">
-                {product.imageUrl ? (
-                  <img
-                    src={product.imageUrl}
+                <img
+                    src="/products/maha-branded.jpg"
                     alt={product.name}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                      (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                    }}
                   />
-                ) : null}
-                <Beaker className={`w-32 h-32 text-gray-300 ${product.imageUrl ? 'hidden' : ''}`} />
               </div>
 
               {/* Quick Info Pills */}
